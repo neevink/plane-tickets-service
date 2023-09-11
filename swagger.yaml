@@ -67,10 +67,14 @@ paths:
           in: query
           schema:
             type: integer
+            minimum: 1
+            example: 10
         - name: offset
           in: query
           schema:
             type: integer
+            minimum: 0
+            example: 0
           required: False
       responses:
         '200':
@@ -151,6 +155,32 @@ paths:
           description: Ticket not found
 
   /event:
+    get:
+      summary: Get all events
+      tags:
+        - Events
+      parameters:
+        - $ref: '#/components/parameters/EventFilterParam'
+        - $ref: '#/components/parameters/EventSortParam'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            example: 0
+          required: False
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfEventsResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
     post:
       summary: Create a new event
       tags:
@@ -170,7 +200,7 @@ paths:
                 $ref: '#/components/schemas/Event'
         '400':
           $ref: '#/components/responses/ErrorResponse'
-            
+
   /event/{event-id}:
     get:
       summary: Get event by ID
@@ -298,7 +328,18 @@ components:
               $ref: '#/components/schemas/Ticket'
             json:
               name: Results
-              
+
+    ListOfEventsResponse:
+      description: List of events
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Event'
+            json:
+              name: Results
+
     ErrorResponse:
       description: Error
       content:
@@ -329,23 +370,9 @@ components:
       name: ticketSort
       in: query
       schema:
-        type: array
-        items:
-          type: object
-          required:
-            - field
-            - order
-          properties:
-            field:
-              type: string
-              example: name
-              pattern: '^(id|name|coordinates\.x|coordinates\.y|creationDate|price|discount|refundable|type|event)$'
-            order:
-              type: string
-              enum:
-                - asc
-                - desc
-              example: asc
+        type: string
+        pattern: '^-?(id|name|coordinates\.x|coordinates\.y|creationDate|price|discount|refundable|type|event)$'
+        example: -name
 
     EventFilterParam:
       name: eventFilter
@@ -362,23 +389,9 @@ components:
       name: eventSort
       in: query
       schema:
-        type: array
-        items:
-          type: object
-          required:
-            - field
-            - order
-          properties:
-            field:
-              type: string
-              example: name
-              pattern: '^(id|name|date|minAge|eventType)$'
-            order:
-              type: string
-              enum:
-                - asc
-                - desc
-              example: asc
+        type: string
+        pattern: '^-?(id|name|date|minAge|eventType)$'
+        example: -date
       
     TicketIdParam:
       name: ticketId
@@ -423,7 +436,7 @@ components:
           format: date
           readOnly: true
           nullable: false
-          example: '2023-12-12'
+          example: '2023-12-13'
         price:
           nullable: false
           type: number
