@@ -335,9 +335,9 @@ components:
       required:
         - name
         - coordinates
+        - price
         - discount
         - refundable
-        - type
         - event
       properties:
         id:
@@ -346,27 +346,39 @@ components:
           readOnly: true
         name:
           type: string
-          minLength: 1
+          nullable: false
+          example: "Концерт Доры"
         coordinates:
+          nullable: false
           $ref: '#/components/schemas/Coordinates'
         creationDate:
           type: string
           format: date
           readOnly: true
+          nullable: false
+          example: '2023-12-12'
         price:
+          nullable: false
           type: number
           format: double
+          example: 5000.0
           minimum: 1
         discount:
           type: number
           format: double
+          nullable: false
           minimum: 0
+          exclusiveMinimum: true
+          example: 0.0
           maximum: 100
         refundable:
+          nullable: false
+          example: false
           type: boolean
         type:
           $ref: '#/components/schemas/TicketType'
         event:
+          nullable: false
           $ref: '#/components/schemas/Event'
 
     Coordinates:
@@ -376,34 +388,47 @@ components:
         - y
       properties:
         x:
+          example: 100
           type: integer
+          nullable: false
+          exclusiveMinimum: true
           minimum: -686
         y:
+          nullable: false
           type: integer
+          example: 100
 
     Event:
       type: object
       required:
         - name
-        - date
+        - minAge
       properties:
         id:
           type: integer
+          nulable: false
           minimum: 1
           readOnly: true
+          description: 'Should be unique'
         name:
           type: string
           minLength: 1
+          example: 'Концерт Доры'
+          nullable: false
         date:
           type: string
           format: date
+          example: '2023-12-13'
         minAge:
           type: integer
+          example: 12
+          nullable: false
         eventType:
           $ref: '#/components/schemas/EventType'
 
     TicketType:
       type: string
+      example: USUAL
       enum:
         - VIP
         - USUAL
@@ -412,6 +437,7 @@ components:
 
     EventType:
       type: string
+      example: CONCERT
       enum:
         - CONCERT
         - BASEBALL
