@@ -1,0 +1,409 @@
+openapi: 3.0.3
+info:
+  title: ticket service
+  description: ticket - soa lab 1
+  version: 1.0.0
+
+
+tags:
+  - name: Tickets
+    description: Tickets operations
+  - name: Booking
+    description: Booking operations
+
+
+paths:
+  /ticket:
+    get:
+      summary: Get a list of tickets
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/FilterParam'
+        - $ref: '#/components/parameters/SortParam'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          required: False
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfTicketsResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+          
+    post:
+      summary: Create a new ticket
+      tags:
+        - Tickets
+      parameters:
+        - name: ticket
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ticket'
+          
+      responses:
+        '201':
+          description: Ticket created successfully
+          content:
+            application/xml:
+                schema:
+                  $ref: '#/components/schemas/Ticket'
+            
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /ticket/{ticketId}:
+    get:
+      summary: Get ticket by ID
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/TicketIdParam'
+        
+      responses:
+        '200':
+          description: The ticket
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '404':
+          description: Ticket not found
+
+    put:
+      summary: Update a dragon by ID
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/TicketIdParam'
+        - name: ticket
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ticket'
+
+      responses:
+        '200':
+          description: Dragon updated successfully
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          description: Dragon not found
+
+    delete:
+      summary: Delete the ticket by ID
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/DragonIdParam'
+      responses:
+        '204':
+          description: Ticket has deleted successfully
+        '404':
+          description: Ticket not found
+
+  /event:
+    post:
+      summary: Create a new event
+      tags:
+        - Tickets
+      parameters:
+        - name: person
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Person'
+      responses:
+        '201':
+          description: A person created
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+            
+  /event/{event-id}:
+    get:
+      summary: Get event by ID
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+
+      responses:
+        '200':
+          description: A event
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+
+    put:
+      summary: Update event by ID
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+        - name: event
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Event'
+
+      responses:
+        '200':
+          description: Event updated successfully
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          description: Event not found
+
+    delete:
+      summary: Delete event by id
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '204':
+          description: Person deleted successfully
+        '404':
+          description: Person not found
+
+
+  /booking/sell/vip/{ticket-id}/{person-id}:
+    post:
+      parameters:
+        - in: path
+          name: ticket-id
+          schema:
+            type: integer
+          required: true
+          description: ticket id
+        - in: path
+          name: person-id
+          schema:
+            type: string
+          required: true
+          description: person id
+      tags:
+        - Booking
+      summary: Create vip ticket
+      description: Скопировать указанный билет, создав такой же, но с категорией "VIP" и с удвоенной ценой
+      responses:
+        '204':
+          description: Created
+        '400':
+         $ref: '#/components/responses/ErrorResponse'
+
+  /booking/sell/discount/{ticket-id}/{person-id}/{discount}:
+    post:
+      parameters:
+        - in: path
+          name: ticket-id
+          schema:
+            type: integer
+          required: true
+          description: ticket id
+        - in: path
+          name: person-id
+          schema:
+            type: integer
+          required: true
+          description: person id
+        - in: path
+          name: discount
+          schema:
+            type: integer
+          required: true
+          description: discount
+      tags:
+        - Booking
+      summary: Create discount ticket
+      description: Cоздать новый билет на основе указанного, указав скидку в заданное число %, и, одновременно, увеличив цену билета на ту же самую сумму
+      responses:
+        '204':
+          description: Created
+        '400':
+         $ref: '#/components/responses/ErrorResponse'
+          
+components:
+
+  responses:
+    ListOfTicketsResponse:
+      description: A list of tickets
+      content:
+        application/xml:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Ticket'
+            xml:
+              name: Results
+              
+    ErrorResponse:
+      description: An error
+      content:
+        application/xml:
+          schema:
+            type: array
+            items:
+              type: string
+              xml:
+                name: Error
+            xml:
+              name: Results
+  
+  
+  parameters:
+    FilterParam:
+      name: filter
+      in: query
+      schema:
+        type: array
+        items:
+          type: object
+          required:
+            - field
+            - value
+          properties:
+            field:
+              type: string
+              example: name
+            value:
+              type: string
+              example: andrey
+      
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: array
+        items:
+          type: object
+          required:
+            - field
+            - order
+          properties:
+            field:
+              type: string
+              example: name
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+    
+    TicketIdParam:
+      name: ticketId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        
+    EventIdParam:
+      name: eventnId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        
+  schemas:
+    Ticket:
+      type: object
+      required:
+        - name
+        - coordinates
+        - discount
+        - refundable
+        - type
+        - event
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date
+          readOnly: true
+        price:
+          type: number
+          format: double
+          minimum: 1
+        discount:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+        refundable:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/TicketType'
+        event:
+          $ref: '#/components/schemas/Event'
+
+    Coordinates:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+          minimum: -686
+        y:
+          type: integer
+
+    Event:
+      type: object
+      required:
+        - name
+        - date
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          format: date
+        minAge:
+          type: integer
+        eventType:
+          $ref: '#/components/schemas/EventType'
+
+    TicketType:
+      type: string
+      enum:
+        - VIP
+        - USUAL
+        - BUDGETARY
+        - CHEAP
+
+    EventType:
+      type: string
+      enum:
+        - CONCERT
+        - BASEBALL
+        - BASKETBALL
+        - THEATRE_PERFORMANCE
