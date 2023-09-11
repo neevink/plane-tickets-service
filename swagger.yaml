@@ -15,6 +15,46 @@ tags:
 
 
 paths:
+  /ticket/sum-discount:
+    get:
+      summary: Calculate the sum of discount for all tickets
+      tags:
+        - Tickets
+      responses:
+        '200':
+          description: The sum of discount for all tickets
+          content:
+            application/json:
+              schema:
+                type: double
+                example: 123.5
+                json:
+                  name: Sum
+
+  /ticket/count-by-discount:
+    get:
+      summary: Count tickets by discount
+      tags:
+        - Tickets
+      responses:
+        '200':
+          description: The count of tickets groupped by discount
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    discount:
+                      type: integer
+                      format: int32
+                      example: 10
+                    count:
+                      type: integer
+                      example: 100
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
   /ticket:
     get:
       summary: Get all tickets
@@ -268,6 +308,7 @@ components:
             type: array
             items:
               type: string
+              example: Bad request
               json:
                 name: Error
             json:
