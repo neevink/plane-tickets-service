@@ -21,8 +21,8 @@ paths:
       tags:
         - Tickets
       parameters:
-        - $ref: '#/components/parameters/FilterParam'
-        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/TicketFilterParam'
+        - $ref: '#/components/parameters/TicketSortParam'
         - name: limit
           in: query
           schema:
@@ -247,7 +247,6 @@ paths:
          $ref: '#/components/responses/ErrorResponse'
           
 components:
-
   responses:
     ListOfTicketsResponse:
       description: List of tickets
@@ -272,29 +271,21 @@ components:
                 name: Error
             json:
               name: Results
-  
-  
+    
   parameters:
-    FilterParam:
-      name: filter
+    TicketFilterParam:
+      name: ticketFilter
       in: query
+      required: false
       schema:
         type: array
         items:
-          type: object
-          required:
-            - field
-            - value
-          properties:
-            field:
-              type: string
-              example: field
-            value:
-              type: string
-              example: value
-      
-    SortParam:
-      name: sort
+          type: string
+          example: id[eq]=1
+          pattern: '^(id|name|coordinates\.x|coordinates\.y|creationDate|price|discount|refundable|type|event)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
+
+    TicketSortParam:
+      name: ticketSort
       in: query
       schema:
         type: array
@@ -307,12 +298,47 @@ components:
             field:
               type: string
               example: name
+              pattern: '^(id|name|coordinates\.x|coordinates\.y|creationDate|price|discount|refundable|type|event)$'
             order:
               type: string
               enum:
                 - asc
                 - desc
-    
+              example: asc
+
+    EventFilterParam:
+      name: eventFilter
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          example: id[eq]=1
+          pattern: '^(id|name|date|minAge|eventType)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
+
+    EventSortParam:
+      name: eventSort
+      in: query
+      schema:
+        type: array
+        items:
+          type: object
+          required:
+            - field
+            - order
+          properties:
+            field:
+              type: string
+              example: name
+              pattern: '^(id|name|date|minAge|eventType)$'
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+              example: asc
+      
     TicketIdParam:
       name: ticketId
       in: path
