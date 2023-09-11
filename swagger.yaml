@@ -7,7 +7,9 @@ info:
 
 tags:
   - name: Tickets
-    description: Tickets operations
+    description: Ticket operations
+  - name: Events
+    description: Event operations
   - name: Booking
     description: Booking operations
 
@@ -15,7 +17,7 @@ tags:
 paths:
   /ticket:
     get:
-      summary: Get a list of tickets
+      summary: Get all tickets
       tags:
         - Tickets
       parameters:
@@ -40,20 +42,20 @@ paths:
       summary: Create a new ticket
       tags:
         - Tickets
-      parameters:
-        - name: ticket
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/Ticket'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
           
       responses:
         '201':
-          description: Ticket created successfully
+          description: Ticket was created successfully
           content:
-            application/xml:
-                schema:
-                  $ref: '#/components/schemas/Ticket'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
             
         '400':
           $ref: '#/components/responses/ErrorResponse'
@@ -70,14 +72,14 @@ paths:
         '200':
           description: The ticket
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Ticket'
         '404':
           description: Ticket not found
 
     put:
-      summary: Update a dragon by ID
+      summary: Update a ticket by ID
       tags:
         - Tickets
       parameters:
@@ -90,18 +92,18 @@ paths:
 
       responses:
         '200':
-          description: Dragon updated successfully
+          description: Ticket was updated successfully
         '400':
           $ref: '#/components/responses/ErrorResponse'
         '404':
-          description: Dragon not found
+          description: Ticket not found
 
     delete:
       summary: Delete the ticket by ID
       tags:
         - Tickets
       parameters:
-        - $ref: '#/components/parameters/DragonIdParam'
+        - $ref: '#/components/parameters/TicketIdParam'
       responses:
         '204':
           description: Ticket has deleted successfully
@@ -112,20 +114,20 @@ paths:
     post:
       summary: Create a new event
       tags:
-        - Tickets
-      parameters:
-        - name: person
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/Person'
+        - Events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
       responses:
         '201':
-          description: A person created
+          description: Event has created
           content:
-            application/xml:
+            application/json:
               schema:
-                $ref: '#/components/schemas/Person'
+                $ref: '#/components/schemas/Event'
         '400':
           $ref: '#/components/responses/ErrorResponse'
             
@@ -133,7 +135,7 @@ paths:
     get:
       summary: Get event by ID
       tags:
-        - Tickets
+        - Events
       parameters:
         - $ref: '#/components/parameters/EventIdParam'
 
@@ -141,7 +143,7 @@ paths:
         '200':
           description: A event
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Event'
         '404':
@@ -150,7 +152,7 @@ paths:
     put:
       summary: Update event by ID
       tags:
-        - Tickets
+        - Events
       parameters:
         - $ref: '#/components/parameters/EventIdParam'
         - name: event
@@ -168,16 +170,16 @@ paths:
           description: Event not found
 
     delete:
-      summary: Delete event by id
+      summary: Delete event by ID
       tags:
-        - Tickets
+        - Events
       parameters:
         - $ref: '#/components/parameters/EventIdParam'
       responses:
         '204':
-          description: Person deleted successfully
+          description: Event deleted successfully
         '404':
-          description: Person not found
+          description: Event not found
 
 
   /booking/sell/vip/{ticket-id}/{person-id}:
@@ -197,11 +199,15 @@ paths:
           description: person id
       tags:
         - Booking
-      summary: Create vip ticket
+      summary: Create VIP ticket
       description: Скопировать указанный билет, создав такой же, но с категорией "VIP" и с удвоенной ценой
       responses:
-        '204':
-          description: Created
+        '201':
+          description: Event has created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
         '400':
          $ref: '#/components/responses/ErrorResponse'
 
@@ -213,7 +219,7 @@ paths:
           schema:
             type: integer
           required: true
-          description: ticket id
+          description: ticket ID
         - in: path
           name: person-id
           schema:
@@ -231,8 +237,12 @@ paths:
       summary: Create discount ticket
       description: Cоздать новый билет на основе указанного, указав скидку в заданное число %, и, одновременно, увеличив цену билета на ту же самую сумму
       responses:
-        '204':
-          description: Created
+        '201':
+          description: Event has created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
         '400':
          $ref: '#/components/responses/ErrorResponse'
           
@@ -240,27 +250,27 @@ components:
 
   responses:
     ListOfTicketsResponse:
-      description: A list of tickets
+      description: List of tickets
       content:
-        application/xml:
+        application/json:
           schema:
             type: array
             items:
               $ref: '#/components/schemas/Ticket'
-            xml:
+            json:
               name: Results
               
     ErrorResponse:
-      description: An error
+      description: Error
       content:
-        application/xml:
+        application/json:
           schema:
             type: array
             items:
               type: string
-              xml:
+              json:
                 name: Error
-            xml:
+            json:
               name: Results
   
   
@@ -278,10 +288,10 @@ components:
           properties:
             field:
               type: string
-              example: name
+              example: field
             value:
               type: string
-              example: andrey
+              example: value
       
     SortParam:
       name: sort
