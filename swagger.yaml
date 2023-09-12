@@ -296,7 +296,8 @@ paths:
 
   /tickets/count-by-type:
     get:
-      summary: Calculate the sum of tickets for given ticket type
+      summary: Calculate the sum of tickets for all tickets those ticket type is less than given ticket type
+      description: 'Вернуть количество объектов, значение поля type которых меньше заданного.'
       tags:
         - Tickets
       parameters:
@@ -323,6 +324,7 @@ paths:
       summary: Calculate the sum of discount for all tickets
       tags:
         - Tickets
+      description: 'Рассчитать сумму значений поля discount для всех объектов.'
       responses:
         '200':
           description: The sum of discount for all tickets
@@ -343,7 +345,7 @@ paths:
         - Tickets
       responses:
         '200':
-          description: The count of tickets groupped by discount
+          description: 'Сгруппировать объекты по значению поля discount, вернуть количество элементов в каждой группе.'
           content:
             application/json:
               schema:
@@ -424,7 +426,7 @@ components:
       name: filter
       in: query
       required: false
-      description: ' `<field>[<op>]=<value>` where <field> is one of Ticket field and <op> is one of `(eq|ne|gt|lt|lte|gte)`'
+      description: ' `<field>[<op>]=<value>` where <field> is one of Event field and <op> is one of `(eq|ne|gt|lt|lte|gte)`'
       schema:
         type: array
         items:
