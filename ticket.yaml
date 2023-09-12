@@ -9,8 +9,6 @@ tags:
     description: Ticket operations
   - name: Events
     description: Event operations
-  - name: Booking
-    description: Booking operations
 
 
 paths:
@@ -222,75 +220,6 @@ paths:
       responses:
         '204':
           description: Event deleted successfully
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-
-
-  /booking/sell/vip/{ticketId}/{personId}:
-    post:
-      parameters:
-        - in: path
-          name: ticketId
-          schema:
-            type: integer
-          required: true
-          description: ticket id
-        - in: path
-          name: personId
-          schema:
-            type: string
-          required: true
-          description: person id
-      tags:
-        - Booking
-      summary: Create VIP ticket
-      description: Скопировать указанный билет, создав такой же, но с категорией "VIP" и с удвоенной ценой
-      responses:
-        '201':
-          description: Event has created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-
-  /booking/sell/discount/{ticketId}/{personId}/{discount}:
-    post:
-      parameters:
-        - in: path
-          name: ticketId
-          schema:
-            type: integer
-          required: true
-          description: ticket ID
-        - in: path
-          name: personId
-          schema:
-            type: integer
-          required: true
-          description: person id
-        - in: path
-          name: discount
-          schema:
-            type: integer
-          required: true
-          description: discount
-      tags:
-        - Booking
-      summary: Create discount ticket
-      description: Cоздать новый билет на основе указанного, указав скидку в заданное число %, и, одновременно, увеличив цену билета на ту же самую сумму
-      responses:
-        '201':
-          description: Event has created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
-        '400':
-          $ref: '#/components/responses/ValidationError'
         '404':
           $ref: '#/components/responses/NotFoundError'
 
