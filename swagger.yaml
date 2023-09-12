@@ -15,7 +15,7 @@ tags:
 
 
 paths:
-  /ticket:
+  /tickets:
     get:
       summary: Get all tickets
       tags:
@@ -40,7 +40,7 @@ paths:
         '200':
           $ref: '#/components/responses/ListOfTicketsResponse'
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
           
     post:
       summary: Create a new ticket
@@ -60,11 +60,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ticket'
-            
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
 
-  /ticket/{ticketId}:
+  /tickets/{ticketId}:
     get:
       summary: Get ticket by ID
       tags:
@@ -80,27 +79,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Ticket'
         '404':
-          description: Ticket not found
+          $ref: '#/components/responses/NotFoundError'
 
     put:
       summary: Update a ticket by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
       tags:
         - Tickets
       parameters:
         - $ref: '#/components/parameters/TicketIdParam'
-        - name: ticket
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/Ticket'
 
       responses:
         '200':
           description: Ticket was updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '201':
+          description: Ticket was created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
         '404':
-          description: Ticket not found
+          $ref: '#/components/responses/NotFoundError'
 
     delete:
       summary: Delete the ticket by ID
@@ -112,9 +122,9 @@ paths:
         '204':
           description: Ticket has deleted successfully
         '404':
-          description: Ticket not found
+          $ref: '#/components/responses/NotFoundError'
 
-  /event:
+  /events:
     get:
       summary: Get all events
       tags:
@@ -139,7 +149,7 @@ paths:
         '200':
           $ref: '#/components/responses/ListOfEventsResponse'
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
 
     post:
       summary: Create a new event
@@ -159,9 +169,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
 
-  /event/{event-id}:
+  /events/{eventId}:
     get:
       summary: Get event by ID
       tags:
@@ -171,33 +181,37 @@ paths:
 
       responses:
         '200':
-          description: A event
+          description: The event
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
         '404':
-          description: Event not found
+          $ref: '#/components/responses/NotFoundError'
 
     put:
       summary: Update event by ID
       tags:
         - Events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
       parameters:
         - $ref: '#/components/parameters/EventIdParam'
-        - name: event
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/Event'
-
       responses:
         '200':
-          description: Event updated successfully
+          description: The event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
         '404':
-          description: Event not found
+          $ref: '#/components/responses/NotFoundError'
 
     delete:
       summary: Delete event by ID
@@ -209,20 +223,20 @@ paths:
         '204':
           description: Event deleted successfully
         '404':
-          description: Event not found
+          $ref: '#/components/responses/NotFoundError'
 
 
-  /booking/sell/vip/{ticket-id}/{person-id}:
+  /booking/sell/vip/{ticketId}/{personId}:
     post:
       parameters:
         - in: path
-          name: ticket-id
+          name: ticketId
           schema:
             type: integer
           required: true
           description: ticket id
         - in: path
-          name: person-id
+          name: personId
           schema:
             type: string
           required: true
@@ -239,19 +253,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
         '400':
-         $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
 
-  /booking/sell/discount/{ticket-id}/{person-id}/{discount}:
+  /booking/sell/discount/{ticketId}/{personId}/{discount}:
     post:
       parameters:
         - in: path
-          name: ticket-id
+          name: ticketId
           schema:
             type: integer
           required: true
           description: ticket ID
         - in: path
-          name: person-id
+          name: personId
           schema:
             type: integer
           required: true
@@ -274,9 +290,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
         '400':
-           $ref: '#/components/responses/ErrorResponse'
-  
-  /ticket/count-by-type:
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /tickets/count-by-type:
     get:
       summary: Calculate the sum of tickets for given ticket type
       tags:
@@ -298,9 +316,9 @@ paths:
                 json:
                   name: Sum
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
 
-  /ticket/sum-discount:
+  /tickets/sum-discount:
     get:
       summary: Calculate the sum of discount for all tickets
       tags:
@@ -316,9 +334,9 @@ paths:
                 json:
                   name: Sum
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
 
-  /ticket/count-by-discount:
+  /tickets/count-by-discount:
     get:
       summary: Count tickets by discount
       tags:
@@ -341,7 +359,7 @@ paths:
                       type: integer
                       example: 100
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/components/responses/ValidationError'
           
 components:
   responses:
@@ -367,20 +385,40 @@ components:
             json:
               name: Results
 
-    ErrorResponse:
-      description: Error
+    ValidationError:
+      description: Validation error
       content:
         application/json:
           schema:
-            type: array
-            items:
-              type: string
-              example: Bad request
-              json:
-                name: Error
-            json:
-              name: Results
-    
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+                  example: field xxx must be greater than
+                  json:
+                    name: Error
+          json:
+            name: Results
+
+    NotFoundError:
+      description: Not found error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+                  example: entity with id 12 not found
+                  json:
+                    name: Error
+          json:
+            name: Results
+
   parameters:
     TicketFilterParam:
       name: ticketFilter
