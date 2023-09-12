@@ -223,7 +223,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFoundError'
 
-  /tickets/count-by-type:
+  /tickets/type/count:
     get:
       summary: Calculate the sum of tickets for all tickets those ticket type is less than given ticket type
       description: 'Вернуть количество объектов, значение поля type которых меньше заданного.'
@@ -248,7 +248,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
 
-  /tickets/sum-discount:
+  /tickets/discount/sum:
     get:
       summary: Calculate the sum of discount for all tickets
       tags:
@@ -267,7 +267,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'
 
-  /tickets/count-by-discount:
+  /tickets/discount/count:
     get:
       summary: Count tickets by discount
       tags:
