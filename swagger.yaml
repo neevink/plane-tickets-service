@@ -4,7 +4,6 @@ info:
   description: ticket - soa lab 1
   version: 1.0.0
 
-
 tags:
   - name: Tickets
     description: Ticket operations
@@ -18,6 +17,7 @@ paths:
   /tickets:
     get:
       summary: Get all tickets
+      description: Get all tickets. Use `limit` and `offset` for pagination.
       tags:
         - Tickets
       parameters:
@@ -421,9 +421,10 @@ components:
 
   parameters:
     TicketFilterParam:
-      name: ticketFilter
+      name: filter
       in: query
       required: false
+      description: ' `<field>[<op>]=<value>` where <field> is one of Ticket field and <op> is one of `(eq|ne|gt|lt|lte|gte)`'
       schema:
         type: array
         items:
@@ -432,17 +433,19 @@ components:
           pattern: '^(id|name|coordinates\.x|coordinates\.y|creationDate|price|discount|refundable|type|event)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
 
     TicketSortParam:
-      name: ticketSort
+      name: sort
       in: query
+      description: '`[-]<field>` to sort by `<field>`.'
       schema:
         type: string
         pattern: '^-?(id|name|coordinates\.x|coordinates\.y|creationDate|price|discount|refundable|type|event)$'
         example: -name
 
     EventFilterParam:
-      name: eventFilter
+      name: filter
       in: query
       required: false
+      description: ' `<field>[<op>]=<value>` where <field> is one of Ticket field and <op> is one of `(eq|ne|gt|lt|lte|gte)`'
       schema:
         type: array
         items:
@@ -451,8 +454,9 @@ components:
           pattern: '^(id|name|date|minAge|eventType)\[(eq|ne|gt|lt|lte|gte)\]=.+$'
 
     EventSortParam:
-      name: eventSort
+      name: sort
       in: query
+      description: '`[-]<field>` to sort by `<field>`.'
       schema:
         type: string
         pattern: '^-?(id|name|date|minAge|eventType)$'
