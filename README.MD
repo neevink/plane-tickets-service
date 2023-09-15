@@ -1,6 +1,7 @@
-# Lab 1
+# Lab 2
 
 ![](doc/task1.png)
+![](doc/task2.png)
 
 ### helios
 
