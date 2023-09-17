@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: Marine-Service
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/soa-db
+    username: ${DATABASE_USERNAME:admin}
+    password: ${DATABASE_PASSWORD:admin}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database: POSTGRESQL
+  sql:
+    init:
+      platform: postgres
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      discovery:
+        instanceId: ${spring.application.name}:${random.value}
+        healthCheckPath: /health
+        healthCheckInterval: 20s
+
+server:
+  port: 8000

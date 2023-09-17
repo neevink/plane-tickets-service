@@ -1,0 +1,17 @@
+ru/ervelus/marineservice/resources/SpaceMarineGroupController.class
+ru/ervelus/marineservice/converter/SpaceMarineConverter.class
+ru/ervelus/marineservice/service/impl/SpaceMarineSearchServiceImpl.class
+ru/ervelus/marineservice/service/impl/SpaceMarineGroupServiceImpl.class
+ru/ervelus/marineservice/resources/SpaceMarineSearchController.class
+ru/ervelus/marineservice/repository/SpaceMarineRepository.class
+ru/ervelus/marineservice/configuration/WebConfiguration.class
+ru/ervelus/marineservice/MarineServiceApplication.class
+ru/ervelus/marineservice/configuration/EntityScanConfiguration.class
+ru/ervelus/marineservice/service/SpaceMarineCrudService.class
+ru/ervelus/marineservice/resources/SpaceMarineCrudController.class
+ru/ervelus/marineservice/service/impl/SpaceMarineCrudServiceImpl.class
+ru/ervelus/marineservice/resources/HealthCheckingController.class
+ru/ervelus/marineservice/service/SpaceMarineSearchService.class
+ru/ervelus/marineservice/repository/SpaceMarineJpaRepository.class
+ru/ervelus/marineservice/service/SpaceMarineGroupService.class
+ru/ervelus/marineservice/resources/BaseController.class

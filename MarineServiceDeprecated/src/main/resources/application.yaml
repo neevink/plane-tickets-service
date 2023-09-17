@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: SOA-Lab2-Service2
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/studs
+    username: s285583
+    password: 9XYH7oQaL91RZfQh
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: POSTGRESQL
+  sql:
+    init:
+      platform: postgres
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher

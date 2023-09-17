@@ -1,0 +1,28 @@
+version: '3.1'
+
+services :
+  db:
+    image: postgres
+    container_name: soa-db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=soa-db
+    command: postgres -p 5432
+    networks:
+      - develop
+    ports:
+      - "5432:5432"
+
+  admin:
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - '9999:8080'
+
+networks:
+  develop:
+    external:
+      name: develop
+
