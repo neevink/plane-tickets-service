@@ -1,2 +1,9 @@
 .idea
+front/node_modules
+front/target
+front/resources/js
+front/resources/out
 
+front/.clj-kondo
+front/.clj-kondo/*
+front/.lsp

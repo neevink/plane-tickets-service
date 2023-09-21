@@ -1,0 +1,13 @@
+- [] CRUD:
+    - [] create
+    - [x] read
+    - [] update
+    - [] delete
+- [x] ticket validation
+- [] filter
+- [] sort
+- [] events CRUD
+- [] events filter
+- [] events sort
+- [] event validation
+- [] integration with backends
