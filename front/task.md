@@ -6,8 +6,16 @@
 - [x] ticket validation
 - [] filter
 - [] sort
+- [] paging (with limit and offset)
+- [] get ticket by id? 
+- [] GET /tickets/discount/sum
+- [] GET /tickets/type/count
+- [] GET /tickets/type/count
+
+
 - [] events CRUD
 - [] events filter
 - [] events sort
 - [] event validation
 - [] integration with backends
+- [] events paging

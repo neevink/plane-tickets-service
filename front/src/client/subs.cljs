@@ -45,3 +45,14 @@
                (fn [error-mp]
                 (= prop-path (:path error-mp)))
                (get db :form-valid))))))
+
+(reg-sub
+ ::toggle-new
+ (fn [db [_]]
+  (get db :toggle-new)))
+
+
+(reg-sub
+ ::toggle-delete
+ (fn [db [_]]
+  (get db :toggle-delete)))

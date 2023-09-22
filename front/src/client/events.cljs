@@ -128,3 +128,14 @@
  ::set-mode
  (fn [{:keys [db]} [_ mode]]
   {:db (assoc db :mode mode)}))
+
+(reg-event-fx
+ ::toggle-new
+ (fn [{:keys [db]} [_]]
+  {:db (update db :toggle-new not)}))
+
+
+(reg-event-fx
+ ::toggle-delete
+ (fn [{:keys [db]} [_]]
+  {:db (update db :toggle-delete not)}))
