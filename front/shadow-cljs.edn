@@ -1,40 +1,59 @@
-{:nrepl {:port 8777}
+{:deps true
+ :nrepl {:port 8777}
 
- 
+ ;; :source-paths ["src" "test"]
 
- :source-paths ["src" "test"]
-
- :dependencies
- [[reagent "1.1.1"]
-  [re-frame "1.3.0"]
-  [bidi "2.1.6"]
-  [clj-commons/pushy "0.3.10"]
-  [garden "1.3.10"]
-  [com.health-samurai/macrocss "0.4.0"]
-  [net.dhleong/spade "1.1.0"]
-
-
-  [binaryage/devtools "1.0.6"]
-  [re-frisk "1.6.0"]]
+ ;; :dependencies
+ ;; [[reagent "1.1.1"]
+ ;;  [re-frame "1.3.0"]
+ ;;  [bidi "2.1.6"]
+ ;;  [clj-commons/pushy "0.3.10"]
+ ;;  [garden "1.3.10"]
+ ;;  [com.health-samurai/macrocss "0.4.0"]
+ ;;  [net.dhleong/spade "1.1.0"]
+ ;;
+ ;;  [binaryage/devtools "1.0.6"]
+ ;;  [re-frisk "1.6.0"]]
 
  :dev-http
- {8280 "resources/public"
-  8290 "target/browser-test"}
+ {8280 "public"
+  #_#_8290 "target/browser-test"}
 
+ ;; :builds
+ ;; {:app
+ ;;  {:target     :browser
+ ;;
+ ;;   :modules
+ ;;   {:app {:init-fn client.core/init}}
+ ;;
+ ;;   :build-hooks [(stylo.shadow/reload "public/out/stylo/css/stylo.css")
+ ;;                 (stylo.shadow/add-version-env "public/out/app.js")]
+ ;;
+ ;;   :output-dir "public/out"
+ ;;   ;; :asset-path "/js/compiled"
+ ;;
+ ;;   :devtools
+ ;;   {:preloads [re-frisk.preload]}
+ ;;
+ ;;   :dev
+ ;;   {:compiler-options
+ ;;    {:optimizations :none}
+ ;;    }}}
+ 
+ 
  :builds
  {:app
-  {:target     :browser
-   :build-hooks [(stylo.shadow/reload "resources/public/out/stylo/css/stylo.css")]
-   :output-dir "resources/public/js/compiled"
-   :asset-path "/js/compiled"
-   :modules
-   {:app {:init-fn client.core/init}}
-   :devtools
-   {:preloads [
-               re-frisk.preload]}
+  {:target :browser
+   :modules {:app {:init-fn client.core/init}}
+   :build-hooks [(stylo.shadow/reload "public/out/stylo/css/stylo.css")
+                 (stylo.shadow/add-version-env "public/out/app.js")]
+   :output-dir "public/out" 
+   :compiler-options {:infer-externs :auto}
+
+   :devtools {:preloads [re-frisk.preload]
+              :after-load client.core/render}
+
    :dev
-   {:compiler-options
-    {:closure-defines
-     { }}}}}
- 
-  }
+   {:devtools {:preloads [re-frisk.preload]
+               :after-load client.core/render}
+    :compiler-options {:optimizations :none}}}}}

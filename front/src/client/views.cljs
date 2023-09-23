@@ -100,7 +100,10 @@
         "Удаление"
         "Вы уверены в удалении?"
         [:<>
-         [:button.deleteBtn "Удалить"]
+         [:button.deleteBtn 
+           {:on-click #(dispatch [::events/delete-ticket id])}
+
+          "Удалить"]
          [:button.cancelBtn {:on-click #(dispatch [::events/toggle-delete])} "Отменить"]]
         true))]))
 
@@ -284,7 +287,7 @@
 
 (defn home-panel []
   (let [mode @(re-frame/subscribe [::subs/mode])]
-    [:header {:class (c [:px 15] [:py 2])}
+    [:div {:class (c [:px 15] [:py 2])}
      [:h1 {:class (c :text-center)}
       "SOA Lab2 Slava+Kirill"]
      [:div

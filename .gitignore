@@ -1,9 +1,10 @@
 .idea
 front/node_modules
 front/target
-front/resources/js
-front/resources/out
+front/public/js
+front/public/out
 
 front/.clj-kondo
 front/.clj-kondo/*
 front/.lsp
+front/.cpcache

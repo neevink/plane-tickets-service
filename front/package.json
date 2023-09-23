@@ -1,11 +1,5 @@
 {
 	"name": "client",
-	"scripts": {
-		"ancient": "clojure -Sdeps '{:deps {com.github.liquidz/antq {:mvn/version \"RELEASE\"}}}' -m antq.core",
-		"watch": "npx shadow-cljs watch app browser-test karma-test",
-		"release": "npx shadow-cljs release app",
-		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
-	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "6.4.2",
 		"@fortawesome/free-brands-svg-icons": "^6.4.2",

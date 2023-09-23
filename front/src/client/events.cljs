@@ -122,7 +122,9 @@
 (reg-event-fx
  ::delete-ticket
  (fn [{:keys [db]} [_ ticket-id]]
-  {:db (update-in db [:tickets] dissoc ticket-id)}))
+  {:db (-> (update-in db [:tickets] dissoc ticket-id)
+           )
+   :dispatch [::toggle-delete]}))
 
 (reg-event-fx
  ::set-mode

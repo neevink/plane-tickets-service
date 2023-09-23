@@ -13,6 +13,8 @@ npm run release
 copy everything from ./front/resources/public into helios
 (or open ./front/resources/public/index.html)
 
+https://se.ifmo.ru/~s285574/soa/public/
+
 ### helios
 
 Change the file `/home/studs/s313087/public_html/swagger.yaml`
