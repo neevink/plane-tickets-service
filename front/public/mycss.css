@@ -36,6 +36,16 @@ label.form-label {
   box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
 }
 
+.modal-medium {
+  width: 1000px;
+  height: 800px;
+  background: white;
+  color: white;
+  z-index: 10;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
+}
+
 .modal-small {
   width: 450px;
   height: 170px;
@@ -64,6 +74,13 @@ label.form-label {
 }
 
 .modalContent {
+  padding: 10px;
+  font-size: 30px;
+  color: #2c3e50;
+  /* text-align: center; */
+}
+
+.modalContent-center {
   padding: 10px;
   font-size: 14px;
   color: #2c3e50;

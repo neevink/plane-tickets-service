@@ -29,7 +29,9 @@
  ::download-tickets
  (fn [{:keys [db]} [_ tickets]]
    (let [tickets-id-map (update-vals (group-by :id tickets) first)]
-     {:db (assoc db :tickets tickets-id-map)})))
+     {:db 
+      (-> db 
+          (assoc :tickets tickets-id-map))})))
 
 (defn move-ticket [db prev-id new-id]
  (-> (assoc-in db 
@@ -41,9 +43,7 @@
  ::change-ticket
  (fn [{:keys [db]} [_ ticket-id prop-path new-value]]
   (if (= :id (first prop-path))
-   (do
-    (println "hello " ticket-id new-value)
-    {:db (move-ticket db ticket-id new-value)})
+   {:db (move-ticket db ticket-id new-value)}
    {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
 
 (def my-messages
@@ -57,7 +57,6 @@
   ::refundable "Ожидался true/false"
   ::creation-date "Ожидалась строка в формате YYYY-MM-DD"})
 
-(s/def ::ne (fn [s] (not= 0 (count s))))
 
 (s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
 (s/def ::x (s/and integer? #(> % -686)))
@@ -65,7 +64,7 @@
 
 (s/def ::coordinates (s/keys :req-un [::x ::y]))
 (s/def ::price (s/and number? pos?))
-(s/def ::discount (s/and number? pos? #(<= % 100)))
+(s/def ::discount (s/and number? pos? #(<= 0 % 100)))
 (s/def ::refundable (fn [a] (#{"true" "false" true false} a)))
 (s/def ::type (fn [v] 
                       (or 
@@ -141,3 +140,34 @@
  ::toggle-delete
  (fn [{:keys [db]} [_]]
   {:db (update db :toggle-delete not)}))
+
+(reg-event-fx
+ ::change-page
+ (fn [{:keys [db]} [_ value]]
+  {:db (assoc-in db [:paging :current-page] value)}))
+
+
+(reg-event-fx
+ ::ticket-toggle-change
+ (fn [{:keys [db]} [_]]
+  {:db (update-in db [:ticket :toggle-change] not)}))
+
+
+(reg-event-fx
+ ::ticket-update
+ (fn [{:keys [db]} [_ ticket-id]]
+  {:db (assoc-in db [:ticket :update-id] ticket-id)
+   :dispatch [::ticket-toggle-change]}))
+
+
+#_"TODO: ticket update"
+(reg-event-fx
+ ::ticket-start-update
+ (fn [{:keys [db]} [_ ticket-id]]
+  (let [modal-opened? (get-in db [:ticket :toggle-change])]
+   (if modal-opened? {:db db}
+    {:db (assoc-in db [:ticket :update-id] ticket-id)
+     :dispatch [::ticket-toggle-change]})
+  
+  
+   )))

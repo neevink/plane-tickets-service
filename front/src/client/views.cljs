@@ -1,7 +1,6 @@
 (ns client.views
   (:require
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
-   ;; [client.styles :as styles]
    [client.events :as events]
    [client.debounce] ; to reg event :)
    [client.routes :as routes]
@@ -48,15 +47,16 @@
              heading-label
              modal-content-html
              bottom-html
-             & small?]
+             & size]
   [:div.darkBG
    [:div.centered
-    [:div {:class (if small? :modal-small :modal)}
+    [:div {:class (if size size :modal-small)}
      [:div.modalHeader
       [:h5.heading heading-label]]
      [:button.closeBtn {:on-click close-fn} "x"]
 
-     [:div.modalContent modal-content-html]
+     [:div {:class (if size :modalContent :modalContent-center)}
+      modal-content-html]
      [:div.modalActions
       [:div.actionsContainer
        bottom-html]]]]])
@@ -78,7 +78,7 @@
 (defn ticket-prop-change [prop-path label label-id]
   (let [current-value  @(re-frame.core/subscribe [::subs/form-prop prop-path])
         invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])]
-    [:div {:class (c [:p 5])}
+    [:div {:class (c [:px 5])}
      [:label {:for label-id} label]
      [:input {:name label-id
               :on-change
@@ -92,57 +92,42 @@
 (defn delete-ticket-icon [id]
   (let [modal-opened? @(subscribe [::subs/toggle-delete])]
     [:span [:i.fa-solid.fa-trash
-           {:class (c [:px 3])
-            :on-click #(dispatch [::events/toggle-delete])}]
+            {:class (c [:px 3])
+             :on-click #(dispatch [::events/toggle-delete])}]
      (when modal-opened?
        (modal
         #(dispatch [::events/toggle-delete])
         "Удаление"
         "Вы уверены в удалении?"
         [:<>
-         [:button.deleteBtn 
-           {:on-click #(dispatch [::events/delete-ticket id])}
+         [:button.deleteBtn
+          {:on-click #(dispatch [::events/delete-ticket id])}
 
           "Удалить"]
-         [:button.cancelBtn {:on-click #(dispatch [::events/toggle-delete])} "Отменить"]]
-        true))]))
+         [:button.cancelBtn {:on-click #(dispatch [::events/toggle-delete])} "Отменить"]]))]))
 
-(defn ticket-selected [{:keys [id name coordinates creation-date price discount
-                               refundable type event] :as ticket}]
-  [:div
-   {:class [(c [:mt -6]
-               [:bg :gray-200]
-               :border
-               [:rounded :xl]
-               :flex-row
-               :flex
-               :justify-between
-               [:p 2]
-               [:pt 4]
-               [:m 2]
-               :cursor-pointer
-               [:hover :shadow-inner [:bg :gray-200]])]}
+(defn edit-ticket-icon [id]
+  (let [modal-opened? @(subscribe [::subs/ticket-toggle-change])]
+    [:span [:i.fa-solid.fa-pen-to-square
+            {:class (c [:px 3])
+             :on-click #(dispatch [::events/ticket-update id])}]
+     (when modal-opened?
+       (modal
+         #(dispatch [::events/ticket-toggle-change])
+         "Изменение билета"
+         "Изменение........." #_"TODO: ticket update"
+         [:<>
+          [:button.deleteBtn
+           {
+            #_#_:on-click #(dispatch [::events/delete-ticket id])}
 
-   [:div
-    [:div "Билет" (delete-ticket-icon id)]
+           "Изменить"]
+          #_[:button.cancelBtn {:on-click 
+                                the-fn
 
-    (ticket-prop-change [:name]           "Название:     " "name")
-    (ticket-prop-change [:coordinates :x] "Координата x: " "coordinates-x")
-    (ticket-prop-change [:coordinates :y] "Координата y: " "coordinates-y")
-    (ticket-prop-change [:creation-date]  "Дата покупки: " "creation-date")
-    (ticket-prop-change [:price]          "Цена:         " "price")
-    (ticket-prop-change [:discount]       "Скидка:       " "discount")
-    (ticket-prop-change [:refundable]     "Возвратный:   " "refundable")
-    (ticket-prop-change [:type]           "Тип:          " "type")
+                                } "Отменить"]]))]))
 
-    [:div
-     [:label {:for "event"} "Event: "]
-     [:input {:name "event"}]]
-    [:button.btn {:class (c [:bg :blue-200] [:rounded :xl] [:w 50] [:h 7])
-                  :on-click #(dispatch [::events/change-ticket-all id])}
-     "Изменить"]]])
-
-(defn one-ticket [{:keys [id name creation-date price discount type event] :as ticket} show?]
+(defn one-ticket [{:keys [id name creation-date price discount type event] :as ticket}]
   ^{:key id}
   [:div
    [:div {:class [(c [:bg "#FAFAFA"]
@@ -155,7 +140,7 @@
                      :cursor-pointer
                      [:hover :shadow-inner [:bg :gray-200]]
                      [:rounded :xl])]
-          :on-click #(dispatch [::events/select-ticket ticket])}
+          #_#_:on-click #(dispatch [::events/ticket-toggle-change id])}
     [:div
      [:div
       [:span {:class (c :text-sm)} creation-date " " (type-view type) " " [:span type] " "]
@@ -166,9 +151,14 @@
      {:class (c :text-xl [:pt 3])}
      [:div
       "СКИДКА: " discount "%"]
-     [:div "ЦЕНА: " price]]]
-   (when show?
-     (ticket-selected ticket))])
+     [:div "ЦЕНА: " price]]
+    [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
+     [:div
+      (edit-ticket-icon id)
+      "Изменить"]
+     [:div
+      (delete-ticket-icon id)
+      "Удалить"]]]])
 
 (defn filter-view []
   [:div
@@ -206,81 +196,127 @@
     [:option {:value "decs"} "По убыванию"]
     "hui2"]])
 
-(defn add-button []
-  (let [modal-opened? @(subscribe [::subs/toggle-new])]
-    [:div [:button
-           {:class (c
-                    [:w 35]
-                    [:h 9]
-                    ;; [:mx 5]
-                    [:mt 2]
-                    [:py 2]
-                    [:border :black]
-                    :rounded
-                    [:bg "#FAFAFA"]
-                    :transition-all
-                    [:duration 200]
-                    [:hover :shadow-inner [:bg :gray-200]]
-                    :ease-in-out
-                    [:focus-within :outline-none :shadow-none [:border "#2e3633"]]
-                    [:focus :outline-none :shadow-none [:border "#2e3633"]]
-                    #_[:hover [:border "#2e3633"]])
-            :on-click #(dispatch [::events/toggle-new])}
-           "Новый"]
-     (when modal-opened?
-       (modal #(dispatch [::events/toggle-new])
-              "Новый билет"
-              [:div
-               [:label "Имя"]
-               [:input]
-
-               [:label "Тип"]
-               [:input]
-
-               [:label "Цена"]
-               [:input]]
-              [:<>
-               [:button.cancelBtn "Создать"]
-               [:button.cancelBtn {:on-click #(dispatch [::events/toggle-new])} "Отменить"]]))]))
+(defn ticket-new-prop [prop-path label label-id descr required?]
+  (let [current-value  @(re-frame.core/subscribe [::subs/form-prop prop-path])
+        invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])]
+    [:div {:class (c [:px 5] :flex :flex-col)}
+     [:label {:for label-id} label (when required? [:span {:style {:color "#dc2626"}} "*"])]
+     [:input {:name label-id
+              :class (c :border [:h 10] :text-2xl
+                        #_[:bg "#AFAFAF"])
+              :maxlength 30
+              :on-change
+              #(dispatch [:dispatch-debounce
+                          {:delay 500
+                           :event [::events/save-form prop-path (.. % -target -value)]}])
+              :placeholder current-value}]
+     [:div
+      #_{:class (c [:mt -6])}
+      [:label {:for label-id
+               :class (c :text-lg :font-light :italic)} (when descr descr)]]
+     [:div (when invalid-message
+             (:message invalid-message))]]))
 
 (defn tickets-header []
   [:div
    {:class (c [:px 4] :flex
-              #_[:h 10]
-              #_[:width "50%"]
               :justify-between)}
-   (add-button)
    (filter-view)
    (sort-view)])
 
-(defn page-circle [value]
+(defn page-circle [value & selected]
   [:div {:class (c
-                 ;; [:bg :red-500]
                  [:w 10]
-                 [:bg "#FAFAFA"]
-                 [:border :black]
                  :cursor-pointer
-                 ;; :align-middle
                  [:pt 2]
-                 [:rounded :full]
+                 [:rounded :xl]
                  [:hover :shadow-inner [:bg :gray-200]]
                  :text-center
-                 [:h 10])} value])
+                 [:h 10])
+         :style (when selected {:background-color "#4281f5"
+                                :color "white"})
+         :on-click #(dispatch [::events/change-page value])}
+   value])
+
+(defn paging-view [tickets]
+  (when (> tickets 0)
+    (let [current-page @(subscribe [::subs/current-page])
+          last-page @(subscribe [::subs/last-page])]
+      [:<>
+       (when (> (dec current-page) 1) ; first page
+         (page-circle 1))
+       (when (< 2 current-page) ; ... 
+         "...")
+       (when (>= (dec current-page) 1) ; prev page
+         (page-circle (dec current-page)))
+
+       (page-circle current-page true) ; current page
+
+       (when (>= last-page (inc current-page))
+         (page-circle (inc current-page))) ; next page
+
+       (when (> (- last-page current-page) 1) ; ... if page is not last or prev-last
+         "...")
+
+       (when (> (- last-page current-page) 1)
+         (page-circle last-page))])))
 
 (defn tickets-view []
   (let [current @(re-frame/subscribe [::subs/current-ticket])
-        all-tickets @(re-frame/subscribe [::subs/tickets])]
-    [:div (doall (for [[_ ticket] all-tickets]
-                   (one-ticket ticket (= (:id ticket) (:id current)))))
+        all-tickets @(re-frame/subscribe [::subs/tickets])
+
+        modal-opened?
+        @(subscribe [::subs/toggle-new])]
+    [:div
+     (when modal-opened?
+       (modal #(dispatch [::events/toggle-new])
+              "Новый билет"
+              [:div
+               [:div
+                {:class (c :grid [:grid-cols 2])}
+                (ticket-new-prop [:name]           "Название" "name" nil true)
+                (ticket-new-prop [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true)
+                (ticket-new-prop [:coordinates :y] "Координата y" "coordinates-y" "(целое число)" true)
+                (ticket-new-prop [:price]          "Цена" "price" "(> 0)" true)
+                (ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true)
+                (ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true)
+                (ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false)
+                [:div {:class (c [:p 5])}
+                 [:label {:for "event"} "Мероприятие"]
+                 [:input {:name "event"
+                          #_#_:on-change
+                            #(dispatch [:dispatch-debounce
+                                        {:delay 500
+                                         :event [::events/save-form prop-path (.. % -target -value)]}])
+                          :placeholder "-"}]]]]
+
+              [:<>
+               [:button.cancelBtn "Создать"]
+               [:button.cancelBtn {:on-click #(dispatch [::events/toggle-new])} "Отменить"]]
+
+              :modal-medium))
+
+     [:div {:class (c :grid [:grid-cols 2])}
+      [:div {:class [(c #_[:bg "#FAFAFA"]
+                      [:border 2]
+                        [:bg "#fafafa"]
+                        [:pt 8]
+                        :text-center
+                        [:rounded :xl]
+                        :text-xl
+                        [:m 2]
+                        :cursor-pointer
+                        [:hover :shadow-inner [:bg :gray-200]])]
+             :on-click #(dispatch [::events/toggle-new])}
+       "НОВЫЙ"]
+
+      (doall (for [[_ ticket] all-tickets]
+               (one-ticket ticket)))]
      [:div {:class (c :flex [:gap 4]
                       :items-center
                       :content-center
                       :justify-center)}
-
-      (page-circle 1)
-      (page-circle 2)
-      "..."
-      (page-circle 50)]]))
+      (paging-view (count all-tickets))]]))
 
 (defn events-page []
   [:div "Events page"])

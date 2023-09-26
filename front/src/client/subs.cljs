@@ -56,3 +56,30 @@
  ::toggle-delete
  (fn [db [_]]
   (get db :toggle-delete)))
+
+
+(reg-sub
+ ::current-page
+ (fn [db [_]]
+  (get-in db [:paging :current-page])))
+
+
+(reg-sub
+ ::last-page
+ (fn [db [_]]
+  (get-in db [:paging :last-page])))
+
+
+(reg-sub
+ ::ticket-toggle-change
+ (fn [db [_]]
+  (get-in db [:ticket :toggle-change])))
+
+
+(reg-sub
+ ::ticket-update
+ (fn [db [_]]
+  (get-in db [:ticket :update-id])))
+
+#_"TODO: ticket update"
+

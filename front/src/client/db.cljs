@@ -61,5 +61,8 @@
    ;; :active-panel :client.views/home-panel
    :tickets example
    :toggle-new false
+   :paging {:current-page 1 :last-page 5}
+   :ticket {:toggle-change false
+            :update-id nil}
    :mode :tickets})
 
