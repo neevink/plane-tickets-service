@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence>
+    <persistence-unit name="SpaceMarine">
+        <class>ru.egormit.library.SpaceMarine</class>
+        <class>ru.egormit.library.StarShip</class>
+        <jta-data-source>java:/PostgresDS</jta-data-source>
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action"
+                      value="create"/>
+            <property name="hibernate.jpa.compliance.global_id_generators" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>
