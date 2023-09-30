@@ -8,3 +8,8 @@ front/.clj-kondo
 front/.clj-kondo/*
 front/.lsp
 front/.cpcache
+
+
+back/Library/target
+back/MarineService/target
+back/StarshipService/target
