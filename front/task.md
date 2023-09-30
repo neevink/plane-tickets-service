@@ -2,12 +2,11 @@
     - [] create
     - [x] read
     - [] update
-    - [] delete
+    - [x] delete
 - [x] ticket validation
-- [] filter
+- [x] filter
 - [] sort
-- [] paging (with limit and offset)
-- [] get ticket by id? 
+- [x] paging (with limit and offset)
 - [] GET /tickets/discount/sum
 - [] GET /tickets/type/count
 - [] GET /tickets/type/count

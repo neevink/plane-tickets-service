@@ -1,7 +1,7 @@
 (ns client.events
   (:require
    [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
-   [cljs.spec.alpha :as s]
+   [client.validation :as validation]
    [client.db :as db]))
 
 (reg-event-db
@@ -46,57 +46,6 @@
      {:db (move-ticket db ticket-id new-value)}
      {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
 
-(def my-messages
-  {::name  "Ожидалась не пустая строка"
-  ;; ::coordinates "Ожидались не пустые координаты"
-   ::x "Ожидалась x > - 686 (целое число)"
-   ::y "Ожидалась y - целое число"
-   ::price "Ожидалось целое число больше 0"
-   ::discount "Ожидалась скидка - целочисленное число"
-   ::type "Ожидался тип: один из VIP, USUAL, BUDGETARY, CHEAP"
-   ::refundable "Ожидался true/false"
-   ::creation-date "Ожидалась строка в формате YYYY-MM-DD"})
-
-(s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
-(s/def ::x (s/and integer? #(> % -686)))
-(s/def ::y (s/and integer?))
-
-(s/def ::coordinates (s/keys :req-un [::x ::y]))
-(s/def ::price (s/and number? pos?))
-(s/def ::discount (s/and number? pos? #(<= 0 % 100)))
-(s/def ::refundable (fn [a] (#{"true" "false" true false} a)))
-(s/def ::type (fn [v]
-                (or
-                 (nil? v)
-                 (get #{"VIP" "USUAL" "BUDGETARY" "CHEAP"} v))))
-(s/def ::creation-date (fn [v]
-                         (re-matches #"([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?"
-                                     v)))
-
-#_(s/def ::ticket-event (fn [v]))
-
-(s/def ::ticket (s/keys :req-un [::name
-                                 ::coordinates
-                                 ::price
-                                 ::discount
-                                 ::type
-                                 ::refundable
-                                 ::creation-date]))
-
-(defn get-message
-  [via messages]
-  (->> (reverse via)
-       (some messages)))
-
-(defn validate [new-ticket]
-  (if (s/valid? ::ticket new-ticket) :ok
-      (filter (fn [m] (-> m :path not-empty))
-              (mapv
-               (fn [{path :path via :via}]
-                 {:path path
-                  :message (get-message via my-messages)})
-               (:cljs.spec.alpha/problems (s/explain-data ::ticket new-ticket))))))
-
 (reg-event-fx
  ::save-form
  (fn [{:keys [db]} [_ path value]]
@@ -105,7 +54,7 @@
 (reg-event-fx
  ::validate-form
  (fn [{:keys [db]} [_ _]]
-   (let [validate-res (validate (get db :form))]
+   (let [validate-res (validation/validate (get db :form))]
      {:db (assoc db :form-valid validate-res)})))
 
 (reg-event-fx
@@ -136,9 +85,19 @@
    {:db (update db :toggle-delete not)}))
 
 (reg-event-fx
+ ::toggle-delete-false
+ (fn [{:keys [db]} [_]]
+   {:db (assoc db :toggle-delete false)}))
+
+(reg-event-fx
  ::change-page
  (fn [{:keys [db]} [_ value]]
    {:db (assoc-in db [:paging :current-page] value)}))
+
+(reg-event-fx
+ ::ticket-toggle-change
+ (fn [{:keys [db]} [_]]
+   {:db (update-in db [:ticket :toggle-change] not)}))
 
 (reg-event-fx
  ::ticket-update
@@ -154,38 +113,36 @@
             (update-in [:ticket :toggle-change] not)
             (assoc-in [:ticket :update-id] ticket-id))}))))
 
-(update {:filters [1 2 3]} :filters conj  {:a 1})
-
-(reg-event-fx
- ::new-filter
- (fn [{:keys [db]} [_]]
-   {:db (update db :filters
-                #(conj % {:value "name" :dir "asc"}))}))
-
 (reg-event-fx
  ::change-filter
- (fn [{:keys [db]} [_ idx prop value]]
+ (fn [{:keys [db]} [_ idx value]]
    {:db
-    (assoc-in db [:filters idx prop] value)}))
-
-
-(defn index-exclude [r ex] 
- (filter #(not (ex %)) (range r)))
-
-(defn dissoc-idx [v & ds]
-   (mapv v (index-exclude (count v) (into #{} ds))))
+    (assoc-in db [:filters idx :value] value)}))
 
 (reg-event-fx
- ::remove-filter
+ ::hide-filter
  (fn [{:keys [db]} [_ idx]]
    {:db
-    (update-in db [:filters] dissoc-idx idx)}))
+    (update-in db [:filters idx :shown] not)}))
 
 (reg-event-fx
  ::change-page-size
  (fn [{:keys [db]} [_ size]]
-  (let [parsed (parse-long size)]
-   {:db
-    (if (and parsed (number? parsed) (<= 1 parsed 100))
-     (assoc-in db [:paging :page-size] parsed)
-     db)})))
+   (let [parsed (parse-long size)]
+     {:db
+      (if (and parsed (number? parsed) (<= 1 parsed 100))
+        (assoc-in db [:paging :page-size] parsed)
+        db)})))
+
+(into [:ticket :edit] [:coo :x])
+
+(reg-event-fx
+ ::ticket-start-edit
+ (fn [{:keys [db]} [_ ticket-id prop]]
+   {:db 
+    (-> (assoc-in db [:ticket :edit :ticket-id] ticket-id)
+        (assoc-in (into [:ticket :edit] prop) true)
+        )
+    
+    }
+   ))

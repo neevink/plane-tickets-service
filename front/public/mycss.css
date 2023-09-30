@@ -162,6 +162,26 @@ label.form-label {
   background: whitesmoke;
 }
 
+.submitBtn {
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 11px 28px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  border: none;
+  background: #38a169;
+  /* background: #fcfcfc; */
+  transition: all 0.25s ease;
+}
+
+.submitBtn:hover {
+  box-shadow: none;
+  transform: none;
+  background: #276749;
+}
+
+
 .primaryBtn {
   margin: 10px 10px;
   cursor: pointer;

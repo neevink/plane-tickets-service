@@ -82,12 +82,26 @@
   (get-in db [:ticket :update-id])))
 
 (reg-sub
- ::filters
- (fn [db [_]]
-  (get db :filters)))
-
-
-(reg-sub
  ::page-size
  (fn [db [_]]
   (get-in db [:paging :page-size])))
+
+(reg-sub
+ ::tickets-on-page
+ (fn [db [_]]
+  (let  [page (get-in db [:paging :current-page])
+         page-size (get-in db [:paging :page-size])]
+   (take page-size (drop 
+                    (* page-size (dec page)) 
+                    (get-in db [:tickets]))))))
+
+(reg-sub
+ ::filters
+ (fn [db [_ prop]]
+  (get-in db [:filters prop])))
+
+
+(reg-sub
+ ::ticket-edit-prop
+ (fn [db [_ prop]]
+  (get-in db (into [:ticket :edit] prop))))
