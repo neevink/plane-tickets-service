@@ -179,3 +179,109 @@ label.form-label {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px -10px rgba(24, 90, 219, 0.6);
 }
+/**/
+/* .wrapper{ */
+/*   position: fixed; */
+/*   top: 50%; */
+/*   left: 50%; */
+/*   transform: translate(-50%, -50%); */
+/* } */
+/**/
+/* .link_wrapper{ */
+/*   position: relative; */
+/* } */
+/**/
+/* a{ */
+/*   display: block; */
+/*   width: 250px; */
+/*   height: 50px; */
+/*   line-height: 50px; */
+/*   font-weight: bold; */
+/*   text-decoration: none; */
+/*   background: #333; */
+/*   text-align: center; */
+/*   color: #fff; */
+/*   text-transform: uppercase; */
+/*   letter-spacing: 1px; */
+/*   border: 3px solid #333; */
+/*   transition: all .35s; */
+/* } */
+/**/
+/* .icon{ */
+/*   width: 50px; */
+/*   height: 50px; */
+/*   border: 3px solid transparent; */
+/*   position: absolute; */
+/*   transform: rotate(45deg); */
+/*   right: 0; */
+/*   top: 0; */
+/*   z-index: -1; */
+/*   transition: all .35s; */
+/* } */
+/**/
+/* .icon svg{ */
+/*   width: 30px; */
+/*   position: absolute; */
+/*   top: calc(50% - 15px); */
+/*   left: calc(50% - 15px); */
+/*   transform: rotate(-45deg); */
+/*   fill: #2ecc71; */
+/*   transition: all .35s; */
+/* } */
+/**/
+/* a:hover{ */
+/*   width: 200px; */
+/*   border: 3px solid #2ecc71; */
+/*   background: transparent; */
+/*   color: #2ecc71; */
+/* } */
+/**/
+/* a:hover + .icon{ */
+/*   border: 3px solid #2ecc71; */
+/*   right: -25%; */
+/* } */
+
+/* CSS */
+.button-23 {
+  background-color: #FFFFFF;
+  border: 1px solid #222222;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #222222;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Circular,-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+  /* font-size: 16px; */
+  /* font-weight: 600; */
+  /* line-height: 20px; */
+  margin: 0px;
+  outline: none;
+  /* padding: 13px 23px; */
+  /* position: relative; */
+  text-align: center;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition: box-shadow .2s,-ms-transform .1s,-webkit-transform .1s,transform .1s;
+  user-select: none;
+  -webkit-user-select: none;
+  width: auto;
+}
+
+.button-23:focus-visible {
+  box-shadow: #222222 0 0 0 2px, rgba(255, 255, 255, 0.8) 0 0 0 4px;
+  transition: box-shadow .2s;
+}
+
+.button-23:active {
+  background-color: #F7F7F7;
+  border-color: #000000;
+  transform: scale(.96);
+}
+
+.button-23:disabled {
+  border-color: #DDDDDD;
+  color: #DDDDDD;
+  cursor: not-allowed;
+  opacity: 1;
+}
+

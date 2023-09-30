@@ -22,41 +22,40 @@
 (reg-event-fx
  ::select-ticket
  (fn [{:keys [db]} [_ ticket-id]]
-   (let [current (:current-ticket db)] 
-    {:db (assoc db :current-ticket (if (= ticket-id current) nil ticket-id))})))
+   (let [current (:current-ticket db)]
+     {:db (assoc db :current-ticket (if (= ticket-id current) nil ticket-id))})))
 
 (reg-event-fx
  ::download-tickets
  (fn [{:keys [db]} [_ tickets]]
    (let [tickets-id-map (update-vals (group-by :id tickets) first)]
-     {:db 
-      (-> db 
+     {:db
+      (-> db
           (assoc :tickets tickets-id-map))})))
 
 (defn move-ticket [db prev-id new-id]
- (-> (assoc-in db 
-               [:tickets new-id] 
-               (get-in db [:tickets prev-id]))
-     (update-in [:tickets] dissoc prev-id)))
+  (-> (assoc-in db
+                [:tickets new-id]
+                (get-in db [:tickets prev-id]))
+      (update-in [:tickets] dissoc prev-id)))
 
 (reg-event-fx
  ::change-ticket
  (fn [{:keys [db]} [_ ticket-id prop-path new-value]]
-  (if (= :id (first prop-path))
-   {:db (move-ticket db ticket-id new-value)}
-   {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
+   (if (= :id (first prop-path))
+     {:db (move-ticket db ticket-id new-value)}
+     {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
 
 (def my-messages
- {::name  "Ожидалась не пустая строка"
+  {::name  "Ожидалась не пустая строка"
   ;; ::coordinates "Ожидались не пустые координаты"
-  ::x "Ожидалась x > - 686 (целое число)"
-  ::y "Ожидалась y - целое число"
-  ::price "Ожидалось целое число больше 0"
-  ::discount "Ожидалась скидка - целочисленное число"
-  ::type "Ожидался тип: один из VIP, USUAL, BUDGETARY, CHEAP"
-  ::refundable "Ожидался true/false"
-  ::creation-date "Ожидалась строка в формате YYYY-MM-DD"})
-
+   ::x "Ожидалась x > - 686 (целое число)"
+   ::y "Ожидалась y - целое число"
+   ::price "Ожидалось целое число больше 0"
+   ::discount "Ожидалась скидка - целочисленное число"
+   ::type "Ожидался тип: один из VIP, USUAL, BUDGETARY, CHEAP"
+   ::refundable "Ожидался true/false"
+   ::creation-date "Ожидалась строка в формате YYYY-MM-DD"})
 
 (s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
 (s/def ::x (s/and integer? #(> % -686)))
@@ -66,23 +65,22 @@
 (s/def ::price (s/and number? pos?))
 (s/def ::discount (s/and number? pos? #(<= 0 % 100)))
 (s/def ::refundable (fn [a] (#{"true" "false" true false} a)))
-(s/def ::type (fn [v] 
-                      (or 
-                       (nil? v)
-                       (get #{"VIP" "USUAL" "BUDGETARY" "CHEAP"} v))))
-(s/def ::creation-date (fn [v] 
-                        (re-matches #"([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?" 
-                                 v)))
+(s/def ::type (fn [v]
+                (or
+                 (nil? v)
+                 (get #{"VIP" "USUAL" "BUDGETARY" "CHEAP"} v))))
+(s/def ::creation-date (fn [v]
+                         (re-matches #"([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?"
+                                     v)))
 
-#_(s/def ::ticket-event (fn [v] 
-                         ))
-                       
-(s/def ::ticket (s/keys :req-un [::name 
+#_(s/def ::ticket-event (fn [v]))
+
+(s/def ::ticket (s/keys :req-un [::name
                                  ::coordinates
-                                 ::price 
-                                 ::discount 
-                                 ::type 
-                                 ::refundable 
+                                 ::price
+                                 ::discount
+                                 ::type
+                                 ::refundable
                                  ::creation-date]))
 
 (defn get-message
@@ -91,83 +89,103 @@
        (some messages)))
 
 (defn validate [new-ticket]
- (if (s/valid? ::ticket new-ticket) :ok
-  (filter (fn [m] (-> m :path not-empty)) 
-          (mapv 
-           (fn [{path :path via :via}]
-            {:path path
-             :message (get-message via my-messages)})
-           (:cljs.spec.alpha/problems (s/explain-data ::ticket new-ticket))))))
+  (if (s/valid? ::ticket new-ticket) :ok
+      (filter (fn [m] (-> m :path not-empty))
+              (mapv
+               (fn [{path :path via :via}]
+                 {:path path
+                  :message (get-message via my-messages)})
+               (:cljs.spec.alpha/problems (s/explain-data ::ticket new-ticket))))))
 
-
-(reg-event-fx 
+(reg-event-fx
  ::save-form
  (fn [{:keys [db]} [_ path value]]
-  {:db (assoc-in db (into [:form ] path) value)}))
+   {:db (assoc-in db (into [:form] path) value)}))
 
-(reg-event-fx 
+(reg-event-fx
  ::validate-form
  (fn [{:keys [db]} [_ _]]
-  (let [validate-res (validate (get db :form))]
-   {:db (assoc db :form-valid validate-res)})))
-
+   (let [validate-res (validate (get db :form))]
+     {:db (assoc db :form-valid validate-res)})))
 
 (reg-event-fx
  ::change-ticket-all
  (fn [{:keys [db]} [_ ticket-id]]
-  {:db db
-   :dispatch [::validate-form ticket-id]}))
+   {:db db
+    :dispatch [::validate-form ticket-id]}))
 
 (reg-event-fx
  ::delete-ticket
  (fn [{:keys [db]} [_ ticket-id]]
-  {:db (-> (update-in db [:tickets] dissoc ticket-id)
-           )
-   :dispatch [::toggle-delete]}))
+   {:db (-> (update-in db [:tickets] dissoc ticket-id))
+    :dispatch [::toggle-delete]}))
 
 (reg-event-fx
  ::set-mode
  (fn [{:keys [db]} [_ mode]]
-  {:db (assoc db :mode mode)}))
+   {:db (assoc db :mode mode)}))
 
 (reg-event-fx
  ::toggle-new
  (fn [{:keys [db]} [_]]
-  {:db (update db :toggle-new not)}))
-
+   {:db (update db :toggle-new not)}))
 
 (reg-event-fx
  ::toggle-delete
  (fn [{:keys [db]} [_]]
-  {:db (update db :toggle-delete not)}))
+   {:db (update db :toggle-delete not)}))
 
 (reg-event-fx
  ::change-page
  (fn [{:keys [db]} [_ value]]
-  {:db (assoc-in db [:paging :current-page] value)}))
-
-
-(reg-event-fx
- ::ticket-toggle-change
- (fn [{:keys [db]} [_]]
-  {:db (update-in db [:ticket :toggle-change] not)}))
-
+   {:db (assoc-in db [:paging :current-page] value)}))
 
 (reg-event-fx
  ::ticket-update
  (fn [{:keys [db]} [_ ticket-id]]
-  {:db (assoc-in db [:ticket :update-id] ticket-id)
-   :dispatch [::ticket-toggle-change]}))
+   (let [modal-opened? (get-in db [:ticket :toggle-change])]
+     (if modal-opened?
+       {:db
+        (-> db
+            (update-in [:ticket :toggle-change] not)
+            (update-in [:ticket] dissoc :update-id))}
+       {:db
+        (-> db
+            (update-in [:ticket :toggle-change] not)
+            (assoc-in [:ticket :update-id] ticket-id))}))))
 
+(update {:filters [1 2 3]} :filters conj  {:a 1})
 
-#_"TODO: ticket update"
 (reg-event-fx
- ::ticket-start-update
- (fn [{:keys [db]} [_ ticket-id]]
-  (let [modal-opened? (get-in db [:ticket :toggle-change])]
-   (if modal-opened? {:db db}
-    {:db (assoc-in db [:ticket :update-id] ticket-id)
-     :dispatch [::ticket-toggle-change]})
-  
-  
-   )))
+ ::new-filter
+ (fn [{:keys [db]} [_]]
+   {:db (update db :filters
+                #(conj % {:value "name" :dir "asc"}))}))
+
+(reg-event-fx
+ ::change-filter
+ (fn [{:keys [db]} [_ idx prop value]]
+   {:db
+    (assoc-in db [:filters idx prop] value)}))
+
+
+(defn index-exclude [r ex] 
+ (filter #(not (ex %)) (range r)))
+
+(defn dissoc-idx [v & ds]
+   (mapv v (index-exclude (count v) (into #{} ds))))
+
+(reg-event-fx
+ ::remove-filter
+ (fn [{:keys [db]} [_ idx]]
+   {:db
+    (update-in db [:filters] dissoc-idx idx)}))
+
+(reg-event-fx
+ ::change-page-size
+ (fn [{:keys [db]} [_ size]]
+  (let [parsed (parse-long size)]
+   {:db
+    (if (and parsed (number? parsed) (<= 1 parsed 100))
+     (assoc-in db [:paging :page-size] parsed)
+     db)})))

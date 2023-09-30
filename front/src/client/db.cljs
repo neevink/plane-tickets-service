@@ -9,7 +9,7 @@
    :discount 20.0
    :refundable true
    :type "VIP"
-   :event {:id 1 :name "Концерт Доры" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+   :event {:id 1 :name "Дора" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
 
   2
   {:id 2 :name "Партер левая сторона, ряд 3, место 7"
@@ -19,7 +19,7 @@
    :discount 20.0
    :refundable true
    :type "USUAL"
-   :event {:id 1 :name "Концерт Доры" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+   :event {:id 2 :name "Лепс" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
 
   3
   {:id 3 :name "Партер левая сторона, ряд 3, место 9"
@@ -29,7 +29,7 @@
    :discount 20.0
    :refundable true
    :type "BUDGETARY"
-   :event {:id 1 :name "Концерт Доры" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+   :event {:id 3 :name "Розенбаум" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
 
   4
   {:id 4 :name "Партер левая сторона, ряд 3, место 9"
@@ -39,7 +39,7 @@
    :discount 20.0
    :refundable true
    :type "BUDGETARY"
-   :event {:id 1 :name "Концерт Доры" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+   :event {:id 5 :name "Лазарев" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
 
   5
   {:id 5 :name "Партер левая сторона, ряд 3, место 9"
@@ -49,7 +49,7 @@
    :discount 20.0
    :refundable true
    :type "BUDGETARY"
-   :event {:id 1 :name "Концерт Доры" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+   :event {:id 6 :name "Иванушки" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
 
 
 
@@ -61,8 +61,11 @@
    ;; :active-panel :client.views/home-panel
    :tickets example
    :toggle-new false
-   :paging {:current-page 1 :last-page 5}
+   :paging {:current-page 1 :last-page 5 
+            :page-size 7}
    :ticket {:toggle-change false
             :update-id nil}
+   :filters [{:type "name"
+              :value "Дора"}]
    :mode :tickets})
 

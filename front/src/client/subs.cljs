@@ -81,5 +81,13 @@
  (fn [db [_]]
   (get-in db [:ticket :update-id])))
 
-#_"TODO: ticket update"
+(reg-sub
+ ::filters
+ (fn [db [_]]
+  (get db :filters)))
 
+
+(reg-sub
+ ::page-size
+ (fn [db [_]]
+  (get-in db [:paging :page-size])))
