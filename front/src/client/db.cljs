@@ -58,9 +58,9 @@
    :toggle-new false
    :paging {:current-page 1 :last-page 5
             :page-size 7}
-   :ticket {:toggle-change false
-            :update-id nil
-            :edit {:ticket-id nil
+   :ticket {:toggle-change true
+            :update-id 1
+            :edit {:ticket-id 1
                    :path {:name false
                           ;; ...
                           }}

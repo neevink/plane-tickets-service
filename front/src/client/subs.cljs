@@ -38,6 +38,14 @@
  (fn [db [_ prop-path]]
    (get-in db (into [:form] prop-path))))
 
+
+(reg-sub
+ ::form-valid?
+ (fn [db [_]]
+  (let [form  (get db :form-valid)]
+   (or (nil? form)
+       (and (or (vector? form) (seq? form)) (empty? form))))))
+
 (reg-sub
  ::form-path-invalid-message
  (fn [db [_ prop-path]]
@@ -104,4 +112,4 @@
 (reg-sub
  ::ticket-edit-prop
  (fn [db [_ prop]]
-  (get-in db (into [:ticket :edit] prop))))
+  (get-in db (into [:ticket :edit :path] prop))))

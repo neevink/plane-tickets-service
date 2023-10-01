@@ -14,12 +14,28 @@
    ::creation-date "Ожидалась строка в формате YYYY-MM-DD"})
 
 (s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
-(s/def ::x (s/and integer? #(> % -686)))
-(s/def ::y (s/and integer?))
+(s/def ::x #(or (> (parse-long %) -686)
+                (and
+                 (integer? %)
+                 (> % -686))))
+
+(s/def ::y #(or
+             (and (string? %) (parse-long %))
+             (integer? %)))
 
 (s/def ::coordinates (s/keys :req-un [::x ::y]))
-(s/def ::price (s/and number? pos?))
-(s/def ::discount (s/and number? pos? #(<= 0 % 100)))
+(s/def ::price
+  #(or
+    (and (number? %) (pos? %))
+    (pos? (parse-double %))))
+
+(s/def ::discount
+  #(or
+    (and (number? %) (pos? %) (<= 0 % 100))
+    (and (string? %)
+         (pos? (parse-double %))
+         (<= 0 (parse-double %) 100))))
+
 (s/def ::refundable (fn [a] (#{"true" "false" true false} a)))
 (s/def ::type (fn [v]
                 (or

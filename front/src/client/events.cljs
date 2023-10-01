@@ -46,15 +46,33 @@
      {:db (move-ticket db ticket-id new-value)}
      {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
 
+(def hack
+ {:id parse-long
+  :coordinates {:x parse-long
+                :y parse-long}
+  :price parse-double
+  :discount parse-double })
+
 (reg-event-fx
  ::save-form
  (fn [{:keys [db]} [_ path value]]
-   {:db (assoc-in db (into [:form] path) value)}))
+   {:db (assoc-in db (into [:form] path) 
+                  (cond-> value
+                   (get hack path)
+                   (try 
+                    ((get hack path) value)
+                    (catch js/Error _e
+                     value
+                     )
+                    )
+                   
+                   ))}))
 
 (reg-event-fx
  ::validate-form
  (fn [{:keys [db]} [_ _]]
    (let [validate-res (validation/validate (get db :form))]
+     (println "VALIDATION " validate-res)
      {:db (assoc db :form-valid validate-res)})))
 
 (reg-event-fx
@@ -97,20 +115,23 @@
 (reg-event-fx
  ::ticket-toggle-change
  (fn [{:keys [db]} [_]]
-   {:db (update-in db [:ticket :toggle-change] not)}))
+   {:db (-> db
+            (update-in [:ticket :toggle-change] not))}))
 
 (reg-event-fx
- ::ticket-update
+ ::start-ticket-update
  (fn [{:keys [db]} [_ ticket-id]]
    (let [modal-opened? (get-in db [:ticket :toggle-change])]
      (if modal-opened?
        {:db
         (-> db
             (update-in [:ticket :toggle-change] not)
+            (assoc :form nil)
             (update-in [:ticket] dissoc :update-id))}
        {:db
         (-> db
             (update-in [:ticket :toggle-change] not)
+            (assoc :form (get-in db [:tickets ticket-id]))
             (assoc-in [:ticket :update-id] ticket-id))}))))
 
 (reg-event-fx
@@ -134,15 +155,42 @@
         (assoc-in db [:paging :page-size] parsed)
         db)})))
 
-(into [:ticket :edit] [:coo :x])
-
 (reg-event-fx
  ::ticket-start-edit
  (fn [{:keys [db]} [_ ticket-id prop]]
-   {:db 
-    (-> (assoc-in db [:ticket :edit :ticket-id] ticket-id)
-        (assoc-in (into [:ticket :edit] prop) true)
-        )
-    
-    }
-   ))
+   (let
+    [val-path  (into [:ticket :edit :path] prop)
+     old-value (get-in db val-path)]
+     {:db
+      (if old-value
+        (-> db
+            (assoc-in [:ticket :edit :ticket-id] ticket-id)
+            (update-in val-path not))
+        (-> (assoc-in db [:ticket :edit :ticket-id] ticket-id)
+            (assoc-in val-path true)))})))
+
+(reg-event-fx
+ ::change-ticket-and-validate
+ (fn [{:keys [db]} [_ prop-path value]]
+   {:db db
+    :fx [[:dispatch [::save-form prop-path value]]
+         [:dispatch [::validate-form]]]}))
+
+(reg-event-fx
+ ::save-ticket-from-form
+ (fn [{:keys [db]} [_]]
+   {:db (conj db :tickets (get db :form))
+    #_#_:fx [[:dispatch [::save-form prop-path value]]
+             [:dispatch [::validate-form]]]}))
+
+(reg-event-fx
+ ::update-ticket-from-form
+ (fn [{:keys [db]} [_]]
+   (let [id (get-in db [:ticket :update-id])]
+     {:db (assoc-in db [:tickets id]
+                    (merge
+                     (get-in db [:tickets id])
+                     #_{:id (get-in db [:ticket :update-id])}
+                     (get-in db [:form])))
+      #_#_:fx [[:dispatch [::save-form prop-path value]]
+               [:dispatch [::validate-form]]]})))
