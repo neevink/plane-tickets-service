@@ -43,3 +43,8 @@
        bottom-html]]]]])
 
 
+(defn delete-icon []
+  [:span [:i.fa-solid.fa-trash
+          {:class (c [:px 3])}]])
+
+

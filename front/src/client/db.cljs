@@ -9,7 +9,7 @@
     :discount 20.0
     :refundable true
     :type "VIP"
-    :event {:id 1 :name "Дора" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+    :event {:id 1 :name "Дора" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}}
 
    2
    {:id 2 :name "Партер левая сторона, ряд 3, место 7"
@@ -19,7 +19,7 @@
     :discount 20.0
     :refundable true
     :type "USUAL"
-    :event {:id 2 :name "Лепс" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+    :event {:id 2 :name "Лепс" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}}
 
    3
    {:id 3 :name "Партер левая сторона, ряд 3, место 9"
@@ -29,7 +29,7 @@
     :discount 20.0
     :refundable true
     :type "BUDGETARY"
-    :event {:id 3 :name "Розенбаум" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+    :event {:id 3 :name "Розенбаум" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}}
 
    4
    {:id 4 :name "Партер левая сторона, ряд 3, место 9"
@@ -39,7 +39,7 @@
     :discount 20.0
     :refundable true
     :type "BUDGETARY"
-    :event {:id 4 :name "Лазарев" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}
+    :event {:id 4 :name "Лазарев" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}}
 
    5
    {:id 5 :name "Партер левая сторона, ряд 3, место 9"
@@ -49,23 +49,23 @@
     :discount 20.0
     :refundable true
     :type "BUDGETARY"
-    :event {:id 5 :name "Иванушки" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}}})
+    :event {:id 5 :name "Иванушки" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}}})
 
 (def example-events
   {1
-   {:id 1 :name "Дора" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}
+   {:id 1 :name "Дора" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}
 
    2
-   {:id 2 :name "Лепс" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}
+   {:id 2 :name "Лепс" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}
 
    3
-   {:id 3 :name "Розенбаум" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}
+   {:id 3 :name "Розенбаум" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}
 
    4
-   {:id 4 :name "Лазарев" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}
+   {:id 4 :name "Лазарев" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}
 
    5
-   {:id 5 :name "Иванушки" :date "2023-12-14" :min-age 10 :event-type "CONCEPT"}})
+   {:id 5 :name "Иванушки" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}})
 
 (def default-db
   {:active-panel :home-panel

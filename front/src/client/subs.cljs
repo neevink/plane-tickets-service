@@ -104,6 +104,15 @@
                     (get-in db [:tickets]))))))
 
 (reg-sub
+ ::events-on-page
+ (fn [db [_]]
+  (let  [page (get-in db [:paging :current-page])
+         page-size (get-in db [:paging :page-size])]
+   (take page-size (drop 
+                    (* page-size (dec page)) 
+                    (get-in db [:events]))))))
+
+(reg-sub
  ::filters
  (fn [db [_ prop]]
   (get-in db [:filters prop])))

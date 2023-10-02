@@ -88,10 +88,6 @@
      [:div (when invalid-message
              (:message invalid-message))]]))
 
-(defn delete-ticket-icon []
-  [:span [:i.fa-solid.fa-trash
-          {:class (c [:px 3])}]])
-
 (defn edit-ticket-icon [id]
   [:span [:i.fa-solid.fa-pen-to-square
           {:class (c [:px 3])
@@ -162,7 +158,7 @@
        [:div
         {:class [cls/base-class (c :cursor-pointer)]
          :on-click #(dispatch [::events/toggle-delete])}
-        (delete-ticket-icon)
+        (components/delete-icon)
         "Удалить"]
        (when modal-edit-opened?
          (components/modal
@@ -181,98 +177,6 @@
            [:button.cancelBtn
             {:on-click #(dispatch [::events/toggle-delete-false])}
             "Отменить"]]))]]]))
-
-(defn filter-view-one [prop only=? label & [selector-values]]
-  (let [filter-db @(subscribe [::subs/filters prop])
-        shown? (:shown filter-db)]
-    [:div {:class (c :border [:mb 4] [:mt 4] [:p 2])}
-     [:div {:class (c :flex :flex-row [:m 1] :justify-between)}
-      [:i.fa-solid.fa-magnifying-glass]
-      [:h1 label]
-      [:button {:class (c [:w 6]
-                          :align-right
-                          :self-end
-                          :float-right
-                          :rounded
-                          :transition-all [:duration 200]
-                          [:focus-within :outline-none :shadow-none [:border "#2e3633"]]
-                          [:focus :outline-none :shadow-none [:border "#2e3633"]]
-                          [:hover [:border "#2e3633"]]
-                          [:h 8])
-                :on-click #(dispatch [::events/hide-filter prop])}
-
-       (if shown?
-         [:i.fa-regular.fa-eye-slash]
-         [:i.fa-regular.fa-eye])]]
-
-     (when shown?
-       [:div {:class (c :w-full)}
-        (when (not only=?)
-          (components/selector
-           ["=" ">=" "<=" "!="]
-            ;;todo
-           #()
-           {:default-value "="
-            :cls (c
-                  :w-full
-                  [:mb 2])}))
-
-        (if selector-values
-          (components/selector selector-values #() ;;todo
-                               {:default-value (first selector-values)})
-          [:input
-           {:class (c
-                    :w-full
-                    :rounded :border [:h 8])
-            :on-change
-            #(dispatch [:dispatch-debounce
-                        {:delay 500
-                         :event [::events/change-filter
-                                 prop
-                                 :value
-                                 (.. % -target -value)]}])
-            :placeholder "Фильтр"}])])]))
-
-(defn filter-view []
-  [:div
-   (filter-view-one :id false "id")
-   (filter-view-one :name true "Имя")
-   (filter-view-one :x false "Координата x")
-   (filter-view-one :y false "Координата y")
-   (filter-view-one :price false "Цена")
-   (filter-view-one :discount false "Скидка")
-   (filter-view-one :refundable true "Возвратный" [true false])
-   (filter-view-one :type false "Тип"
-                    ["CHEAP" "BUDGETARY" "USUAL" "VIP"])
-   (filter-view-one :event true "event")])
-
-(defn sort-view []
-  [:div
-   [:div {:class (c :flex)}
-    (components/selector
-     ["id"
-      {:value "name" :desc "Имя"}
-      "x"
-      "y"
-      {:value "refundable" :desc "Возвратный"}
-      {:value "type" :desc "Тип билета"}
-      "event"]
-     #())
-
-    (components/selector
-     [{:value "netu" :desc "Без сортировки"}
-      {:value "asc" :desc "По возрастанию"}
-      {:value "desc" :desc "По убыванию"}]
-     #()
-     {:default-value "netu"
-      :cls
-      (c [:px 2] :text-center [:w 35])})]])
-
-(defn tickets-header []
-  [:div {:class (c :flex :flex-col)}
-   (sort-view)
-   [:hr {:class (c [:pt 2])}]
-   (filter-view)])
 
 (defn page-circle [value & selected]
   [:div {:class (c
