@@ -120,10 +120,8 @@
     [:<>
      (when form-valid?
        [:button.submitBtn
-        (cond->
-         {:class (c [:w-min 100])
-          :on-click #(dispatch [::events/update-ticket-from-form])}
-          (assoc :disabled "true"))
+        {:class (c [:w-min 100])
+         :on-click #(dispatch [::events/update-ticket-from-form])}
         "Изменить"])
      [:button.cancelBtn {:class (c [:w-min 100])
                          :on-click #(dispatch [::events/ticket-toggle-change])}
@@ -217,8 +215,7 @@
            {:default-value "="
             :cls (c
                   :w-full
-                  [:mb 2]
-                  )}))
+                  [:mb 2])}))
 
         (if selector-values
           (components/selector selector-values #() ;;todo
