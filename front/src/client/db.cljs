@@ -88,5 +88,6 @@
     :refundable {:value "" :shown false}
     :type {:value "" :shown false}
     :event  {:value "" :shown false}}
-   :mode :events})
+   :mode #_:events :tickets
+   })
 

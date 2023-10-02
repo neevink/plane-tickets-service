@@ -26,14 +26,11 @@
 (defn new-event-bot [])
 
 (defn edit-event-icon [id]
- [:span [:i.fa-solid.fa-pen-to-square
+  [:span [:i.fa-solid.fa-pen-to-square
           {:class (c [:px 3])
-           #_#_:on-click #(dispatch [::events/start-ticket-update id])}]]
- )
-       
+           #_#_:on-click #(dispatch [::events/start-ticket-update id])}]])
 
 (defn one-event [{:keys [id name date min-age event-type] :as event}]
-
   ^{:key id}
   [:div
    [:div
@@ -51,7 +48,7 @@
        [:span {:class (c :text-sm)} date  " " (event-type-icon event-type) " " [:span event-type] " "]
        [:div
         [:span {:class (c :text-xl :text-bold)} [:span name]]]]
-      [:span {:class (c :text-sm)} name]]
+      [:span {:class (c :text-sm)} "Минимальный возраст: " min-age]]
      [:div
       {:class (c :text-xl [:pt 3])}]
      [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
@@ -99,8 +96,8 @@
    value])
 
 (defn paging-view [events-number]
- 
- (when (> events-number 0)
+
+  (when (> events-number 0)
     (let [current-page @(subscribe [::subs/current-page])
           last-page @(subscribe [::subs/last-page])]
       [:<>
@@ -120,18 +117,7 @@
          "...")
 
        (when (> (- last-page current-page) 1)
-         (page-circle last-page))]))
- 
- 
- 
- 
- )
-
-(defn tickets-header []
-  [:div {:class (c :flex :flex-col)}
-   #_(sort-view)
-   [:hr {:class (c [:pt 2])}]
-   #_(filter-view)])
+         (page-circle last-page))])))
 
 (defn events-view []
   (let [events-on-page @(re-frame/subscribe [::subs/events-on-page])
@@ -160,7 +146,7 @@
         (new-event-bot)
         :modal-medium))
 
-     [:div {:class (c :grid [:grid-cols 2])}
+     [:div {:class (c :grid [:grid-cols 3])}
       [:div {:class [cls/div-center]
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]

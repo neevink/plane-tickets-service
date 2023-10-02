@@ -147,8 +147,7 @@
         (when (= :events mode)
           (events-view/events-page))
         (when (= :tickets mode)
-          [:div
-           (tickets/tickets-view)])]]]]))
+          (tickets/tickets-view))]]]]))
 
 (defmethod routes/panels :home-panel [] [home-panel])
 
