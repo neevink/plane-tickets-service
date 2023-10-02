@@ -5,7 +5,7 @@
    [re-frame.core :as re-frame]
    [client.events :as events]
    [client.routes :as routes]
-   [client.views :as views]
+   [client.views.core :as views]
    [client.config :as config]
    ))
 

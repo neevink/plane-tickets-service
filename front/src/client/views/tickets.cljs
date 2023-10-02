@@ -1,9 +1,8 @@
-(ns client.views
+(ns client.views.tickets
   (:require
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
    [client.events :as events]
    [client.debounce] ; to reg event :)
-   [client.routes :as routes]
    [client.myclasses :as cls]
    [client.mycomponents :as components]
    [client.subs :as subs])
@@ -89,20 +88,6 @@
      [:div (when invalid-message
              (:message invalid-message))]]))
 
-(defn ticket-prop-change [prop-path label label-id]
-  (let [current-value  @(re-frame.core/subscribe [::subs/form-prop prop-path])
-        invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])]
-    [:div {:class (c [:px 5])}
-     [:label {:for label-id} label]
-     [:input {:name label-id
-              :on-change
-              #(dispatch [:dispatch-debounce
-                          {:delay 500
-                           :event [::events/save-form prop-path (.. % -target -value)]}])
-              :placeholder current-value}]
-     [:div (when invalid-message
-             (:message invalid-message))]]))
-
 (defn delete-ticket-icon []
   [:span [:i.fa-solid.fa-trash
           {:class (c [:px 3])}]])
@@ -138,8 +123,7 @@
         (cond->
          {:class (c [:w-min 100])
           :on-click #(dispatch [::events/update-ticket-from-form])}
-          #_#_(not form-valid?)
-            (assoc :disabled "true"))
+          (assoc :disabled "true"))
         "Изменить"])
      [:button.cancelBtn {:class (c [:w-min 100])
                          :on-click #(dispatch [::events/ticket-toggle-change])}
@@ -234,7 +218,7 @@
             :cls (c
                   :w-full
                   [:mb 2]
-                  #_[:w 60])}))
+                  )}))
 
         (if selector-values
           (components/selector selector-values #() ;;todo
@@ -386,36 +370,4 @@
       (doall (for [[_ ticket] tickets-on-page]
                (one-ticket ticket)))]]))
 
-(defn events-page []
-  [:div "Events page"])
 
-(defn home-panel []
-  (let [mode @(re-frame/subscribe [::subs/mode])]
-    [:div {:class (c [:px 15] [:py 2])}
-     [:h1 {:class (c :text-center)}
-      "SOA Lab2 Slava+Kirill"]
-     [:div
-      {:class (c :font-mono [:pt 2])}
-      [:div
-       [:button
-        {:on-click #(dispatch [::events/set-mode :tickets])
-         :class (c [:px 1] :underline)}
-        "Билеты"]
-       [:button
-        {:on-click #(dispatch [::events/set-mode :events])
-         :class (c [:px 1] :underline)}
-        "Ивенты"]
-
-       (when (= :events mode)
-         (events-page))
-
-       (when (= :tickets mode)
-         [:div {:class (c :flex)}
-          (tickets-header)
-          (tickets-view)])]]]))
-
-(defmethod routes/panels :home-panel [] [home-panel])
-
-(defn main-panel []
-  (let [active-panel (re-frame/subscribe [::subs/active-panel])]
-    (routes/panels @active-panel)))
