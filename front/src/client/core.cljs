@@ -1,14 +1,15 @@
 (ns client.core
   (:require
-   [reagent.dom :as rdom]
-   [reagent.core :as r]
-   [re-frame.core :as re-frame]
-   [client.events :as events]
-   [client.routes :as routes]
-   [client.views.core :as views]
-   [client.config :as config]
-   ))
+    [reagent.dom :as rdom]
+    [reagent.core :as r]
+    [re-frame.core :as re-frame]
+    [client.events :as events]
+    [client.routes :as routes]
+    [client.views.core :as views]
+    [client.config :as config]
+    #_[devtools.core :as devtools]))
 
+#_(devtools/install!)
 
 (defn dev-setup []
   (when config/debug?

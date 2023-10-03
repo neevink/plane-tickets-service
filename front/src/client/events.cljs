@@ -47,45 +47,59 @@
      {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
 
 (def hack
- {:id parse-long
-  :coordinates {:x parse-long
-                :y parse-long}
-  :price parse-double
-  :discount parse-double })
+  {:id parse-long
+   :coordinates {:x parse-long
+                 :y parse-long}
+   :price parse-double
+   :discount parse-double})
 
 (reg-event-fx
  ::save-form
  (fn [{:keys [db]} [_ path value]]
-   {:db (assoc-in db (into [:form] path) 
+   {:db (assoc-in db (into [:form] path)
                   (cond-> value
-                   (get hack path)
-                   (try 
-                    ((get hack path) value)
-                    (catch js/Error _e
-                     value
-                     )
-                    )
-                   
-                   ))}))
+                    (get hack path)
+                    (try
+                      ((get hack path) value)
+                      (catch js/Error _e
+                        value))))}))
+
+(reg-event-fx
+ ::save-form-event
+ (fn [{:keys [db]} [_ path value]]
+   {:db (assoc-in db (into [:event-form] path)
+                  (cond->
+                   value
+                    (get hack path)
+                    (try
+                      ((get hack path) value)
+                      (catch js/Error _e
+                        value))))}))
 
 (reg-event-fx
  ::validate-form
  (fn [{:keys [db]} [_ _]]
-   (let [validate-res (validation/validate (get db :form))]
-     (println "VALIDATION " validate-res)
+   (let [validate-res (validation/validate-ticket (get db :form))]
      {:db (assoc db :form-valid validate-res)})))
 
 (reg-event-fx
- ::change-ticket-all
- (fn [{:keys [db]} [_ ticket-id]]
-   {:db db
-    :dispatch [::validate-form ticket-id]}))
+ ::validate-event-form
+ (fn [{:keys [db]} [_ _]]
+   (let [validate-res (validation/validate-event (get db :form-event))]
+     {:db (assoc db :event-form-valid validate-res)})))
 
 (reg-event-fx
  ::delete-ticket
  (fn [{:keys [db]} [_ ticket-id]]
+   (js/console.log "ticket id " ticket-id)
    {:db (-> (update-in db [:tickets] dissoc ticket-id))
-    :dispatch [::toggle-delete]}))
+    :dispatch [::toggle-delete-false]}))
+
+(reg-event-fx
+ ::delete-event
+ (fn [{:keys [db]} [_ event-id]]
+   {:db (-> (update-in db [:events] dissoc event-id))
+    :dispatch [::toggle-delete-false]}))
 
 (reg-event-fx
  ::set-mode
@@ -113,26 +127,43 @@
    {:db (assoc-in db [:paging :current-page] value)}))
 
 (reg-event-fx
- ::ticket-toggle-change
+ ::toggle-change
  (fn [{:keys [db]} [_]]
+   (.log js/console (range 200))
    {:db (-> db
-            (update-in [:ticket :toggle-change] not))}))
+            (update-in [:toggle-change] not))}))
 
 (reg-event-fx
  ::start-ticket-update
  (fn [{:keys [db]} [_ ticket-id]]
-   (let [modal-opened? (get-in db [:ticket :toggle-change])]
+   (let [modal-opened? (get-in db [:toggle-change])]
      (if modal-opened?
        {:db
         (-> db
-            (update-in [:ticket :toggle-change] not)
+            (update-in [:toggle-change] not)
             (assoc :form nil)
             (update-in [:ticket] dissoc :update-id))}
        {:db
         (-> db
-            (update-in [:ticket :toggle-change] not)
+            (update-in [:toggle-change] not)
             (assoc :form (get-in db [:tickets ticket-id]))
             (assoc-in [:ticket :update-id] ticket-id))}))))
+
+(reg-event-fx
+ ::start-event-update
+ (fn [{:keys [db]} [_ event-id]]
+   (let [modal-opened? (get-in db [:toggle-change])]
+     (if modal-opened?
+       {:db
+        (-> db
+            (update-in [:toggle-change] not)
+            (assoc :event-form nil)
+            (update-in [:event] dissoc :update-id))}
+       {:db
+        (-> db
+            (update-in [:toggle-change] not)
+            (assoc :event-form (get-in db [:events event-id]))
+            (assoc-in [:event :update-id] event-id))}))))
 
 (reg-event-fx
  ::change-filter
@@ -179,9 +210,21 @@
 (reg-event-fx
  ::save-ticket-from-form
  (fn [{:keys [db]} [_]]
-   {:db (conj db :tickets (get db :form))
-    #_#_:fx [[:dispatch [::save-form prop-path value]]
-             [:dispatch [::validate-form]]]}))
+
+   #_"TODO: back"
+   {:db (update db :tickets assoc 1000 (get db :form))
+    :fx [[:dispatch [::toggle-new]]
+         #_#_[:dispatch [::save-form prop-path value]]
+           [:dispatch [::validate-form]]]}))
+
+(reg-event-fx
+ ::save-event-from-form
+ (fn [{:keys [db]} [_]]
+   #_"TODO: back"
+   {:db (update db :events assoc 1000 (get db :event-form))
+    :fx [[:dispatch [::toggle-new]]
+         #_#_[:dispatch [::save-form prop-path value]]
+           [:dispatch [::validate-form]]]}))
 
 (reg-event-fx
  ::update-ticket-from-form

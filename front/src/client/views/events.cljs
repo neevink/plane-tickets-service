@@ -21,65 +21,114 @@
     (= event-type "BASEBALL")
     [:i.fa-solid.fa-baseball]))
 
-(defn new-event-top [])
+(defn event-new-prop [prop-path label label-id descr required?]
+  (let [current-value  @(re-frame.core/subscribe [::subs/event-form-prop prop-path])
+        invalid-message @(re-frame.core/subscribe [::subs/event-form-path-invalid-message prop-path])]
+    [:div {:class (c [:px 5] :flex :flex-col)}
 
-(defn new-event-bot [])
+     [:label {:for label-id} label (when required? [:span {:style {:color "#dc2626"}} "*"])]
+     [:input {:name label-id
+              :id label-id
+              :class (c :border [:h 10] :text-2xl)
+              :maxLength 30
+              :on-change
+              #(dispatch [:dispatch-debounce
+                          {:delay 500
+                           :event [::events/save-form-event prop-path (.. % -target -value)]}])
+              :placeholder (str current-value)}]
+
+     [:div
+      [:label {:for label-id
+               :class (c :text-lg :font-light :italic)} (when descr descr)]]
+     [:div (when invalid-message
+             (:message invalid-message))]]))
+
+(defn new-event-top []
+  [:div
+   [:div
+    (event-new-prop [:name] "Название" "name" nil true)
+    (event-new-prop [:date] "Дата мероприятия" "date" nil false)
+    (event-new-prop [:minAge] "Минимальный возраст" "minAge" nil true)
+    (event-new-prop [:eventType] "Тип мероприятия" "type" "(CONCERT, BASEBALL, BASKETBALL, THEATRE_PERFORMANCE)" false)]])
+
+(defn new-event-bot []
+  [:div {:class (c :flex [:gap 4])}
+   [:button.submitBtn {:class (c [:w-min 100] [:bg :green-500])
+                       :on-click #(dispatch [::events/save-event-from-form])} "Создать"]
+   [:button.cancelBtn {:class (c [:w-min 100])
+                       :on-click #(dispatch [::events/toggle-new])} "Отменить"]])
+
+(defn edit-event-view-top [id])
+
+(defn edit-event-view-bot []
+  (let [form-valid? @(subscribe [::subs/events-form-valid?])]
+    [:<>
+     (when form-valid?
+       [:button.submitBtn
+        {:class (c [:w-min 100])
+         :on-click #(dispatch [::events/update-ticket-from-form])}
+        "Изменить"])
+     [:button.cancelBtn {:class (c [:w-min 100])
+                         :on-click #(dispatch [::events/toggle-change])}
+      "Отменить"]]))
 
 (defn edit-event-icon [id]
   [:span [:i.fa-solid.fa-pen-to-square
           {:class (c [:px 3])
-           #_#_:on-click #(dispatch [::events/start-ticket-update id])}]])
+           :on-click #(dispatch [::events/start-event-update id])}]])
 
 (defn one-event [{:keys [id name date min-age event-type] :as event}]
-  ^{:key id}
-  [:div
-   [:div
-    [:div {:class [(c [:bg "#FAFAFA"]
-                      [:border :current]
-                      :flex-row
-                      :flex
-                      :justify-between
-                      [:p 2]
-                      [:m 2]
-                      [:hover :shadow-inner [:bg :gray-200]]
-                      [:rounded :xl])]}
+  (let [modal-edit-opened? @(subscribe [::subs/toggle-change])
+        modal-delete-opened? @(subscribe [::subs/toggle-delete])]
+    ^{:key id}
+    [:div
      [:div
-      [:div
-       [:span {:class (c :text-sm)} date  " " (event-type-icon event-type) " " [:span event-type] " "]
+      [:div {:class [(c [:bg "#FAFAFA"]
+                        [:border :current]
+                        :flex-row
+                        :flex
+                        :justify-between
+                        [:p 2]
+                        [:m 2]
+                        [:hover :shadow-inner [:bg :gray-200]]
+                        [:rounded :xl])]}
        [:div
-        [:span {:class (c :text-xl :text-bold)} [:span name]]]]
-      [:span {:class (c :text-sm)} "Минимальный возраст: " min-age]]
-     [:div
-      {:class (c :text-xl [:pt 3])}]
-     [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
-      [:div
-       {:class [cls/base-class (c :cursor-pointer)]
-        :on-click #(dispatch [::events/start-ticket-update id])}
-       (edit-event-icon id)
-       "Изменить"]
+        [:div
+         [:span {:class (c :text-sm)} date  " " (event-type-icon event-type) " " [:span event-type] " "]
+         [:div
+          [:span {:class (c :text-xl :text-bold)} [:span name]]]]
+        [:span {:class (c :text-sm)} "Минимальный возраст: " min-age]]
+       [:div
+        {:class (c :text-xl [:pt 3])}]
+       [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
+        [:div
+         {:class [cls/base-class (c :cursor-pointer)]
+          :on-click #(dispatch [::events/start-ticket-update id])}
+         (edit-event-icon id)
+         "Изменить"]
 
-      [:div
-       {:class [cls/base-class (c :cursor-pointer)]
-        :on-click #(dispatch [::events/toggle-delete])}
-       (components/delete-icon)
-       "Удалить"]
-      #_(when modal-edit-opened?
+        [:div
+         {:class [cls/base-class (c :cursor-pointer)]
+          :on-click #(dispatch [::events/toggle-delete])}
+         (components/delete-icon)
+         "Удалить"]
+        (when modal-edit-opened?
           (components/modal
-           "Изменение билета"
-           (edit-ticket-view-top id)
-           (edit-ticket-view-bot)
+           "Изменение мероприятия"
+           (edit-event-view-top id)
+           (edit-event-view-bot)
            :modal-medium))
-      #_(when modal-delete-opened?
+        (when modal-delete-opened?
           (components/modal
            "Удаление"
            "Вы уверены в удалении?"
            [:<>
             [:button.deleteBtn
-             #_{:on-click #(dispatch [::events/delete-ticket id])}
+             {:on-click #(dispatch [::events/delete-event id])}
              "Удалить"]
             [:button.cancelBtn
-             #_{:on-click #(dispatch [::events/toggle-delete-false])}
-             "Отменить"]]))]]]])
+             {:on-click #(dispatch [::events/toggle-delete-false])}
+             "Отменить"]]))]]]]))
 
 (defn page-circle [value & selected]
   [:div {:class (c
@@ -121,8 +170,7 @@
 
 (defn events-view []
   (let [events-on-page @(re-frame/subscribe [::subs/events-on-page])
-        modal-opened?
-        @(subscribe [::subs/toggle-new])]
+        modal-opened? @(subscribe [::subs/toggle-new])]
     [:div {:class (c :w-full)}
      [:div
       [:div
@@ -150,8 +198,9 @@
       [:div {:class [cls/div-center]
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]
-      (doall (for [[_ event] events-on-page]
-               (one-event event)))]]))
+      (doall
+       (for [[_ event] events-on-page]
+         (one-event event)))]]))
 
 (defn events-page []
   (events-view))

@@ -50,7 +50,8 @@
    :output-dir "public/out" 
    :compiler-options {:infer-externs :auto}
 
-   :devtools {:preloads [re-frisk.preload]
+   :devtools {:preloads [re-frisk.preload
+                         devtools.preload]
               :after-load client.core/render}
 
    :dev

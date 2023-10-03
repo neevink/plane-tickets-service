@@ -120,53 +120,57 @@
          :on-click #(dispatch [::events/update-ticket-from-form])}
         "Изменить"])
      [:button.cancelBtn {:class (c [:w-min 100])
-                         :on-click #(dispatch [::events/ticket-toggle-change])}
+                         :on-click #(dispatch [::events/toggle-change])}
       "Отменить"]]))
 
-(defn one-ticket [{:keys [id name creation-date price discount type event] :as ticket}]
+(defn one-ticket [{:keys [id name creationDate price discount type eventId]}]
   (let [modal-delete-opened? @(subscribe [::subs/toggle-delete])
-        modal-edit-opened? @(subscribe [::subs/ticket-toggle-change])]
+        modal-edit-opened? @(subscribe [::subs/toggle-change])
+        event @(subscribe [::subs/event-by-id eventId])]
     ^{:key id}
-    [:div
-     [:div {:class [(c [:bg "#FAFAFA"]
-                       [:border :current]
-                       :flex-row
-                       :flex
-                       :justify-between
-                       [:p 2]
-                       [:m 2]
-                       [:hover :shadow-inner [:bg :gray-200]]
-                       [:rounded :xl])]}
-      [:div
+    (doall
+     [:div
+      [:div {:class [(c [:bg "#FAFAFA"]
+                        [:border :current]
+                        :flex-row
+                        :flex
+                        :justify-between
+                        [:p 2]
+                        [:m 2]
+                        [:hover :shadow-inner [:bg :gray-200]]
+                        [:rounded :xl])]}
        [:div
-        [:span {:class (c :text-sm)} creation-date " " (type-view type) " " [:span type] " "]
         [:div
-         [:span {:class (c :text-xl :text-bold)} [:span (:name event)]]]]
-       [:span {:class (c :text-sm)} name]]
-      [:div
-       {:class (c :text-xl [:pt 3])}
+         [:div "ID : " id ]
+         [:span {:class (c :text-sm)} creationDate " " (type-view type) " " [:span type] " "]
+         [:div
+          [:span {:class (c :text-xl :text-bold)} [:span (or (:name event)
+                                                             "Неизвестное мероприятие")]]]]
+        [:span {:class (c :text-sm)} name]]
        [:div
-        "СКИДКА: " discount "%"]
-       [:div "ЦЕНА: " price]]
-      [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
-       [:div
-        {:class [cls/base-class (c :cursor-pointer)]
-         :on-click #(dispatch [::events/start-ticket-update id])}
-        (edit-ticket-icon id)
-        "Изменить"]
+        {:class (c :text-xl [:pt 3])}
+        [:div
+         "СКИДКА: " discount "%"]
+        [:div "ЦЕНА: " price]]
+       [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
+        [:div
+         {:class [cls/base-class (c :cursor-pointer)]
+          :on-click #(dispatch [::events/start-ticket-update id])}
+         (edit-ticket-icon id)
+         "Изменить"]
 
-       [:div
-        {:class [cls/base-class (c :cursor-pointer)]
-         :on-click #(dispatch [::events/toggle-delete])}
-        (components/delete-icon)
-        "Удалить"]
-       (when modal-edit-opened?
+        [:div
+         {:class [cls/base-class (c :cursor-pointer)]
+          :on-click #(dispatch [::events/toggle-delete])}
+         (components/delete-icon)
+         "Удалить"]
+        (when modal-edit-opened?
          (components/modal
           "Изменение билета"
           (edit-ticket-view-top id)
           (edit-ticket-view-bot)
           :modal-medium))
-       (when modal-delete-opened?
+        (when modal-delete-opened?
          (components/modal
           "Удаление"
           "Вы уверены в удалении?"
@@ -176,7 +180,7 @@
             "Удалить"]
            [:button.cancelBtn
             {:on-click #(dispatch [::events/toggle-delete-false])}
-            "Отменить"]]))]]]))
+            "Отменить"]]))]]])))
 
 (defn page-circle [value & selected]
   [:div {:class (c
@@ -233,7 +237,8 @@
 
 (defn new-ticket-bot []
   [:div {:class (c :flex [:gap 4])}
-   [:button.submitBtn {:class (c [:w-min 100] [:bg :green-500])} "Создать"]
+   [:button.submitBtn {:class (c [:w-min 100] [:bg :green-500])
+                       :on-click #(dispatch [::events/save-ticket-from-form])} "Создать"]
    [:button.cancelBtn {:class (c [:w-min 100])
                        :on-click #(dispatch [::events/toggle-new])} "Отменить"]])
 
