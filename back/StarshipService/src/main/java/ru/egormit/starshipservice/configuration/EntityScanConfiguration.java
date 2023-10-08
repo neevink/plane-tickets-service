@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Egor Mitrofanov.
  */
 @Configuration
-@EntityScan("ru.egormit.library")
+@EntityScan("ru.itmo.library")
 public class EntityScanConfiguration {
 }

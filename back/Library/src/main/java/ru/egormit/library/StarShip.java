@@ -41,12 +41,6 @@ public class StarShip {
     private String name;
 
     /**
-     * Флотн.
-     */
-    @Column(name = "fleet")
-    private String fleet;
-
-    /**
      * Координата X.
      */
     @Column(name = "coordinate_x")
