@@ -29,7 +29,9 @@ public class EventController {
      * @param request тело запроса.
      */
     @PostMapping(value = Endpoints.CREATE_EVENT)
-    public ResponseEntity<Object> createEvent(@RequestBody CreateEventRequest request) {
+    public ResponseEntity<Object> createEvent(
+            @RequestBody CreateEventRequest request
+    ) {
         eventService.createEvent(request);
         return ResponseEntity.ok().build();
     }
@@ -51,8 +53,25 @@ public class EventController {
      */
     @GetMapping(value = Endpoints.GET_EVENT_BY_ID)
     public ResponseEntity<EventDto> getEventById(
-            @PathVariable("ticketId") Long ticketId
+            @PathVariable("eventId") Long eventId
     ) {
-        return new ResponseEntity<>(eventService.getEventById(ticketId), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getEventById(eventId), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = Endpoints.DELETE_EVENT_BY_ID)
+    public ResponseEntity<Object> deleteEventById(
+            @PathVariable("eventId") Long eventId
+    ) {
+        eventService.deleteEventById(eventId);
+        return new ResponseEntity<>("deleted", HttpStatus.OK);
+    }
+
+    @PutMapping(value = Endpoints.UPDATE_EVENT_BY_ID)
+    public ResponseEntity<Object> updateEventById(
+            @PathVariable("eventId") Long eventId,
+            @RequestBody CreateEventRequest request
+    ) {
+        eventService.updateEventById(eventId, request);
+        return new ResponseEntity<>("updated", HttpStatus.OK);
     }
 }

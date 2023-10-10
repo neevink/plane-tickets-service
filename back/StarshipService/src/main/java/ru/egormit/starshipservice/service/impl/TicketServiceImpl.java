@@ -3,14 +3,8 @@ package ru.egormit.starshipservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-import ru.egormit.library.SpaceMarine;
-import ru.egormit.library.SpaceMarineResponse;
-import ru.egormit.library.SpaceMarineUpdateRequest;
-import ru.egormit.library.StarShip;
 import ru.egormit.starshipservice.domain.EventRepository;
 import ru.egormit.starshipservice.domain.TicketRepository;
-import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.egormit.starshipservice.utils.TicketModelMapper;
@@ -87,5 +81,36 @@ public class TicketServiceImpl implements TicketService {
     public TicketDto getTicketById(Long ticketId) {
         Ticket ticket = ticketRepository.getById(ticketId);
         return ticketModelMapper.map(ticket);
+    }
+
+    @Override
+    public void deleteTicketById(Long ticketId) {
+        ticketRepository.deleteById(ticketId);
+    }
+
+    @Override
+    public void updateTicketById(Long ticketId, CreateTicketRequest request) {
+        if (!ticketRepository.existsById(ticketId)) {
+            return;  // raise 404 exception
+        }
+
+        Ticket updatedTicket = new Ticket();
+        updatedTicket.setId(ticketId);
+        updatedTicket.setName(request.getName());
+        updatedTicket.setCoordinateX(request.getCoordinates().getX());
+        updatedTicket.setCoordinateY(request.getCoordinates().getY());
+        updatedTicket.setCreationDate(ZonedDateTime.now());
+        updatedTicket.setPrice(request.getPrice());
+        updatedTicket.setDiscount(request.getDiscount());
+        updatedTicket.setRefundable(request.getRefundable());
+        updatedTicket.setType(request.getType());
+
+        if (eventRepository.existsById(request.getEventId())) {
+            Optional<Event> event = eventRepository.findById(request.getEventId());
+            if (event.isPresent()){
+                updatedTicket.setEvent(event.get());
+            }
+        }
+        ticketRepository.save(updatedTicket);
     }
 }

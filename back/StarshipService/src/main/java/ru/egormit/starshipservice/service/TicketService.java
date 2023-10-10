@@ -32,4 +32,8 @@ public interface TicketService {
      * @return билет
      */
     TicketDto getTicketById(Long ticketId);
+
+    void deleteTicketById(Long ticketId);
+
+    void updateTicketById(Long ticketId, CreateTicketRequest request);
 }

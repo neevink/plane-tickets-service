@@ -29,7 +29,9 @@ public class TicketController {
      * @param request тело запроса.
      */
     @PostMapping(value = Endpoints.CREATE_TICKET)
-    public ResponseEntity<Object> createTicket(@RequestBody CreateTicketRequest request) {
+    public ResponseEntity<Object> createTicket(
+            @RequestBody CreateTicketRequest request
+    ) {
         ticketService.createTicket(request);
         return ResponseEntity.ok().build();
     }
@@ -54,5 +56,28 @@ public class TicketController {
             @PathVariable("ticketId") Long ticketId
     ) {
         return new ResponseEntity<>(ticketService.getTicketById(ticketId), HttpStatus.OK);
+    }
+
+    /**
+     * Удаление билета по id.
+     */
+    @DeleteMapping(value = Endpoints.DELETE_TICKET_BY_ID)
+    public ResponseEntity<Object> deleteTicketById(
+            @PathVariable("ticketId") Long ticketId
+    ) {
+        ticketService.deleteTicketById(ticketId);
+        return new ResponseEntity<>("deleted", HttpStatus.OK);
+    }
+
+    /**
+     * Обновление билета по id.
+     */
+    @PutMapping(value = Endpoints.UPDATE_TICKET_BY_ID)
+    public ResponseEntity<Object> updateTicketById(
+            @PathVariable("ticketId") Long ticketId,
+            @RequestBody CreateTicketRequest request
+    ) {
+        ticketService.updateTicketById(ticketId, request);
+        return new ResponseEntity<>("updated", HttpStatus.OK);
     }
 }
