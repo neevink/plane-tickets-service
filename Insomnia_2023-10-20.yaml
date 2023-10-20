@@ -1,0 +1,333 @@
+_type: export
+__export_format: 4
+__export_date: 2023-10-20T15:04:11.420Z
+__export_source: insomnia.desktop.app:v8.3.0
+resources:
+  - _id: req_ad61661f634f471d9010dacafc210f3f
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696934031035
+    created: 1696762907618
+    url: http://localhost:8080/tickets
+    name: create ticket
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Концерт Доры",
+          "coordinates": {
+            "x": 100,
+            "y": 100
+          },
+          "price": 5000,
+          "discount": 0,
+          "refundable": false,
+          "type": "USUAL",
+          "eventId": 1
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1696106589069
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_71dda5c8e70440e7b52ad35e5834f005
+    parentId: null
+    modified: 1696106551474
+    created: 1696106551474
+    name: soa-spec.yaml
+    description: ""
+    scope: design
+    _type: workspace
+  - _id: req_944607a8ad504c189a6d1cef0f20c1f3
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696765501268
+    created: 1696106588969
+    url: http://localhost:8080/tickets/1
+    name: get ticket by id
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1696106588969
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_da186d2c869e4423914c4193a8f20c6c
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696793419781
+    created: 1696765514564
+    url: http://localhost:8080/tickets
+    name: get all tickets
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1693343918767.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ca2cdf24eef74a769572167c2c25a957
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696934409847
+    created: 1696934082120
+    url: http://localhost:8080/tickets/1
+    name: update ticket by id
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Билет на концерт Доры",
+          "coordinates": {
+            "x": 100,
+            "y": 100
+          },
+          "price": 5000,
+          "discount": 0,
+          "refundable": false,
+          "type": "USUAL",
+          "eventId": 1
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1691962583667.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_c3cecc76a2114635950f29b1ddb70ad1
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696934067120
+    created: 1696934062228
+    url: http://localhost:8080/tickets/1
+    name: delete ticket by id
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1690581248566.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_db252f931a4a42b79338df1d21089268
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696795917942
+    created: 1696765523521
+    url: http://localhost:8080/events
+    name: create event
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "name": "Концерт Доры 777",
+          "date": "2023-12-13",
+          "minAge": 12,
+          "eventType": "CONCERT"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1687818578365.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_808294859df440bbacb6734c3c3da575
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696765665264
+    created: 1696765628027
+    url: http://localhost:8080/events/1
+    name: get event by id
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1686437243264.625
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_3256b1a3683e4ac5b77cb41ddaf1d107
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696934048301
+    created: 1696765658438
+    url: http://localhost:8080/events
+    name: get all events
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1685746575714.3125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_fd573cb20b614166bc195cdd0c5f6418
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696934384337
+    created: 1696934123335
+    url: http://localhost:8080/events/1
+    name: update event by id
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "name": "Концерт Доры",
+          "date": "2023-12-13",
+          "minAge": 12,
+          "eventType": "CONCERT"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1685573908826.7344
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5e9078e790634216af629e6b9c4fa4e3
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696798832259
+    created: 1696798807275
+    url: http://localhost:8080/events/1
+    name: delete event by id
+    description: ""
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1685401241939.1562
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_2ebc60f2c399c0ad6977de0c8c8d744b861fe7a1
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696106551476
+    created: 1696106551476
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1696106551476
+    _type: environment
+  - _id: jar_2ebc60f2c399c0ad6977de0c8c8d744b861fe7a1
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696106551476
+    created: 1696106551476
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_fab35e333f04495aafc5365da560eed1
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1696762355107
+    created: 1696106551475
+    fileName: soa-spec.yaml
+    contents: ""
+    contentType: yaml
+    _type: api_spec
