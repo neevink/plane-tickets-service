@@ -1,9 +1,9 @@
 (ns client.events
   (:require
-    [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
-    [client.validation :as validation]
-    [client.http :as http]
-    [re-frame-cljs-http.http-fx]
+   [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
+   [client.validation :as validation]
+   [client.http :as http]
+   [re-frame-cljs-http.http-fx]
    [client.db :as db]))
 
 (def back-url "http://localhost:8080")
@@ -11,61 +11,66 @@
 (defn full-url [endpoint]
   (str back-url endpoint))
 
-(defn http-get [db url on-success on-failure]
+(defn call-http [db url method on-success on-failure & params]
   {:db (assoc db :loading? true)
-   :http-cljs {:method :get
-               :params {}
-               :with-credentials? false
-               :on-success on-success
-               :on-failure on-failure
-               :url url}})
+   :http-cljs (merge {:method method
+                      :params {}
+                      :with-credentials? false
+                      :on-success on-success
+                      :on-failure on-failure
+                      :url url}
+                     params)})
+
+(defn http-get [db url on-success on-failure]
+  (call-http db url :get on-success on-failure))
+
+(defn http-delete [db url on-success on-failure]
+  (call-http db url :delete on-success on-failure))
 
 (re-frame/reg-event-db
-  ::tickets-downloaded
-  (fn [db [_ tickets]]
-    (let [tickets (:body tickets)
-          tickets (mapv (fn [ticket]
-                          (if-not (:eventId ticket)
-                            (assoc ticket :eventId (get-in ticket [:event :id]))
-                            ticket))
-                        tickets)
-          tickets-id-map (update-vals (group-by :id tickets) first)]
-      (-> db
-           (assoc :tickets tickets-id-map)))))
+ ::tickets-downloaded
+ (fn [db [_ tickets]]
+   (let [tickets (:body tickets)
+         tickets (mapv (fn [ticket]
+                         (if-not (:eventId ticket)
+                           (assoc ticket :eventId (get-in ticket [:event :id]))
+                           ticket))
+                       tickets)
+         tickets-id-map (update-vals (group-by :id tickets) first)]
+     (-> db
+         (assoc :tickets tickets-id-map)))))
 
 (re-frame/reg-event-db
-  ::tickets-not-downloaded
-  (fn [db [_ result]]
-    (assoc db :http-result result :errors? true)))
-
+ ::tickets-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
 
 (reg-event-fx
-  ::download-tickets
-  (fn [{:keys [db]} _]
-    (http-get db (full-url "/tickets")
-              [::tickets-downloaded]
-              [::tickets-not-downloaded])))
+ ::download-tickets
+ (fn [{:keys [db]} _]
+   (http-get db (full-url "/tickets")
+             [::tickets-downloaded]
+             [::tickets-not-downloaded])))
 
 (re-frame/reg-event-db
-  ::events-downloaded
-  (fn [db [_ events]]
-    (let [events (:body events)
-          events-id-map (update-vals (group-by :id events) first)]
-      (-> db
-          (assoc :events events-id-map)))))
+ ::events-downloaded
+ (fn [db [_ events]]
+   (let [events (:body events)
+         events-id-map (update-vals (group-by :id events) first)]
+     (-> db
+         (assoc :events events-id-map)))))
 
 (re-frame/reg-event-db
-  ::events-not-downloaded
-  (fn [db [_ result]]
-    (assoc db :http-result result :errors? true)))
+ ::events-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
 
 (reg-event-fx
-  ::download-events
-  (fn [{:keys [db]} _]
-    (http-get db  (full-url "/events")
-              [::events-downloaded]
-              [::events-not-downloaded])))
-
+ ::download-events
+ (fn [{:keys [db]} _]
+   (http-get db  (full-url "/events")
+             [::events-downloaded]
+             [::events-not-downloaded])))
 
 (reg-event-db
  ::initialize-db
@@ -87,7 +92,6 @@
  (fn [{:keys [db]} [_ ticket-id]]
    (let [current (:current-ticket db)]
      {:db (assoc db :current-ticket (if (= ticket-id current) nil ticket-id))})))
-
 
 (defn move-ticket [db prev-id new-id]
   (-> (assoc-in db
@@ -144,18 +148,55 @@
    (let [validate-res (validation/validate-event (get db :form-event))]
      {:db (assoc db :event-form-valid validate-res)})))
 
+(re-frame/reg-event-fx
+ ::ticket-deleted
+ (fn [{:keys [db]} [_ ticket-id]]
+   {:db (update db :tickets dissoc ticket-id)
+    :dispatch [::toggle-delete-false]}))
+
+(re-frame/reg-event-db
+ ::ticket-not-deleted
+ (fn [db [_ ticket-id]]
+   (update db :errors conj ["not deleted" ticket-id])))
+
+(reg-event-fx
+ ::delete-ticket-http
+ (fn [{:keys [db]} [_ ticket-id]]
+   (http-delete db (full-url (str "/tickets/" ticket-id))
+                [::ticket-deleted ticket-id]
+                [::ticket-not-deleted ticket-id])))
+
 (reg-event-fx
  ::delete-ticket
  (fn [{:keys [db]} [_ ticket-id]]
    (js/console.log "ticket id " ticket-id)
    {:db (-> (update-in db [:tickets] dissoc ticket-id))
+    :dispatch [::delete-ticket-http ticket-id]}))
+
+
+(re-frame/reg-event-fx
+ ::event-deleted
+ (fn [{:keys [db]} [_ ticket-id]]
+   {:db (update db :events dissoc ticket-id)
     :dispatch [::toggle-delete-false]}))
+
+(re-frame/reg-event-db
+ ::event-not-deleted
+ (fn [db [_ event-id]]
+   (update db :errors conj ["not deleted" event-id])))
+
+(reg-event-fx
+ ::delete-event-http
+ (fn [{:keys [db]} [_ event-id]]
+   (http-delete db (full-url (str "/events/" event-id))
+                [::event-deleted event-id]
+                [::event-not-deleted event-id])))
 
 (reg-event-fx
  ::delete-event
  (fn [{:keys [db]} [_ event-id]]
    {:db (-> (update-in db [:events] dissoc event-id))
-    :dispatch [::toggle-delete-false]}))
+    :dispatch [::delete-event-http event-id]}))
 
 (reg-event-fx
  ::set-mode
@@ -168,9 +209,18 @@
    {:db (update db :toggle-new not)}))
 
 (reg-event-fx
- ::toggle-delete
- (fn [{:keys [db]} [_]]
-   {:db (update db :toggle-delete not)}))
+ ::toggle-delete ;; ticket
+ (fn [{:keys [db]} [_ id]]
+   {:db (assoc-in
+         (update db :toggle-delete not)
+         [:ticket :to-delete] id)}))
+
+(reg-event-fx
+ ::toggle-delete-event
+ (fn [{:keys [db]} [_ id]]
+   {:db (assoc-in
+         (update db :toggle-delete not)
+         [:event :to-delete] id)}))
 
 (reg-event-fx
  ::toggle-delete-false

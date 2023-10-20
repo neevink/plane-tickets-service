@@ -4,6 +4,8 @@
    [client.events :as events]
    [client.debounce] ; to reg event :)
    [client.myclasses :as cls]
+   [goog.string :as gstring]
+   [goog.string.format]
    [client.mycomponents :as components]
    [client.subs :as subs])
   (:require-macros [stylo.core :refer [c]]))
@@ -123,64 +125,48 @@
                          :on-click #(dispatch [::events/toggle-change])}
       "Отменить"]]))
 
-(defn one-ticket [{:keys [id name creationDate price discount type eventId]}]
-  (let [modal-delete-opened? @(subscribe [::subs/toggle-delete])
-        modal-edit-opened? @(subscribe [::subs/toggle-change])
-        event @(subscribe [::subs/event-by-id eventId])]
+(defn one-ticket [id]
+  (let [ticket @(subscribe [::subs/ticket-by-id id])
+        event @(subscribe [::subs/event-by-id (:eventId ticket)])
+        _ (prn "id " id " ticket id " (:id ticket))]
     ^{:key id}
-    (doall
-     [:div
-      [:div {:class [(c [:bg "#FAFAFA"]
-                        [:border :current]
-                        :flex-row
-                        :flex
-                        :justify-between
-                        [:p 2]
-                        [:m 2]
-                        [:hover :shadow-inner [:bg :gray-200]]
-                        [:rounded :xl])]}
+    [:div
+     [:div {:class [(c [:bg "#FAFAFA"]
+                       [:border :current]
+                       :flex-row
+                       :flex
+                       :justify-between
+                       [:p 2]
+                       [:m 2]
+                       [:hover :shadow-inner [:bg :gray-200]]
+                       [:rounded :xl])]}
+      [:div
        [:div
+        [:div "ID: " id]
+        [:span {:class (c :text-sm)}
+         (.toLocaleString (js/Date. (:creationDate ticket))) " " (type-view (:type ticket)) " " [:span (:type ticket)] " "]
         [:div
-         [:div "ID : " id ]
-         [:span {:class (c :text-sm)} (.toLocaleString (js/Date. creationDate)) " " (type-view type) " " [:span type] " "]
-         [:div
-          [:span {:class (c :text-xl :text-bold)} [:span (or (:name event)
-                                                             "Неизвестное мероприятие")]]]]
-        [:span {:class (c :text-sm)} name]]
+         [:span {:class (c :text-xl :text-bold)}
+          [:span (or (:name event)
+                     "Неизвестное мероприятие")]]]]
+       [:span {:class (c :text-sm)} (:name ticket)]]
+      [:div
+       {:class (c :text-xl [:pt 3])}
        [:div
-        {:class (c :text-xl [:pt 3])}
-        [:div
-         "СКИДКА: " discount "%"]
-        [:div "ЦЕНА: " price]]
-       [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
-        [:div
-         {:class [cls/base-class (c :cursor-pointer)]
-          :on-click #(dispatch [::events/start-ticket-update id])}
-         (edit-ticket-icon id)
-         "Изменить"]
+        "СКИДКА: " (:discount ticket) "%"]
+       [:div "ЦЕНА: " (:price ticket)]]
+      [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
+       [:div
+        {:class [cls/base-class (c :cursor-pointer)]
+         :on-click #(dispatch [::events/start-ticket-update id])}
+        (edit-ticket-icon id)
+        "Изменить"]
 
-        [:div
-         {:class [cls/base-class (c :cursor-pointer)]
-          :on-click #(dispatch [::events/toggle-delete])}
-         (components/delete-icon)
-         "Удалить"]
-        (when modal-edit-opened?
-         (components/modal
-          "Изменение билета"
-          (edit-ticket-view-top id)
-          (edit-ticket-view-bot)
-          :modal-medium))
-        (when modal-delete-opened?
-         (components/modal
-          "Удаление"
-          "Вы уверены в удалении?"
-          [:<>
-           [:button.deleteBtn
-            {:on-click #(dispatch [::events/delete-ticket id])}
-            "Удалить"]
-           [:button.cancelBtn
-            {:on-click #(dispatch [::events/toggle-delete-false])}
-            "Отменить"]]))]]])))
+       [:div
+        {:class [cls/base-class (c :cursor-pointer)]
+         :on-click #(dispatch [::events/toggle-delete id])}
+        [components/delete-icon]
+        "Удалить"]]]]))
 
 (defn page-circle [value & selected]
   [:div {:class (c
@@ -202,34 +188,34 @@
           last-page @(subscribe [::subs/last-page])]
       [:<>
        (when (> (dec current-page) 1) ; first page
-         (page-circle 1))
+         [page-circle 1])
        (when (< 2 current-page) ; ...
          "...")
        (when (>= (dec current-page) 1) ; prev page
-         (page-circle (dec current-page)))
+         [page-circle (dec current-page)])
 
-       (page-circle current-page true) ; current page
+       [page-circle current-page true] ; current page
 
        (when (>= last-page (inc current-page))
-         (page-circle (inc current-page))) ; next page
+         [page-circle (inc current-page)]) ; next page
 
        (when (> (- last-page current-page) 1) ; ... if page is not last or prev-last
          "...")
 
        (when (> (- last-page current-page) 1)
-         (page-circle last-page))])))
+         [page-circle last-page])])))
 
 (defn new-ticket-top []
   [:div
    [:div
     {:class (c :grid [:grid-cols 2])}
-    (ticket-new-prop [:name]           "Название" "name" nil true)
-    (ticket-new-prop [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true)
-    (ticket-new-prop [:coordinates :y] "Координата y" "coordinates-y" "(целое число)" true)
-    (ticket-new-prop [:price]          "Цена" "price" "(> 0)" true)
-    (ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true)
-    (ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true)
-    (ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false)
+    [ticket-new-prop [:name]           "Название" "name" nil true]
+    [ticket-new-prop [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true]
+    [ticket-new-prop [:coordinates :y] "Координата y" "coordinates-y" "(целое число)" true]
+    [ticket-new-prop [:price]          "Цена" "price" "(> 0)" true]
+    [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
+    [ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true]
+    [ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false]
     [:div {:class (c [:p 5])}
      [:label {:for "event"} "Мероприятие"]
      [:input {:name "event"
@@ -244,8 +230,11 @@
 
 (defn tickets-view []
   (let [tickets-on-page @(re-frame/subscribe [::subs/tickets-on-page])
-        modal-opened?
-        @(subscribe [::subs/toggle-new])]
+        modal-opened? @(subscribe [::subs/toggle-new])
+        modal-delete-opened? @(subscribe [::subs/toggle-delete])
+        to-delete-id @(subscribe [::subs/ticket-to-delete-id])
+        modal-edit-opened?   @(subscribe [::subs/toggle-change])
+        to-edit-id @(subscribe [::subs/ticket-update-id])]
     [:div {:class (c :w-full)}
      [:div
       [:div
@@ -253,27 +242,45 @@
                   [:mb 5] [:mx 10])}
        [:span
         "Размер страницы:"
-        (components/selector [1 5 10 15 20 30 40 50 60]
-                             #(dispatch [::events/change-page-size
-                                         (.. % -target -value)])
-                             {:default-value 5})]]
+        [components/selector [1 5 10 15 20 30 40 50 60]
+         #(dispatch [::events/change-page-size
+                     (.. % -target -value)])
+         {:default-value 5}]]]
       [:div {:class (c :flex [:gap 4]
                        :items-center
                        :content-center
                        :justify-center)}
-       (paging-view (count tickets-on-page))]]
+       [paging-view (count tickets-on-page)]]]
      (when modal-opened?
        (components/modal
         "Новый билет"
-        (new-ticket-top)
-        (new-ticket-bot)
+        [new-ticket-top]
+        [new-ticket-bot]
         :modal-medium))
 
      [:div {:class (c :grid [:grid-cols 2])}
       [:div {:class [cls/div-center]
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]
-      (doall (for [[_ ticket] tickets-on-page]
-               (one-ticket ticket)))]]))
-
-
+      (doall
+        (for [[ticket-id _ticket] tickets-on-page]
+          ^{:key ticket-id}
+          [one-ticket ticket-id
+           (fn [] (dispatch [::events/delete-ticket ticket-id]))]))
+      (when modal-edit-opened?
+        [components/modal
+         (str "Изменение билета " to-edit-id)
+         [edit-ticket-view-top to-edit-id]
+         [edit-ticket-view-bot]
+         :modal-medium])
+      (when modal-delete-opened?
+        [components/modal
+         "Удаление"
+         (gstring/format "Вы уверены в удалении билета %s?" to-delete-id)
+         [:<>
+          [:button.deleteBtn
+           {:on-click #(dispatch [::events/delete-ticket to-delete-id])}
+           "Удалить"]
+          [:button.cancelBtn
+           {:on-click #(dispatch [::events/toggle-delete-false])}
+           "Отменить"]]])]]))

@@ -103,7 +103,7 @@
    (get-in db [:toggle-change])))
 
 (reg-sub
- ::ticket-update
+ ::ticket-update-id
  (fn [db [_]]
    (get-in db [:ticket :update-id])))
 
@@ -139,3 +139,14 @@
  ::ticket-edit-prop
  (fn [db [_ prop]]
    (get-in db (into [:ticket :edit :path] prop))))
+
+(reg-sub
+ ::ticket-to-delete-id
+ (fn [db [_]]
+   (get-in db [:ticket :to-delete])))
+
+
+(reg-sub
+ ::event-to-delete-id
+ (fn [db [_]]
+   (get-in db [:event :to-delete])))

@@ -3,6 +3,8 @@
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
    [client.events :as events]
    [client.debounce] ; to reg event :)
+   [goog.string :as gstring]
+   [goog.string.format]
    [client.myclasses :as cls]
    [client.mycomponents :as components]
    [client.subs :as subs])
@@ -77,58 +79,41 @@
           {:class (c [:px 3])
            :on-click #(dispatch [::events/start-event-update id])}]])
 
-(defn one-event [{:keys [id name date min-age event-type] :as event}]
-  (let [modal-edit-opened? @(subscribe [::subs/toggle-change])
-        modal-delete-opened? @(subscribe [::subs/toggle-delete])]
-    ^{:key id}
-    [:div
+(defn one-event [{:keys [id name date min-age event-type]}]
+  ^{:key id}
+  [:div
+   [:div
+    [:div {:class [(c [:bg "#FAFAFA"]
+                      [:border :current]
+                      :flex-row
+                      :flex
+                      :justify-between
+                      [:p 2]
+                      [:m 2]
+                      [:hover :shadow-inner [:bg :gray-200]]
+                      [:rounded :xl])]}
      [:div
-      [:div {:class [(c [:bg "#FAFAFA"]
-                        [:border :current]
-                        :flex-row
-                        :flex
-                        :justify-between
-                        [:p 2]
-                        [:m 2]
-                        [:hover :shadow-inner [:bg :gray-200]]
-                        [:rounded :xl])]}
-       [:div
-        [:div
-         [:span {:class (c :text-sm)} (take 10 date)  " " (event-type-icon event-type) " " [:span event-type] " "]
-         [:div
-          [:span {:class (c :text-xl :text-bold)} [:span name]]]]
-        [:span {:class (c :text-sm)} "Минимальный возраст: " min-age]]
-       [:div
-        {:class (c :text-xl [:pt 3])}]
-       [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
-        [:div
-         {:class [cls/base-class (c :cursor-pointer)]
-          :on-click #(dispatch [::events/start-ticket-update id])}
-         (edit-event-icon id)
-         "Изменить"]
+      [:div
+       [:div "ID: " id]
 
-        [:div
-         {:class [cls/base-class (c :cursor-pointer)]
-          :on-click #(dispatch [::events/toggle-delete])}
-         (components/delete-icon)
-         "Удалить"]
-        (when modal-edit-opened?
-          (components/modal
-           "Изменение мероприятия"
-           (edit-event-view-top id)
-           (edit-event-view-bot)
-           :modal-medium))
-        (when modal-delete-opened?
-          (components/modal
-           "Удаление"
-           "Вы уверены в удалении?"
-           [:<>
-            [:button.deleteBtn
-             {:on-click #(dispatch [::events/delete-event id])}
-             "Удалить"]
-            [:button.cancelBtn
-             {:on-click #(dispatch [::events/toggle-delete-false])}
-             "Отменить"]]))]]]]))
+       [:span {:class (c :text-sm)} (take 10 date)  " " (event-type-icon event-type) " " [:span event-type] " "]
+       [:div
+        [:span {:class (c :text-xl :text-bold)} [:span name]]]]
+      [:span {:class (c :text-sm)} "Минимальный возраст: " min-age]]
+     [:div
+      {:class (c :text-xl [:pt 3])}]
+     [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
+      [:div
+       {:class [cls/base-class (c :cursor-pointer)]
+        :on-click #(dispatch [::events/start-ticket-update id])}
+       (edit-event-icon id)
+       "Изменить"]
+
+      [:div
+       {:class [cls/base-class (c :cursor-pointer)]
+        :on-click #(dispatch [::events/toggle-delete-event id])}
+       (components/delete-icon)
+       "Удалить"]]]]])
 
 (defn page-circle [value & selected]
   [:div {:class (c
@@ -170,38 +155,56 @@
 
 (defn events-view []
   (let [events-on-page @(re-frame/subscribe [::subs/events-on-page])
-        modal-opened? @(subscribe [::subs/toggle-new])]
-    [:div {:class (c :w-full)}
+        modal-edit-opened? @(subscribe [::subs/toggle-change])
+        modal-delete-opened? @(subscribe [::subs/toggle-delete])
+        modal-opened? @(subscribe [::subs/toggle-new])
+        event-to-delete-id @(subscribe [::subs/event-to-delete-id])]
+   [:div {:class (c :w-full)}
+    [:div
      [:div
-      [:div
-       {:class (c :flex :items-center :content-center :justify-center
-                  [:mb 5] [:mx 10])}
-       [:span
-        "Размер страницы:"
-        (components/selector [1 5 10 15 20 30 40 50 60]
-                             #(dispatch [::events/change-page-size
-                                         (.. % -target -value)])
-                             {:default-value 5})]]
-      [:div {:class (c :flex [:gap 4]
-                       :items-center
-                       :content-center
-                       :justify-center)}
-       (paging-view (count events-on-page))]]
-     (when modal-opened?
-       (components/modal
-        "Новое мероприятие"
-        (new-event-top)
-        (new-event-bot)
-        :modal-medium))
+      {:class (c :flex :items-center :content-center :justify-center
+                 [:mb 5] [:mx 10])}
+      [:span
+       "Размер страницы:"
+       (components/selector [1 5 10 15 20 30 40 50 60]
+                            #(dispatch [::events/change-page-size
+                                        (.. % -target -value)])
+                            {:default-value 5})]]
+     [:div {:class (c :flex [:gap 4]
+                      :items-center
+                      :content-center
+                      :justify-center)}
+      (paging-view (count events-on-page))]]
+    (when modal-opened?
+     (components/modal
+      "Новое мероприятие"
+      [new-event-top]
+      [new-event-bot]
+      :modal-medium))
+    (when modal-edit-opened?
+     (components/modal
+      (str "Изменение мероприятия " event-to-delete-id)
+      (edit-event-view-top event-to-delete-id)
+      (edit-event-view-bot)
+      :modal-medium))
+    (when modal-delete-opened?
+     (components/modal
+      "Удаление"
+      (gstring/format "Вы уверены в удалении мероприятия %s?" event-to-delete-id)
+      [:<>
+       [:button.deleteBtn
+        {:on-click #(dispatch [::events/delete-event event-to-delete-id])}
+        "Удалить"]
+       [:button.cancelBtn
+        {:on-click #(dispatch [::events/toggle-delete-false])}
+        "Отменить"]]))
 
-     [:div {:class (c :grid [:grid-cols 3])}
-      [:div {:class [cls/div-center]
-             :on-click #(dispatch [::events/toggle-new])}
-       "НОВЫЙ"]
-      (doall
-       (for [[_ event] events-on-page]
-         (one-event event)))]]))
+    [:div {:class (c :grid [:grid-cols 3])}
+     [:div {:class [cls/div-center]
+            :on-click #(dispatch [::events/toggle-new])}
+      "НОВЫЙ"]
+     (doall
+      (for [[_ event] events-on-page]
+       (one-event event)))]]))
 
-(defn events-page []
-  (events-view))
 

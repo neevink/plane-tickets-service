@@ -128,31 +128,30 @@
 (defn home-panel []
   (let [mode @(re-frame/subscribe [::subs/mode])]
     [:div {:class (c [:px 15] [:py 2])}
-     [:h1 {:class (c :text-center)}
-      "SOA Lab2 Slava+Kirill24
+       [:h1 {:class (c :text-center)}
+        "SOA Lab2 Slava+Kirill24
 
-      todo delete id bug"]
-     [:div
-      {:class (c :font-mono [:pt 2])}
-      [:div
-       [:button
-        {:on-click #(dispatch [::events/set-mode :tickets])
-         :class (c [:px 1] :underline)}
-        "Билеты"]
-       [:button
-        {:on-click #(dispatch [::events/set-mode :events])
-         :class (c [:px 1] :underline)}
-        "Ивенты"]
-       [:div  {:class (c :flex)}
-        (header mode)
-
-        (when (= :events mode)
-          (events-view/events-page))
-        (when (= :tickets mode)
-          (tickets/tickets-view))]]]]))
+        todo delete events"]
+       [:div
+        {:class (c :font-mono [:pt 2])}
+        [:div
+         [:button
+          {:on-click #(dispatch [::events/set-mode :tickets])
+           :class (c [:px 1] :underline)}
+          "Билеты1"]
+         [:button
+          {:on-click #(dispatch [::events/set-mode :events])
+           :class (c [:px 1] :underline)}
+          "Ивенты"]
+         [:div {:class (c :flex)}
+          [header mode]
+          (when (= :events mode)
+            [events-view/events-view])
+          (when (= :tickets mode)
+            [tickets/tickets-view])]]]]))
 
 (defmethod routes/panels :home-panel [] [home-panel])
 
 (defn main-panel []
   (let [active-panel (re-frame/subscribe [::subs/active-panel])]
-    (routes/panels @active-panel)))
+    (fn [] [routes/panels @active-panel])))
