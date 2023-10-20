@@ -1,23 +1,9 @@
-- [x] CRUD:
-    - [x] create
-    - [x] read
-    - [x] update
-    - [x] delete
-- [x] ticket validation
-- [x] filter
-- [x] sort
-- [x] paging (with limit and offset)
-
+- [] create
+- [] update
+- [] paging
+- [] filter
+- [] sort
+- [] validation
 - [] GET /tickets/discount/sum
 - [] GET /tickets/type/count
 - [] GET /tickets/type/count
-- [] events CRUD
-    - [] create
-    - [] read
-    - [] update
-    - [] delete
-- [] events filter
-- [] events sort
-- [] event validation
-- [] integration with backends
-- [] events paging

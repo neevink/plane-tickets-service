@@ -111,6 +111,7 @@
                             {:value "USUAL" :desc "Обычный"}
                             {:value "BUDGETARY" :desc "Бюджетный"}
                             {:value "CHEAP" :desc "Дешевый"}])
+    ;; todo
     #_(input-with-init-value id [:event] "event" "event" "todo" true)]])
 
 (defn edit-ticket-view-bot []
@@ -127,8 +128,7 @@
 
 (defn one-ticket [id]
   (let [ticket @(subscribe [::subs/ticket-by-id id])
-        event @(subscribe [::subs/event-by-id (:eventId ticket)])
-        _ (prn "id " id " ticket id " (:id ticket))]
+        event  @(subscribe [::subs/event-by-id (:eventId ticket)])]
     ^{:key id}
     [:div
      [:div {:class [(c [:bg "#FAFAFA"]

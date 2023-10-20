@@ -27,6 +27,9 @@
 (defn http-delete [db url on-success on-failure]
   (call-http db url :delete on-success on-failure))
 
+(defn http-post [db url body on-success on-failure]
+  (call-http db url :delete on-success on-failure {:body body}))
+
 (re-frame/reg-event-db
  ::tickets-downloaded
  (fn [db [_ tickets]]
@@ -313,15 +316,37 @@
     :fx [[:dispatch [::save-form prop-path value]]
          [:dispatch [::validate-form]]]}))
 
+
+(re-frame/reg-event-fx
+ ::ticket-added
+ (fn [{:keys [db]} [_ ticket-resp]]
+   (let [ticket (:body ticket-resp)]
+     {:db (assoc-in db [:tickets (:id ticket)] ticket)
+      :dispatch [::toggle-new]})))
+
+(re-frame/reg-event-db
+ ::ticket-not-added
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::save-ticket-http
+ (fn [{:keys [db]} [_ ticket]]
+   {:db (http-post db (full-url "/tickets")
+             [::ticket-added]
+             [::ticket-not-added]
+             ticket)}))
+
 (reg-event-fx
  ::save-ticket-from-form
  (fn [{:keys [db]} [_]]
 
    #_"TODO: back"
    {:db (update db :tickets assoc 1000 (get db :form))
-    :fx [[:dispatch [::toggle-new]]
-         #_#_[:dispatch [::save-form prop-path value]]
-           [:dispatch [::validate-form]]]}))
+    :dispatch [::save-ticket-http]
+    ;; #_:fx [#_#_[:dispatch [::save-form prop-path value]]
+    ;;        [:dispatch [::validate-form]]]
+    }))
 
 (reg-event-fx
  ::save-event-from-form
