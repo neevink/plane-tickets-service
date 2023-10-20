@@ -1,6 +1,5 @@
 package com.ervelus.marineservice.service.impl;
 
-import com.ervelus.marineservice.converter.SpaceMarineConverter;
 import com.ervelus.marineservice.repository.SpaceMarineCrudRepository;
 import com.ervelus.marineservice.service.SpaceMarineCrudService;
 import ru.egormit.library.*;
@@ -17,22 +16,18 @@ import java.util.List;
 public class SpaceMarineCrudServiceImpl implements SpaceMarineCrudService {
     @Inject
     private SpaceMarineCrudRepository repository;
-    @Inject
-    private SpaceMarineConverter converter;
 
     @Override
     public void createSpaceMarine(SpaceMarineCreateRequest request) {
         SpaceMarine spaceMarine = new SpaceMarine();
         ZonedDateTime time = ZonedDateTime.now();
         spaceMarine.setCreationDate(time.with(LocalTime.of(0,0,0,0)));
-        repository.save(converter.createRequestToEntity(request, spaceMarine));
     }
 
     @Override
     public void updateSpaceMarine(Long id, SpaceMarineUpdateRequest request) {
         SpaceMarine spaceMarine = repository.getById(id);
         if (spaceMarine == null) throw new NotFoundException();
-        repository.save(converter.updateRequestToEntity(request, spaceMarine));
     }
 
     @Override
@@ -41,7 +36,6 @@ public class SpaceMarineCrudServiceImpl implements SpaceMarineCrudService {
         List<SpaceMarineResponse> responseList = new ArrayList<>();
         for (SpaceMarine marine : marines) {
             SpaceMarineResponse response = new SpaceMarineResponse();
-            responseList.add(converter.entityToResponse(marine, response));
         }
         return SpaceMarineSearchResponse.of(responseList, countPages(pageDto.getLimit()));
     }
@@ -50,7 +44,7 @@ public class SpaceMarineCrudServiceImpl implements SpaceMarineCrudService {
     public SpaceMarineResponse getSpaceMarineById(Long id) {
         SpaceMarine spaceMarine = repository.getById(id);
         SpaceMarineResponse response = new SpaceMarineResponse();
-        return converter.entityToResponse(spaceMarine, response);
+        return null;
     }
 
     @Override

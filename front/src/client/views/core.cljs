@@ -130,7 +130,7 @@
     [:div {:class (c [:px 15] [:py 2])}
      [:h1 {:class (c :text-center)}
       "SOA Lab2 Slava+Kirill24
-      
+
       todo delete id bug"]
      [:div
       {:class (c :font-mono [:pt 2])}

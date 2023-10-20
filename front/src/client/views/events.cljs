@@ -94,7 +94,7 @@
                         [:rounded :xl])]}
        [:div
         [:div
-         [:span {:class (c :text-sm)} date  " " (event-type-icon event-type) " " [:span event-type] " "]
+         [:span {:class (c :text-sm)} (take 10 date)  " " (event-type-icon event-type) " " [:span event-type] " "]
          [:div
           [:span {:class (c :text-xl :text-bold)} [:span name]]]]
         [:span {:class (c :text-sm)} "Минимальный возраст: " min-age]]
@@ -152,7 +152,7 @@
       [:<>
        (when (> (dec current-page) 1) ; first page
          (page-circle 1))
-       (when (< 2 current-page) ; ... 
+       (when (< 2 current-page) ; ...
          "...")
        (when (>= (dec current-page) 1) ; prev page
          (page-circle (dec current-page)))

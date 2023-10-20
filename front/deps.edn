@@ -7,26 +7,22 @@
   com.health-samurai/macrocss {:mvn/version "0.4.0"}
   reagent/reagent {:mvn/version "1.1.1"}
   re-frame/re-frame {:mvn/version "1.3.0"}
+
+  cljs-http/cljs-http {:mvn/version "0.1.46"}
+  org.clojars.arthurbarroso/re-frame-cljs-http {:mvn/version "0.1.0"}
+  ;; routing
   bidi/bidi {:mvn/version "2.1.6"}
+
+  ;; idk if I need it
   garden/garden  {:mvn/version "1.3.10"}
 
+  ;; shit for garden
   clj-commons/pushy {:mvn/version "0.3.10"}
   net.dhleong/spade {:mvn/version "1.1.0"}
 
   binaryage/devtools {:mvn/version "1.0.7"}
   re-frisk/re-frisk {:mvn/version "1.6.0"}
   }
-
- ;; [[reagent "1.1.1"]
-  ;; [re-frame "1.3.0"]
-  ;; [bidi "2.1.6"]
-  ;; clj-commons/pushy {:mvn/version "0.3.10"}
-  ;; [garden "1.3.10"]
-  ;; [com.health-samurai/macrocss "0.4.0"]
-  ;; [net.dhleong/spade "1.1.0"]
-
-  ;; [binaryage/devtools "1.0.6"]
-  ;; [re-frisk "1.6.0"]]
 
  :aliases {:shadow
            {:main-opts ["-m" "shadow.cljs.devtools.cli" "watch" "app"]}

@@ -1,6 +1,5 @@
 package com.ervelus.marineservice.service.impl;
 
-import com.ervelus.marineservice.converter.SpaceMarineConverter;
 import com.ervelus.marineservice.repository.SpaceMarineSearchRepository;
 import com.ervelus.marineservice.service.SpaceMarineSearchService;
 import ru.egormit.library.SpaceMarine;
@@ -17,8 +16,6 @@ import java.util.*;
 public class SpaceMarineSearchServiceImpl implements SpaceMarineSearchService {
     @Inject
     private SpaceMarineSearchRepository repository;
-    @Inject
-    private SpaceMarineConverter converter;
 
     @Override
     public SpaceMarineSearchResponse findAllSpaceMarineByFilter(SpaceMarineFilterRequest request) {
@@ -45,7 +42,6 @@ public class SpaceMarineSearchServiceImpl implements SpaceMarineSearchService {
         List<SpaceMarineResponse> responseList = new ArrayList<>();
         for (SpaceMarine marine : marines) {
             SpaceMarineResponse response = new SpaceMarineResponse();
-            responseList.add(converter.entityToResponse(marine, response));
         }
         return SpaceMarineSearchResponse.of(responseList, countPages(responseList.size(), request.getPage(), request.getLimit()));
     }
@@ -56,7 +52,6 @@ public class SpaceMarineSearchServiceImpl implements SpaceMarineSearchService {
         List<SpaceMarineResponse> responseList = new ArrayList<>();
         for (SpaceMarine marine : marines) {
             SpaceMarineResponse response = new SpaceMarineResponse();
-            responseList.add(converter.entityToResponse(marine, response));
         }
         return SpaceMarineSearchResponse.of(responseList, countPages(responseList.size(), request.getPage(), request.getLimit()));
     }
@@ -67,7 +62,6 @@ public class SpaceMarineSearchServiceImpl implements SpaceMarineSearchService {
         List<SpaceMarineResponse> responseList = new ArrayList<>();
         for (SpaceMarine marine : marines) {
             SpaceMarineResponse response = new SpaceMarineResponse();
-            responseList.add(converter.entityToResponse(marine, response));
         }
         return SpaceMarineSearchResponse.of(responseList, countPages(responseList.size(), request.getPage(), request.getLimit()));
     }

@@ -1,8 +1,71 @@
 (ns client.events
   (:require
-   [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
-   [client.validation :as validation]
+    [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
+    [client.validation :as validation]
+    [client.http :as http]
+    [re-frame-cljs-http.http-fx]
    [client.db :as db]))
+
+(def back-url "http://localhost:8080")
+
+(defn full-url [endpoint]
+  (str back-url endpoint))
+
+(defn http-get [db url on-success on-failure]
+  {:db (assoc db :loading? true)
+   :http-cljs {:method :get
+               :params {}
+               :with-credentials? false
+               :on-success on-success
+               :on-failure on-failure
+               :url url}})
+
+(re-frame/reg-event-db
+  ::tickets-downloaded
+  (fn [db [_ tickets]]
+    (let [tickets (:body tickets)
+          tickets (mapv (fn [ticket]
+                          (if-not (:eventId ticket)
+                            (assoc ticket :eventId (get-in ticket [:event :id]))
+                            ticket))
+                        tickets)
+          tickets-id-map (update-vals (group-by :id tickets) first)]
+      (-> db
+           (assoc :tickets tickets-id-map)))))
+
+(re-frame/reg-event-db
+  ::tickets-not-downloaded
+  (fn [db [_ result]]
+    (assoc db :http-result result :errors? true)))
+
+
+(reg-event-fx
+  ::download-tickets
+  (fn [{:keys [db]} _]
+    (http-get db (full-url "/tickets")
+              [::tickets-downloaded]
+              [::tickets-not-downloaded])))
+
+(re-frame/reg-event-db
+  ::events-downloaded
+  (fn [db [_ events]]
+    (let [events (:body events)
+          events-id-map (update-vals (group-by :id events) first)]
+      (-> db
+          (assoc :events events-id-map)))))
+
+(re-frame/reg-event-db
+  ::events-not-downloaded
+  (fn [db [_ result]]
+    (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+  ::download-events
+  (fn [{:keys [db]} _]
+    (http-get db  (full-url "/events")
+              [::events-downloaded]
+              [::events-not-downloaded])))
+
 
 (reg-event-db
  ::initialize-db
@@ -25,13 +88,6 @@
    (let [current (:current-ticket db)]
      {:db (assoc db :current-ticket (if (= ticket-id current) nil ticket-id))})))
 
-(reg-event-fx
- ::download-tickets
- (fn [{:keys [db]} [_ tickets]]
-   (let [tickets-id-map (update-vals (group-by :id tickets) first)]
-     {:db
-      (-> db
-          (assoc :tickets tickets-id-map))})))
 
 (defn move-ticket [db prev-id new-id]
   (-> (assoc-in db

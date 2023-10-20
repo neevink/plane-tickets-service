@@ -142,7 +142,7 @@
        [:div
         [:div
          [:div "ID : " id ]
-         [:span {:class (c :text-sm)} creationDate " " (type-view type) " " [:span type] " "]
+         [:span {:class (c :text-sm)} (.toLocaleString (js/Date. creationDate)) " " (type-view type) " " [:span type] " "]
          [:div
           [:span {:class (c :text-xl :text-bold)} [:span (or (:name event)
                                                              "Неизвестное мероприятие")]]]]
@@ -203,7 +203,7 @@
       [:<>
        (when (> (dec current-page) 1) ; first page
          (page-circle 1))
-       (when (< 2 current-page) ; ... 
+       (when (< 2 current-page) ; ...
          "...")
        (when (>= (dec current-page) 1) ; prev page
          (page-circle (dec current-page)))

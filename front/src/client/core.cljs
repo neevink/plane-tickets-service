@@ -1,13 +1,14 @@
 (ns client.core
   (:require
-    [reagent.dom :as rdom]
-    [reagent.core :as r]
-    [re-frame.core :as re-frame]
-    [client.events :as events]
-    [client.routes :as routes]
-    [client.views.core :as views]
-    [client.config :as config]
-    #_[devtools.core :as devtools]))
+   [reagent.dom :as rdom]
+   [reagent.core :as r]
+   [re-frame.core :as re-frame]
+   [client.events :as events]
+   [client.routes :as routes]
+   [client.views.core :as views]
+   [client.config :as config]
+   [client.http :as http]
+   #_[devtools.core :as devtools]))
 
 #_(devtools/install!)
 
@@ -16,7 +17,7 @@
     (println "dev mode")))
 
 (def compiler
-     (r/create-compiler {:function-components true}))
+  (r/create-compiler {:function-components true}))
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
@@ -28,6 +29,8 @@
   (routes/start!)
 
   (re-frame/dispatch-sync [::events/initialize-db])
+  (re-frame/dispatch-sync [::events/download-events])
+  (re-frame/dispatch-sync [::events/download-tickets])
   (dev-setup)
   (mount-root))
 
