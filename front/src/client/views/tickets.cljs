@@ -222,23 +222,33 @@
         modal-delete-opened? @(subscribe [::subs/toggle-delete])
         to-delete-id @(subscribe [::subs/ticket-to-delete-id])
         modal-edit-opened?   @(subscribe [::subs/toggle-change])
-        to-edit-id @(subscribe [::subs/ticket-update-id])]
+        to-edit-id @(subscribe [::subs/ticket-update-id])
+        count-tickets @(subscribe [::subs/count-tickets])
+        page-number @(subscribe [::subs/current-page])
+        page-size @(subscribe [::subs/page-size])]
     [:div {:class (c :w-full)}
      [:div
-      [:div
-       {:class (c :flex :items-center :content-center :justify-center
-                  [:mb 5] [:mx 10])}
-       [:span
-        "Размер страницы:"
-        [components/selector [1 5 10 15 20 30 40 50 60]
-         #(dispatch [::events/change-page-size
-                     (.. % -target -value)])
-         {:default-value 5}]]]
+      {:class (c :flex :content-between :justify-between
+                 [:mb 5] [:mx 10])}
+      [:span
+       (components/paging-label
+         (inc (* (dec page-number) page-size))
+         (+ (* (dec page-number) page-size)
+            (count tickets-on-page))
+         count-tickets)
+
+       [components/selector [1 5 10 15 20 30 40 50 60]
+        #(dispatch [::events/change-page-size
+                    (.. % -target -value)])
+        {:default-value 5
+         :cls (c [:w 15] [:ml 3])}]]
       [:div {:class (c :flex [:gap 4]
                        :items-center
                        :content-center
                        :justify-center)}
        [components/paging-view (count tickets-on-page)]]]
+
+
      (when modal-opened?
        (components/modal
         "Новый билет"

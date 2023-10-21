@@ -203,26 +203,25 @@
 
     [:div {:class (c :w-full)}
      [:div
-      [:div
-       {:class (c :flex #_:items-center #_:content-center #_:justify-center :content-between :justify-between
-                  [:mb 5] [:mx 10])}
-       [:span
-        (components/paging-label
-          (inc (* (dec page-number) page-size))
-          (+ (* (dec page-number) page-size)
-             (count events-on-page))
-          count-events)
+      {:class (c :flex :content-between :justify-between
+                 [:mb 5] [:mx 10])}
+      [:span
+       (components/paging-label
+         (inc (* (dec page-number) page-size))
+         (+ (* (dec page-number) page-size)
+            (count events-on-page))
+         count-events)
 
-        [components/selector [1 5 10 15 20 30 40 50 60]
+       [components/selector [1 5 10 15 20 30 40 50 60]
         #(dispatch [::events/change-page-size
                     (.. % -target -value)])
         {:default-value 5
          :cls (c [:w 15] [:ml 3])}]]
-       [:div {:class (c :flex [:gap 4]
-                        :items-center
-                        :content-center
-                        :justify-center)}
-        [components/paging-view (count events-on-page)]]]]
+      [:div {:class (c :flex [:gap 4]
+                       :items-center
+                       :content-center
+                       :justify-center)}
+       [components/paging-view (count events-on-page)]]]
 
      (when modal-opened?
        (components/modal
