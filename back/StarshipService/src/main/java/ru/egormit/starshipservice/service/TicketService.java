@@ -16,8 +16,9 @@ public interface TicketService {
      * Создание билета
      *
      * @param request билет
+     * @return
      */
-    void createTicket(CreateTicketRequest request);
+    TicketDto createTicket(CreateTicketRequest request);
 
     /**
      * Получение списка кораблей

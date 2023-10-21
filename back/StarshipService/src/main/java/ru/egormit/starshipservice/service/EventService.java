@@ -6,7 +6,7 @@ import ru.itmo.library.EventDto;
 import java.util.List;
 
 public interface EventService {
-    void createEvent(CreateEventRequest request);
+    EventDto createEvent(CreateEventRequest request);
 
     List<EventDto> getAllEvents();
 

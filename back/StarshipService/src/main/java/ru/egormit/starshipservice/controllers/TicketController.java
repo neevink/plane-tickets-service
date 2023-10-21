@@ -29,11 +29,11 @@ public class TicketController {
      * @param request тело запроса.
      */
     @PostMapping(value = Endpoints.CREATE_TICKET)
-    public ResponseEntity<Object> createTicket(
+    public ResponseEntity<TicketDto> createTicket(
             @RequestBody CreateTicketRequest request
     ) {
-        ticketService.createTicket(request);
-        return ResponseEntity.ok().build();
+        TicketDto ticketDto = ticketService.createTicket(request);
+        return new ResponseEntity<>(ticketDto, HttpStatus.OK);
     }
 
     /**

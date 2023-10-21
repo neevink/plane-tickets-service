@@ -39,13 +39,20 @@ public class EventServiceImpl implements EventService {
     private final EventModelMapper eventModelMapper;
 
     @Override
-    public void createEvent(CreateEventRequest request) {
+    public EventDto createEvent(CreateEventRequest request) {
         Event event = new Event();
         event.setName(request.getName());
         event.setDate(request.getDate());
         event.setMinAge(request.getMinAge());
         event.setEventType(request.getEventType());
         eventRepository.save(event);
+        EventDto createdEvent = new EventDto();
+        createdEvent.setId(event.getId());
+        createdEvent.setName(event.getName());
+        createdEvent.setDate(event.getDate());
+        createdEvent.setMinAge(event.getMinAge());
+        createdEvent.setEventType(event.getEventType());
+        return createdEvent;
     }
 
     public List<EventDto> getAllEvents() {

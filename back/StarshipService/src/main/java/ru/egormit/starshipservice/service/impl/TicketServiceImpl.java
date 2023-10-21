@@ -9,10 +9,7 @@ import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.egormit.starshipservice.utils.TicketModelMapper;
-import ru.itmo.library.CreateTicketRequest;
-import ru.itmo.library.Event;
-import ru.itmo.library.Ticket;
-import ru.itmo.library.TicketDto;
+import ru.itmo.library.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -50,7 +47,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketModelMapper ticketModelMapper;
 
     @Override
-    public void createTicket(CreateTicketRequest request) {
+    public TicketDto createTicket(CreateTicketRequest request) {
         Ticket ticket = new Ticket();
         ticket.setName(request.getName());
         ticket.setCoordinateX(request.getCoordinates().getX());
@@ -71,6 +68,17 @@ public class TicketServiceImpl implements TicketService {
             }
         }
         ticketRepository.save(ticket);
+
+        TicketDto createdTicket = new TicketDto();
+        createdTicket.setId(ticket.getId());
+        createdTicket.setName(ticket.getName());
+        createdTicket.setCoordinates(Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()));
+        createdTicket.setCreationDate(ticket.getCreationDate());
+        createdTicket.setPrice(ticket.getPrice());
+        createdTicket.setDiscount(ticket.getDiscount());
+        createdTicket.setRefundable(ticket.getRefundable());
+        createdTicket.setType(ticket.getType());
+        return createdTicket;
     }
 
     @Override

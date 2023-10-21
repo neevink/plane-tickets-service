@@ -29,11 +29,11 @@ public class EventController {
      * @param request тело запроса.
      */
     @PostMapping(value = Endpoints.CREATE_EVENT)
-    public ResponseEntity<Object> createEvent(
+    public ResponseEntity<EventDto> createEvent(
             @RequestBody CreateEventRequest request
     ) {
-        eventService.createEvent(request);
-        return ResponseEntity.ok().build();
+        EventDto newEvent = eventService.createEvent(request);
+        return new ResponseEntity<>(newEvent, HttpStatus.OK);
     }
 
     /**
