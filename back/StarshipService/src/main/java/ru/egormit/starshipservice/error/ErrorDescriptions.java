@@ -3,7 +3,7 @@ package ru.egormit.starshipservice.error;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import ru.egormit.library.ErrorResponse;
+import ru.itmo.library.common.ErrorResponse;
 
 /**
  * Ошибки с комментариями.
@@ -16,7 +16,9 @@ public enum ErrorDescriptions {
     HANDLER_NOT_FOUND("Не найден обработчик", HttpStatus.NOT_FOUND),
     SPACEMACS_IS_BUSY("Этот космодесантник уже на другом корабле", HttpStatus.BAD_REQUEST),
     STARSHIP_IS_EMPTY("Этот космический корабль уже пустой", HttpStatus.BAD_REQUEST),
-    STARSHIP_NOT_FOUND("Этот космический корабль уже пустой", HttpStatus.NOT_FOUND);
+    STARSHIP_NOT_FOUND("Этот космический корабль уже пустой", HttpStatus.NOT_FOUND),
+    TICKET_NOT_FOUND("Билет с заданным ID не найден", HttpStatus.NOT_FOUND),
+    EVENT_NOT_FOUND("Событие с заданным ID не найдено", HttpStatus.NOT_FOUND);
 
     /**
      * Сообщение ошибки.

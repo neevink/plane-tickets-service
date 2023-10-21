@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
-import ru.egormit.library.ErrorResponse;
+import ru.itmo.library.common.ErrorResponse;
 import ru.egormit.starshipservice.error.ApplicationException;
 
 import java.io.IOException;

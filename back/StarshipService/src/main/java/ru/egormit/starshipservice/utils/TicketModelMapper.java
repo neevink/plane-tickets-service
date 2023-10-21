@@ -3,9 +3,7 @@ package ru.egormit.starshipservice.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.egormit.library.Coordinates;
-import ru.egormit.library.SpaceMarineResponse;
-import ru.egormit.library.SpaceMarineUpdateRequest;
+import ru.itmo.library.Coordinates;
 import ru.itmo.library.Ticket;
 import ru.itmo.library.TicketDto;
 
@@ -25,18 +23,4 @@ public class TicketModelMapper {
         dto.setEvent(ticket.getEvent());
         return dto;
     }
-
-    public SpaceMarineUpdateRequest map(SpaceMarineResponse response) {
-        SpaceMarineUpdateRequest request = new SpaceMarineUpdateRequest();
-        request.setId(response.getId());
-        request.setName(response.getName());
-        request.setCoordinates(response.getCoordinates());
-        request.setCategory(response.getCategory());
-        request.setWeaponType(response.getWeaponType());
-        request.setMeleeWeapon(response.getMeleeWeapon());
-        request.setCreationDate(response.getCreationDate());
-        request.setHealth(response.getHealth());
-        return request;
-    }
-
 }

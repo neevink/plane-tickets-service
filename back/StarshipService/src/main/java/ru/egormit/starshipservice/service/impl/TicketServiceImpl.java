@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.egormit.starshipservice.domain.EventRepository;
 import ru.egormit.starshipservice.domain.TicketRepository;
+import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.egormit.starshipservice.utils.TicketModelMapper;
@@ -60,9 +61,12 @@ public class TicketServiceImpl implements TicketService {
         ticket.setRefundable(request.getRefundable());
         ticket.setType(request.getType());
 
-        if (eventRepository.existsById(request.getEventId())) {
-            Optional<Event> event = eventRepository.findById(request.getEventId());
-            if (event.isPresent()){
+        if (request.getEventId() != null) {
+            if (!eventRepository.existsById(request.getEventId())) {
+                throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+            }
+            else {
+                Optional<Event> event = eventRepository.findById(request.getEventId());
                 ticket.setEvent(event.get());
             }
         }
@@ -79,19 +83,25 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDto getTicketById(Long ticketId) {
+        if (!ticketRepository.existsById(ticketId)) {
+            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
+        }
         Ticket ticket = ticketRepository.getById(ticketId);
         return ticketModelMapper.map(ticket);
     }
 
     @Override
     public void deleteTicketById(Long ticketId) {
+        if (!ticketRepository.existsById(ticketId)){
+            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
+        }
         ticketRepository.deleteById(ticketId);
     }
 
     @Override
     public void updateTicketById(Long ticketId, CreateTicketRequest request) {
         if (!ticketRepository.existsById(ticketId)) {
-            return;  // raise 404 exception
+            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
         }
 
         Ticket updatedTicket = new Ticket();
@@ -105,9 +115,12 @@ public class TicketServiceImpl implements TicketService {
         updatedTicket.setRefundable(request.getRefundable());
         updatedTicket.setType(request.getType());
 
-        if (eventRepository.existsById(request.getEventId())) {
-            Optional<Event> event = eventRepository.findById(request.getEventId());
-            if (event.isPresent()){
+        if (request.getEventId() != null) {
+            if (!eventRepository.existsById(request.getEventId())) {
+                throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+            }
+            else {
+                Optional<Event> event = eventRepository.findById(request.getEventId());
                 updatedTicket.setEvent(event.get());
             }
         }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.egormit.starshipservice.domain.EventRepository;
+import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.EventService;
 import ru.egormit.starshipservice.utils.EventModelMapper;
@@ -56,19 +57,27 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto getEventById(Long eventId) {
+        if (!eventRepository.existsById(eventId)){
+            throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+        }
+
         Event event = eventRepository.getById(eventId);
         return eventModelMapper.map(event);
     }
 
     @Override
     public void deleteEventById(Long eventId) {
+        if (!eventRepository.existsById(eventId)){
+            throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+        }
+
         eventRepository.deleteById(eventId);
     }
 
     @Override
     public void updateEventById(Long eventId, CreateEventRequest request) {
         if (!eventRepository.existsById(eventId)) {
-            return;  // raise 404 exception
+            throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
         }
 
         Event updatedEvent = new Event();

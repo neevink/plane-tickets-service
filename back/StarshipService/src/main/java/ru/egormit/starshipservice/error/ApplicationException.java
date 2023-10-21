@@ -1,7 +1,7 @@
 package ru.egormit.starshipservice.error;
 
 import lombok.Getter;
-import ru.egormit.library.ErrorResponse;
+import ru.itmo.library.common.ErrorResponse;
 
 /**
  * Кастомные исключения.

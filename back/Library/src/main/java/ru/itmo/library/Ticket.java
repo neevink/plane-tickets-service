@@ -3,11 +3,9 @@ package ru.itmo.library;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.egormit.library.SpaceMarine;
 import ru.itmo.library.enums.TicketType;
 
 import javax.persistence.*;
-import java.util.Set;
 
 /**
  * Сущность Ticket.
@@ -42,7 +40,7 @@ public class Ticket {
      * Координата Y.
      */
     @Column(name = "coordinate_y")
-    private Long coordinateY;
+    private Float coordinateY;
 
     /**
      * Дата создания.

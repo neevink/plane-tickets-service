@@ -5,7 +5,7 @@ import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.egormit.library.ErrorResponse;
+import ru.itmo.library.common.ErrorResponse;
 import ru.egormit.starshipservice.error.ApplicationException;
 
 import java.io.IOException;
