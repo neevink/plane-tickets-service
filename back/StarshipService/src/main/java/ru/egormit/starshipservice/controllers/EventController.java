@@ -74,4 +74,10 @@ public class EventController {
         eventService.updateEventById(eventId, request);
         return new ResponseEntity<>("updated", HttpStatus.OK);
     }
+
+    // front needs this!!!!!!!!
+    @GetMapping(value = Endpoints.GET_EVENTS_COUNT)
+    public ResponseEntity<Long> countTickets() {
+        return new ResponseEntity<>(eventService.countEvents(), HttpStatus.OK);
+    }
 }

@@ -123,22 +123,21 @@
   [:div {:class (c :flex :flex-col)}
    (sort-view mode)
    [:hr {:class (c [:pt 2])}]
-   (filter-view mode)])
+   (filter-view mode)]
+  )
 
 (defn home-panel []
   (let [mode @(re-frame/subscribe [::subs/mode])]
     [:div {:class (c [:px 15] [:py 2])}
      [:h1 {:class (c :text-center)}
-      "SOA Lab2 Slava+Kirill24
-
-        todo delete events"]
+      "SOA Lab2 Slava+Kirill24"]
      [:div
       {:class (c :font-mono [:pt 2])}
       [:div
        [:button
         {:on-click #(dispatch [::events/set-mode :tickets])
          :class (c [:px 1] :underline)}
-        "Билеты1"]
+        "Билеты"]
        [:button
         {:on-click #(dispatch [::events/set-mode :events])
          :class (c [:px 1] :underline)}

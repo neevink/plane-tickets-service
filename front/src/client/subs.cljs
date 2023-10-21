@@ -99,7 +99,12 @@
 (reg-sub
  ::last-page
  (fn [db [_]]
-   (get-in db [:paging :last-page])))
+  (let [mode (:mode db)
+        entity  (if (= mode :tickets) :count-tickets :count-events)]
+   (js/Math.ceil
+    (double
+     (/ (get-in db [entity])
+        (get-in db [:paging :page-size])))))))
 
 (reg-sub
  ::toggle-change
@@ -175,7 +180,15 @@
  ::initialized?
  (fn [db _]
   (and (find db :events)
-       (find db :tickets)))
+       (find db :tickets))))
 
- )
+(reg-sub
+ ::count-events
+ (fn [db _]
+  (get db :count-events)))
 
+
+(reg-sub
+ ::count-tickets
+ (fn [db _]
+  (get db :count-tickets)))

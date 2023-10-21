@@ -96,4 +96,9 @@ public class EventServiceImpl implements EventService {
 
         eventRepository.save(updatedEvent);
     }
+
+    @Override
+    public long countEvents() {
+        return eventRepository.count();
+    }
 }

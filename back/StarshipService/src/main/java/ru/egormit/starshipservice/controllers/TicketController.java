@@ -80,4 +80,10 @@ public class TicketController {
         ticketService.updateTicketById(ticketId, request);
         return new ResponseEntity<>("updated", HttpStatus.OK);
     }
+
+    // front needs this!!!!!!!!
+    @GetMapping(value = Endpoints.GET_TICKETS_COUNT)
+    public ResponseEntity<Long> countTickets() {
+        return new ResponseEntity<>(ticketService.countTickets(), HttpStatus.OK);
+    }
 }

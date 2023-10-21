@@ -32,7 +32,7 @@
         opened? @(subscribe [::subs/ticket-edit-prop prop-path])
         on-change-fn
         #(dispatch [:dispatch-debounce
-                    {:delay 500
+                    {:delay 300
                      :event [::events/change-ticket-and-validate prop-path (.. % -target -value)]}])]
     [:div
      {:class (c :border)}
@@ -65,7 +65,7 @@
          (when-not select-values
            [:label {:for label-id
                     :class (c :text-lg :font-light :italic)} (when descr descr)])])
-      [:div
+      [:div {:class (c :text-sm)}
        (when invalid-message
          (:message invalid-message))]]]))
 
@@ -75,7 +75,7 @@
         invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])
         on-change-fn
         #(dispatch [:dispatch-debounce
-                    {:delay 500
+                    {:delay 300
                      :event [::events/change-ticket-and-validate prop-path (.. % -target -value)]}])]
     [:div {:class (c [:px 5] :flex :flex-col)}
 
@@ -84,8 +84,7 @@
        (components/selector
         select-values
         on-change-fn
-        {:default-value "="
-         :cls (c :w-full [:mb 2])})
+        {:cls (c :w-full [:mb 2])})
 
        [:input {:name label-id
                 :id label-id
@@ -98,7 +97,8 @@
      [:div
       [:label {:for label-id
                :class (c :text-lg :font-light :italic)} (when descr descr)]]
-     [:div (when invalid-message
+     [:div {:class (c :text-sm)}
+      (when invalid-message
              (:message invalid-message))]]))
 
 (defn edit-ticket-icon []
@@ -179,66 +179,17 @@
         [components/delete-icon]
         "Удалить"]]]]))
 
-(defn page-circle [value & selected]
-  [:div {:class (c
-                 [:w 10]
-                 :cursor-pointer
-                 [:pt 2]
-                 [:rounded :xl]
-                 [:hover :shadow-inner [:bg :gray-200]]
-                 :text-center
-                 [:h 10])
-         :style (when selected {:background-color "#4281f5"
-                                :color "white"})
-         :on-click #(dispatch [::events/change-page value])}
-   value])
-
-(defn paging-view [tickets]
-  (when (> tickets 0)
-    (let [current-page @(subscribe [::subs/current-page])
-          last-page @(subscribe [::subs/last-page])]
-      [:<>
-       (when (> (dec current-page) 1) ; first page
-         [page-circle 1])
-       (when (< 2 current-page) ; ...
-         "...")
-       (when (>= (dec current-page) 1) ; prev page
-         [page-circle (dec current-page)])
-
-       [page-circle current-page true] ; current page
-
-       (when (>= last-page (inc current-page))
-         [page-circle (inc current-page)]) ; next page
-
-       (when (> (- last-page current-page) 1) ; ... if page is not last or prev-last
-         "...")
-
-       (when (> (- last-page current-page) 1)
-         [page-circle last-page])])))
-
-#_(defn event-id-view []
-    (let [events @(subscribe [::subs/events])]
-      (components/selector
-       select-values
-
-       #(dispatch [:dispatch-debounce
-                   {:delay 500
-                    :event [::events/change-ticket-and-validate [:eventId]
-                            (.. % -target -value)]}])
-       {:default-value "="
-        :cls (c :w-full [:mb 2])})))
-
 (defn new-ticket-top []
   (let
    [events @(subscribe [::subs/events])
     nice-events (mapv (fn [[event-id event]]
-                      {:value event-id
-                       :desc
-                       (str
-                        (:name event) " "
-                        (.toLocaleString (js/Date. (:date event))))})
-                     events)]
-   [:div
+                        {:value (long event-id)
+                         :desc
+                         (str
+                          (:name event) " "
+                          (.toLocaleString (js/Date. (:date event))))})
+                      events)]
+    [:div
      {:class (c :grid [:grid-cols 2])}
      [ticket-new-prop [:name]           "Название" "name" nil true]
      [ticket-new-prop [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true]
@@ -247,23 +198,14 @@
      [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
      [ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true
       [{:value true :desc "Да"}
-       {:value false :desc "Нет"}]
-      ]
+       {:value false :desc "Нет"}]]
      [ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false
       [{:value "VIP" :desc "VIP"}
        {:value "USUAL" :desc "Обычный"}
        {:value "BUDGETARY" :desc "Бюджетный"}
-       {:value "CHEAP" :desc "Дешевый"}]
-
-      ]
+       {:value "CHEAP" :desc "Дешевый"}]]
      [ticket-new-prop [:eventId]        "Мероприятие" "eventId" "" true
-      nice-events]
-
-
-     [:div {:class (c [:p 5])}
-      [:label {:for "event"} "Мероприятие"]
-      [:input {:name "event"
-               :placeholder "-"}]]]))
+      nice-events]]))
 
 (defn new-ticket-bot []
   (let [form-valid? @(subscribe [::subs/form-valid?])]
@@ -296,7 +238,7 @@
                        :items-center
                        :content-center
                        :justify-center)}
-       [paging-view (count tickets-on-page)]]]
+       [components/paging-view (count tickets-on-page)]]]
      (when modal-opened?
        (components/modal
         "Новый билет"

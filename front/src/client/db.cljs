@@ -71,8 +71,8 @@
   {:active-panel :home-panel
    :toggle-new false
    :toggle-change false
-   :paging {:current-page 1 :last-page 5
-            :page-size 7}
+   :paging {:current-page 1
+            :page-size 5}
    :ticket {:update-id 1
             :edit {:ticket-id 1
                    :path {:name false
