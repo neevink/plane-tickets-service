@@ -8,14 +8,14 @@
    (:active-panel db)))
 
 (reg-sub
- ::current-ticket
- (fn [db _]
-   (get-in db [:current-ticket])))
-
-(reg-sub
  ::tickets
  (fn [db _]
    (get-in db [:tickets])))
+
+(reg-sub
+ ::events
+ (fn [db _]
+   (get-in db [:events])))
 
 (reg-sub
  ::ticket-by-id
@@ -52,30 +52,34 @@
  (fn [db [_]]
    (let [form (get db :form-valid)]
      (or (nil? form)
+         (= :ok form)
          (and (or (vector? form) (seq? form)) (empty? form))))))
 
 (reg-sub
  ::events-form-valid?
  (fn [db [_]]
-   (let [form (get db :events-form-valid)]
+   (let [form (get db :event-form-valid)]
      (or (nil? form)
+         (= :ok form)
          (and (or (vector? form) (seq? form)) (empty? form))))))
 
 (reg-sub
  ::form-path-invalid-message
  (fn [db [_ prop-path]]
-   (first (vec (filter
-                (fn [error-mp]
-                  (= prop-path (:path error-mp)))
-                (get db :form-valid))))))
+   (when (not= :ok  (get db :form-valid))
+     (first (vec (filter
+                  (fn [error-mp]
+                    (= prop-path (:path error-mp)))
+                  (get db :form-valid)))))))
 
 (reg-sub
  ::event-form-path-invalid-message
  (fn [db [_ prop-path]]
-   (first (vec (filter
-                (fn [error-mp]
-                  (= prop-path (:path error-mp)))
-                (get db :event-form-valid))))))
+   (when (not= :ok (get db :event-form-valid))
+     (first (vec (filter
+                  (fn [error-mp]
+                    (= prop-path (:path error-mp)))
+                  (get db :event-form-valid)))))))
 
 (reg-sub
  ::toggle-new
@@ -140,13 +144,38 @@
  (fn [db [_ prop]]
    (get-in db (into [:ticket :edit :path] prop))))
 
+
+(reg-sub
+ ::event-edit-prop
+ (fn [db [_ prop]]
+   (get-in db (into [:event :edit :path] prop))))
+
 (reg-sub
  ::ticket-to-delete-id
  (fn [db [_]]
    (get-in db [:ticket :to-delete])))
 
+(reg-sub
+ ::event-to-delete-id
+ (fn [db [_]]
+   (get-in db [:ticket :to-delete])))
 
 (reg-sub
  ::event-to-delete-id
  (fn [db [_]]
    (get-in db [:event :to-delete])))
+
+(reg-sub
+ ::event-to-edit-id
+ (fn [db [_]]
+   (get-in db [:event :to-edit])))
+
+
+(reg-sub
+ ::initialized?
+ (fn [db _]
+  (and (find db :events)
+       (find db :tickets)))
+
+ )
+

@@ -37,7 +37,8 @@
     [:div
      {:class (c :border)}
      [:span
-      [:label {:for label-id} label (when required? [:span {:style {:color "#dc2626"}} "*"])]]
+      [:label {:for label-id} label
+       (when required? [:span {:style {:color "#dc2626"}} "*"])]]
      [:div {:class (c :text-sm)}
       (when-not opened?
         [:span
@@ -63,26 +64,36 @@
 
          (when-not select-values
            [:label {:for label-id
-                    :class (c :text-lg :font-light :italic)} (when descr descr)])
-         [:div
-          (when invalid-message
-            (:message invalid-message))]])]]))
+                    :class (c :text-lg :font-light :italic)} (when descr descr)])])
+      [:div
+       (when invalid-message
+         (:message invalid-message))]]]))
 
-(defn ticket-new-prop [prop-path label label-id descr required?]
+(defn ticket-new-prop [prop-path label label-id descr required?
+                       & [select-values]]
   (let [current-value  @(re-frame.core/subscribe [::subs/form-prop prop-path])
-        invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])]
+        invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])
+        on-change-fn
+        #(dispatch [:dispatch-debounce
+                    {:delay 500
+                     :event [::events/change-ticket-and-validate prop-path (.. % -target -value)]}])]
     [:div {:class (c [:px 5] :flex :flex-col)}
 
      [:label {:for label-id} label (when required? [:span {:style {:color "#dc2626"}} "*"])]
-     [:input {:name label-id
-              :id label-id
-              :class (c :border [:h 10] :text-2xl)
-              :maxLength 30
-              :on-change
-              #(dispatch [:dispatch-debounce
-                          {:delay 500
-                           :event [::events/save-form prop-path (.. % -target -value)]}])
-              :placeholder (str current-value)}]
+     (if select-values
+       (components/selector
+        select-values
+        on-change-fn
+        {:default-value "="
+         :cls (c :w-full [:mb 2])})
+
+       [:input {:name label-id
+                :id label-id
+                :class (c :border [:h 10] :text-2xl)
+                :maxLength 30
+                :on-change
+                on-change-fn
+                :placeholder (str current-value)}])
 
      [:div
       [:label {:for label-id
@@ -90,10 +101,9 @@
      [:div (when invalid-message
              (:message invalid-message))]]))
 
-(defn edit-ticket-icon [id]
+(defn edit-ticket-icon []
   [:span [:i.fa-solid.fa-pen-to-square
-          {:class (c [:px 3])
-           :on-click #(dispatch [::events/start-ticket-update id])}]])
+          {:class (c [:px 3])}]])
 
 (defn edit-ticket-view-top [id]
   [:div
@@ -102,6 +112,7 @@
     (input-with-init-value id [:name] "Название" "name" nil true)
     (input-with-init-value id [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true)
     (input-with-init-value id [:coordinates :y] "Координата y" "coordinates-y" "целое число" true)
+    (input-with-init-value id [:creationDate] "Дата создания" "creation-date" "YYYY-MM-DD" true)
     (input-with-init-value id [:price] "Цена" "price" "(> 0)" true)
     (input-with-init-value id [:discount] "Скидка" "discount" "(от 0 до 100)" true)
     (input-with-init-value id [:refundable] "Возвратный" "refundable" "true/false" true [{:value true :desc "Да"}
@@ -159,7 +170,7 @@
        [:div
         {:class [cls/base-class (c :cursor-pointer)]
          :on-click #(dispatch [::events/start-ticket-update id])}
-        (edit-ticket-icon id)
+        (edit-ticket-icon)
         "Изменить"]
 
        [:div
@@ -205,28 +216,63 @@
        (when (> (- last-page current-page) 1)
          [page-circle last-page])])))
 
+#_(defn event-id-view []
+    (let [events @(subscribe [::subs/events])]
+      (components/selector
+       select-values
+
+       #(dispatch [:dispatch-debounce
+                   {:delay 500
+                    :event [::events/change-ticket-and-validate [:eventId]
+                            (.. % -target -value)]}])
+       {:default-value "="
+        :cls (c :w-full [:mb 2])})))
+
 (defn new-ticket-top []
-  [:div
+  (let
+   [events @(subscribe [::subs/events])
+    nice-events (mapv (fn [[event-id event]]
+                      {:value event-id
+                       :desc
+                       (str
+                        (:name event) " "
+                        (.toLocaleString (js/Date. (:date event))))})
+                     events)]
    [:div
-    {:class (c :grid [:grid-cols 2])}
-    [ticket-new-prop [:name]           "Название" "name" nil true]
-    [ticket-new-prop [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true]
-    [ticket-new-prop [:coordinates :y] "Координата y" "coordinates-y" "(целое число)" true]
-    [ticket-new-prop [:price]          "Цена" "price" "(> 0)" true]
-    [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
-    [ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true]
-    [ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false]
-    [:div {:class (c [:p 5])}
-     [:label {:for "event"} "Мероприятие"]
-     [:input {:name "event"
-              :placeholder "-"}]]]])
+     {:class (c :grid [:grid-cols 2])}
+     [ticket-new-prop [:name]           "Название" "name" nil true]
+     [ticket-new-prop [:coordinates :x] "Координата x" "coordinates-x" "(x > - 686)" true]
+     [ticket-new-prop [:coordinates :y] "Координата y" "coordinates-y" "(целое число)" true]
+     [ticket-new-prop [:price]          "Цена" "price" "(> 0)" true]
+     [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
+     [ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true
+      [{:value true :desc "Да"}
+       {:value false :desc "Нет"}]
+      ]
+     [ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false
+      [{:value "VIP" :desc "VIP"}
+       {:value "USUAL" :desc "Обычный"}
+       {:value "BUDGETARY" :desc "Бюджетный"}
+       {:value "CHEAP" :desc "Дешевый"}]
+
+      ]
+     [ticket-new-prop [:eventId]        "Мероприятие" "eventId" "" true
+      nice-events]
+
+
+     [:div {:class (c [:p 5])}
+      [:label {:for "event"} "Мероприятие"]
+      [:input {:name "event"
+               :placeholder "-"}]]]))
 
 (defn new-ticket-bot []
-  [:div {:class (c :flex [:gap 4])}
-   [:button.submitBtn {:class (c [:w-min 100] [:bg :green-500])
-                       :on-click #(dispatch [::events/save-ticket-from-form])} "Создать"]
-   [:button.cancelBtn {:class (c [:w-min 100])
-                       :on-click #(dispatch [::events/toggle-new])} "Отменить"]])
+  (let [form-valid? @(subscribe [::subs/form-valid?])]
+    [:div {:class (c :flex [:gap 4])}
+     (when form-valid?
+       [:button.submitBtn {:class (c [:w-min 100] [:bg :green-500])
+                           :on-click #(dispatch [::events/save-ticket-from-form])} "Создать"])
+     [:button.cancelBtn {:class (c [:w-min 100])
+                         :on-click #(dispatch [::events/toggle-new])} "Отменить"]]))
 
 (defn tickets-view []
   (let [tickets-on-page @(re-frame/subscribe [::subs/tickets-on-page])
@@ -263,10 +309,10 @@
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]
       (doall
-        (for [[ticket-id _ticket] tickets-on-page]
-          ^{:key ticket-id}
-          [one-ticket ticket-id
-           (fn [] (dispatch [::events/delete-ticket ticket-id]))]))
+       (for [[ticket-id _ticket] tickets-on-page]
+         ^{:key ticket-id}
+         [one-ticket ticket-id
+          (fn [] (dispatch [::events/delete-ticket ticket-id]))]))
       (when modal-edit-opened?
         [components/modal
          (str "Изменение билета " to-edit-id)

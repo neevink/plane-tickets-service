@@ -10,7 +10,8 @@
        (some messages)))
 
 (defn validate-event [new-event]
-  (if (s/valid? ::event new-event) :ok
+  (prn "validate-event " new-event)
+  (if (s/valid? ::event-validation/event new-event) :ok
       (filter (fn [m] (-> m :path not-empty))
               (mapv
                (fn [{path :path via :via}]
@@ -19,7 +20,8 @@
                (:cljs.spec.alpha/problems (s/explain-data ::event-validation/event new-event))))))
 
 (defn validate-ticket [new-ticket]
-  (if (s/valid? ::ticket new-ticket) :ok
+  (prn "ticket " new-ticket)
+  (if (s/valid? ::ticket-validation/ticket new-ticket) :ok
       (filter (fn [m] (-> m :path not-empty))
               (mapv
                (fn [{path :path via :via}]

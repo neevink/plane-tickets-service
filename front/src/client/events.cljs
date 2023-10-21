@@ -2,7 +2,6 @@
   (:require
    [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
    [client.validation :as validation]
-   [client.http :as http]
    [re-frame-cljs-http.http-fx]
    [client.db :as db]))
 
@@ -11,15 +10,25 @@
 (defn full-url [endpoint]
   (str back-url endpoint))
 
-(defn call-http [db url method on-success on-failure & params]
-  {:db (assoc db :loading? true)
-   :http-cljs (merge {:method method
-                      :params {}
-                      :with-credentials? false
-                      :on-success on-success
-                      :on-failure on-failure
-                      :url url}
-                     params)})
+(defn call-http
+  ([db url method on-success on-failure]
+   {:db (assoc db :loading? true)
+    :http-cljs {:method method
+                :params {}
+                :with-credentials? false
+                :on-success on-success
+                :on-failure on-failure
+                :url url}})
+  ([db url method on-success on-failure params]
+   {:db (assoc db :loading? true)
+    :http-cljs (merge {:method method
+                       :params {}
+                       :format :json
+                       :with-credentials? false
+                       :on-success on-success
+                       :on-failure on-failure
+                       :url url}
+                      params)}))
 
 (defn http-get [db url on-success on-failure]
   (call-http db url :get on-success on-failure))
@@ -28,16 +37,31 @@
   (call-http db url :delete on-success on-failure))
 
 (defn http-post [db url body on-success on-failure]
-  (call-http db url :delete on-success on-failure {:body body}))
+  (call-http db url :post on-success on-failure {:params body}))
+
+(defn http-put [db url body on-success on-failure]
+  {:db (assoc db :loading? true)
+   :http-cljs {:method :put
+               :params body
+               :format :json
+               :with-credentials? false
+               :on-success on-success
+               :on-failure on-failure
+               ;; :json-params body
+               :url url}})
+
+(defn hack-creation-date [ticket]
+  (update ticket :creationDate #(->> % (take 10) (apply str))))
 
 (re-frame/reg-event-db
  ::tickets-downloaded
  (fn [db [_ tickets]]
    (let [tickets (:body tickets)
          tickets (mapv (fn [ticket]
-                         (if-not (:eventId ticket)
-                           (assoc ticket :eventId (get-in ticket [:event :id]))
-                           ticket))
+                         (-> (if-not (:eventId ticket)
+                               (assoc ticket :eventId (get-in ticket [:event :id]))
+                               ticket)
+                             (hack-creation-date)))
                        tickets)
          tickets-id-map (update-vals (group-by :id tickets) first)]
      (-> db
@@ -75,10 +99,12 @@
              [::events-downloaded]
              [::events-not-downloaded])))
 
-(reg-event-db
+(reg-event-fx
  ::initialize-db
  (fn [_ _]
-   db/default-db))
+   {:db db/default-db
+    :fx [[:dispatch  [::download-events]]
+         [:dispatch  [::download-tickets]]]}))
 
 (reg-event-fx
  ::navigate
@@ -90,52 +116,44 @@
  (fn [{:keys [db]} [_ active-panel]]
    {:db (assoc db :active-panel active-panel)}))
 
-(reg-event-fx
- ::select-ticket
- (fn [{:keys [db]} [_ ticket-id]]
-   (let [current (:current-ticket db)]
-     {:db (assoc db :current-ticket (if (= ticket-id current) nil ticket-id))})))
-
-(defn move-ticket [db prev-id new-id]
-  (-> (assoc-in db
-                [:tickets new-id]
-                (get-in db [:tickets prev-id]))
-      (update-in [:tickets] dissoc prev-id)))
-
-(reg-event-fx
- ::change-ticket
- (fn [{:keys [db]} [_ ticket-id prop-path new-value]]
-   (if (= :id (first prop-path))
-     {:db (move-ticket db ticket-id new-value)}
-     {:db (assoc-in db (into [:tickets ticket-id] prop-path) new-value)})))
-
-(def hack
+(def hack-ticket
   {:id parse-long
    :coordinates {:x parse-long
                  :y parse-long}
+   :type #(if (= "" %) nil %)
    :price parse-double
    :discount parse-double})
+
+(def hack-event
+  {:id parse-long
+   :eventType #(if (= "" %) nil %)
+   :date #(if (= "" %) nil %)
+   :minAge parse-long})
 
 (reg-event-fx
  ::save-form
  (fn [{:keys [db]} [_ path value]]
+   (prn "save form " path)
    {:db (assoc-in db (into [:form] path)
                   (cond-> value
-                    (get hack path)
+                    (get-in hack-ticket path)
                     (try
-                      ((get hack path) value)
+                      ((get-in hack-ticket path) value)
                       (catch js/Error _e
                         value))))}))
 
 (reg-event-fx
  ::save-form-event
  (fn [{:keys [db]} [_ path value]]
+   (prn "save form event " path)
    {:db (assoc-in db (into [:event-form] path)
                   (cond->
                    value
-                    (get hack path)
+                    (get-in hack-event path)
                     (try
-                      ((get hack path) value)
+
+                      (prn "helllo " ((get-in hack-event path) value))
+                      ((get-in hack-event path) value)
                       (catch js/Error _e
                         value))))}))
 
@@ -143,12 +161,13 @@
  ::validate-form
  (fn [{:keys [db]} [_ _]]
    (let [validate-res (validation/validate-ticket (get db :form))]
+     (prn "validate form res is " validate-res)
      {:db (assoc db :form-valid validate-res)})))
 
 (reg-event-fx
  ::validate-event-form
  (fn [{:keys [db]} [_ _]]
-   (let [validate-res (validation/validate-event (get db :form-event))]
+   (let [validate-res (validation/validate-event (get db :event-form))]
      {:db (assoc db :event-form-valid validate-res)})))
 
 (re-frame/reg-event-fx
@@ -175,7 +194,6 @@
    (js/console.log "ticket id " ticket-id)
    {:db (-> (update-in db [:tickets] dissoc ticket-id))
     :dispatch [::delete-ticket-http ticket-id]}))
-
 
 (re-frame/reg-event-fx
  ::event-deleted
@@ -310,12 +328,34 @@
             (assoc-in val-path true)))})))
 
 (reg-event-fx
+ ::event-start-edit
+ (fn [{:keys [db]} [_ ticket-id prop]]
+   (let
+    [val-path  (into [:event :edit :path] prop)
+     old-value (get-in db val-path)]
+     {:db
+      (if old-value
+        (-> db
+            (assoc-in [:event :edit :event-id] ticket-id)
+            (update-in val-path not))
+        (-> (assoc-in db [:event :edit :event-id] ticket-id)
+            (assoc-in val-path true)))})))
+
+(reg-event-fx
  ::change-ticket-and-validate
  (fn [{:keys [db]} [_ prop-path value]]
+   (prn "calling change-ticket-and-validate")
    {:db db
     :fx [[:dispatch [::save-form prop-path value]]
          [:dispatch [::validate-form]]]}))
 
+(reg-event-fx
+ ::change-event-and-validate
+ (fn [{:keys [db]} [_ prop-path value]]
+   (prn "calling change-event-and-validate")
+   {:db db
+    :fx [[:dispatch [::save-form-event prop-path value]]
+         [:dispatch [::validate-event-form]]]}))
 
 (re-frame/reg-event-fx
  ::ticket-added
@@ -332,46 +372,94 @@
 (reg-event-fx
  ::save-ticket-http
  (fn [{:keys [db]} [_ ticket]]
-   {:db (http-post db (full-url "/tickets")
-             [::ticket-added]
-             [::ticket-not-added]
-             ticket)}))
+   (http-post db (full-url "/tickets")
+              ticket
+              [::ticket-added]
+              [::ticket-not-added])))
 
 (reg-event-fx
  ::save-ticket-from-form
  (fn [{:keys [db]} [_]]
+   {:dispatch [::save-ticket-http (:form db)]}))
 
-   #_"TODO: back"
-   {:db (update db :tickets assoc 1000 (get db :form))
-    :dispatch [::save-ticket-http]
-    ;; #_:fx [#_#_[:dispatch [::save-form prop-path value]]
-    ;;        [:dispatch [::validate-form]]]
-    }))
+(re-frame/reg-event-fx
+ ::event-added
+ (fn [{:keys [db]} [_ event-resp]]
+   (let [event (:body event-resp)]
+     {:db (assoc-in db [:events (:id event)] event)
+      :dispatch [::toggle-new]})))
+
+(re-frame/reg-event-db
+ ::event-not-added
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::save-event-http
+ (fn [{:keys [db]} [_ event]]
+   (http-post db (full-url "/events")
+              event
+              [::event-added]
+              [::event-not-added])))
 
 (reg-event-fx
  ::save-event-from-form
  (fn [{:keys [db]} [_]]
-   #_"TODO: back"
-   {:db (update db :events assoc 1000 (get db :event-form))
-    :fx [[:dispatch [::toggle-new]]
-         #_#_[:dispatch [::save-form prop-path value]]
-           [:dispatch [::validate-form]]]}))
+   {:dispatch [::save-event-http (:event-form db)]}))
+
+(re-frame/reg-event-db
+ ::ticket-updated
+ (fn [db [_ ticket]]
+   (prn "ticket updated")
+   (let [ticket (:body ticket)
+         id (:id ticket)]
+     (assoc-in db [:tickets id] ticket))))
+
+(re-frame/reg-event-db
+ ::ticket-not-updated
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::update-ticket-http
+ (fn [{:keys [db]} [_ ticket]]
+   (prn "update ticket http " ticket)
+   (http-put db
+             (full-url (str "/tickets/" (:id ticket)))
+             (dissoc ticket :event)
+             [::ticket-updated ticket]
+             [::ticket-not-updated ticket])))
 
 (reg-event-fx
  ::update-ticket-from-form
  (fn [{:keys [db]} [_]]
-   (let [id (get-in db [:ticket :update-id])]
-     {:db (assoc-in db [:tickets id]
-                    (merge
-                     (get-in db [:tickets id])
-                     #_{:id (get-in db [:ticket :update-id])}
-                     (get-in db [:form])))
-      #_#_:fx [[:dispatch [::save-form prop-path value]]
-               [:dispatch [::validate-form]]]})))
+   (prn "update ticket from form")
+   {:db db
+    :dispatch [::update-ticket-http (:form db)]}))
 
+(re-frame/reg-event-db
+ ::event-updated
+ (fn [db [_ event]]
+   (let [event (:body event)
+         id (:id event)]
+     (assoc-in db [:events id] event))))
 
+(re-frame/reg-event-db
+ ::event-not-updated
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
 
+(reg-event-fx
+ ::update-event-http
+ (fn [{:keys [db]} [_ event]]
+   (http-put db
+             (full-url (str "/events/" (:id event)))
+             (dissoc event :event)
+             [::event-updated event]
+             [::event-not-updated event])))
 
-
-
-
+(reg-event-fx
+ ::update-event-from-form
+ (fn [{:keys [db]} [_]]
+   {:db db
+    :dispatch [::update-event-http (:event-form db)]}))

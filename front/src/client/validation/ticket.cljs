@@ -8,16 +8,16 @@
    ::x "Ожидалась x > - 686 (целое число)"
    ::y "Ожидалась y - целое число"
    ::price "Ожидалось целое число больше 0"
-   ::discount "Ожидалась скидка - целочисленное число"
+   ::discount "Ожидалась скидка - целочисленное число больше 0"
    ::type "Ожидался тип: один из VIP, USUAL, BUDGETARY, CHEAP"
    ::refundable "Ожидался true/false"
    ::creationDate "Ожидалась строка в формате YYYY-MM-DD"})
 
 (s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
-(s/def ::x #(or (> (parse-long %) -686)
-                (and
-                 (integer? %)
-                 (> % -686))))
+(s/def ::x #(or (and
+                  (integer? %)
+                  (> % -686))
+                (> (parse-long %) -686)))
 
 (s/def ::y #(or
              (and (string? %) (parse-long %))
@@ -51,4 +51,4 @@
                                  ::discount
                                  ::refundable
                                  ::creationDate]
-                        :opt [::type]))
+                        :opt-un [::type]))

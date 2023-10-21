@@ -7,7 +7,6 @@
    [client.routes :as routes]
    [client.views.core :as views]
    [client.config :as config]
-   [client.http :as http]
    #_[devtools.core :as devtools]))
 
 #_(devtools/install!)
@@ -28,9 +27,7 @@
 (defn init []
   (routes/start!)
 
-  (re-frame/dispatch-sync [::events/initialize-db])
-  (re-frame/dispatch-sync [::events/download-events])
-  (re-frame/dispatch-sync [::events/download-tickets])
+  (re-frame/dispatch [::events/initialize-db])
   (dev-setup)
   (mount-root))
 

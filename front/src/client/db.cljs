@@ -1,5 +1,4 @@
-(ns client.db
- (:require [client.http :as http]))
+(ns client.db)
 
 (def example-tickets
   {1
@@ -68,23 +67,8 @@
    5
    {:id 5 :name "Иванушки" :date "2023-12-14" :min-age 10 :event-type "CONCERT"}})
 
-(defn tickets-by-id []
- (prn "downloading tickets")
- (let [tickets (http/tickets)
-       tickets-id-map (update-vals (group-by :id tickets) first)]
-  tickets-id-map))
-
-(defn events-by-id []
- (prn "downloading events")
- (let [events (http/events)
-       _ (prn "events " events)
-       events-id-map (update-vals (group-by :id events) first)]
-  events-id-map))
-
 (def default-db
   {:active-panel :home-panel
-   :tickets []
-   :events []
    :toggle-new false
    :toggle-change false
    :paging {:current-page 1 :last-page 5
