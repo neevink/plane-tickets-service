@@ -134,4 +134,9 @@ public class TicketServiceImpl implements TicketService {
         }
         ticketRepository.save(updatedTicket);
     }
+
+    @Override
+    public long countTickets() {
+        return ticketRepository.count();
+    }
 }

@@ -186,43 +186,7 @@
        (components/delete-icon)
        "Удалить"]]]]])
 
-(defn page-circle [value & selected]
-  [:div {:class (c
-                 [:w 10]
-                 :cursor-pointer
-                 [:pt 2]
-                 [:rounded :xl]
-                 [:hover :shadow-inner [:bg :gray-200]]
-                 :text-center
-                 [:h 10])
-         :style (when selected {:background-color "#4281f5"
-                                :color "white"})
-         :on-click #(dispatch [::events/change-page value])}
-   value])
 
-(defn paging-view [events-number]
-
-  (when (> events-number 0)
-    (let [current-page @(subscribe [::subs/current-page])
-          last-page @(subscribe [::subs/last-page])]
-      [:<>
-       (when (> (dec current-page) 1) ; first page
-         (page-circle 1))
-       (when (< 2 current-page) ; ...
-         "...")
-       (when (>= (dec current-page) 1) ; prev page
-         (page-circle (dec current-page)))
-
-       (page-circle current-page true) ; current page
-
-       (when (>= last-page (inc current-page))
-         (page-circle (inc current-page))) ; next page
-
-       (when (> (- last-page current-page) 1) ; ... if page is not last or prev-last
-         "...")
-
-       (when (> (- last-page current-page) 1)
-         (page-circle last-page))])))
 
 (defn events-view []
   (let [events-on-page @(re-frame/subscribe [::subs/events-on-page])
@@ -230,24 +194,35 @@
         modal-delete-opened? @(subscribe [::subs/toggle-delete])
         modal-opened? @(subscribe [::subs/toggle-new])
         event-to-delete-id @(subscribe [::subs/event-to-delete-id])
-        event-to-edit-id @(subscribe [::subs/event-to-edit-id])]
+        event-to-edit-id @(subscribe [::subs/event-to-edit-id])
+        count-events @(subscribe [::subs/count-events])
+        page-number @(subscribe [::subs/current-page])
+        page-size @(subscribe [::subs/page-size])
+
+        ]
 
     [:div {:class (c :w-full)}
      [:div
-      [:div
-       {:class (c :flex :items-center :content-center :justify-center
-                  [:mb 5] [:mx 10])}
-       [:span
-        "Размер страницы:"
-        (components/selector [1 5 10 15 20 30 40 50 60]
-                             #(dispatch [::events/change-page-size
-                                         (.. % -target -value)])
-                             {:default-value 5})]]
+      {:class (c :flex :content-between :justify-between
+                 [:mb 5] [:mx 10])}
+      [:span
+       (components/paging-label
+         (inc (* (dec page-number) page-size))
+         (+ (* (dec page-number) page-size)
+            (count events-on-page))
+         count-events)
+
+       [components/selector [1 5 10 15 20 30 40 50 60]
+        #(dispatch [::events/change-page-size
+                    (.. % -target -value)])
+        {:default-value 5
+         :cls (c [:w 15] [:ml 3])}]]
       [:div {:class (c :flex [:gap 4]
                        :items-center
                        :content-center
                        :justify-center)}
-       (paging-view (count events-on-page))]]
+       [components/paging-view (count events-on-page)]]]
+
      (when modal-opened?
        (components/modal
         "Новое мероприятие"

@@ -17,4 +17,6 @@ public interface EventService {
     void deleteEventById(Long eventId);
 
     void updateEventById(Long eventId, CreateEventRequest request);
+
+    long countEvents();
 }

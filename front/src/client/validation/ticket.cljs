@@ -11,6 +11,7 @@
    ::discount "Ожидалась скидка - целочисленное число больше 0"
    ::type "Ожидался тип: один из VIP, USUAL, BUDGETARY, CHEAP"
    ::refundable "Ожидался true/false"
+   ::eventId "Ожидалось выбранное мероприятие"
    ::creationDate "Ожидалась строка в формате YYYY-MM-DD"})
 
 (s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
@@ -41,14 +42,18 @@
                 (or
                  (nil? v)
                  (get #{"VIP" "USUAL" "BUDGETARY" "CHEAP"} v))))
+
 (s/def ::creationDate (fn [v]
                         (re-matches #"([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?"
                                     v)))
+
+(s/def ::eventId number?)
 
 (s/def ::ticket (s/keys :req-un [::name
                                  ::coordinates
                                  ::price
                                  ::discount
+                                 ::eventId
                                  ::refundable
                                  ::creationDate]
                         :opt-un [::type]))

@@ -8,6 +8,8 @@ package ru.egormit.starshipservice.common;
 public interface Endpoints {
     String CREATE_TICKET = "/tickets";
     String GET_ALL_TICKETS = "/tickets";
+
+    String GET_TICKETS_COUNT = "/tickets/count";
     String GET_TICKET_BY_ID = "/tickets/{ticketId}";
     String DELETE_TICKET_BY_ID = "/tickets/{ticketId}";
     String UPDATE_TICKET_BY_ID = "/tickets/{ticketId}";
@@ -18,4 +20,5 @@ public interface Endpoints {
     String GET_EVENT_BY_ID = "/events/{eventId}";
     String DELETE_EVENT_BY_ID = "/events/{eventId}";
     String UPDATE_EVENT_BY_ID = "/events/{eventId}";
+    String GET_EVENTS_COUNT = "/events/count";
 }

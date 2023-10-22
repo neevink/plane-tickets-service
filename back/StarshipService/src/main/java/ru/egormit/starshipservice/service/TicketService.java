@@ -37,4 +37,6 @@ public interface TicketService {
     void deleteTicketById(Long ticketId);
 
     void updateTicketById(Long ticketId, CreateTicketRequest request);
+
+    long countTickets();
 }

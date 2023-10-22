@@ -99,11 +99,51 @@
              [::events-downloaded]
              [::events-not-downloaded])))
 
+(re-frame/reg-event-db
+ ::events-counted
+ (fn [db [_ events]]
+   (-> db
+       (assoc :count-events (:body events)))))
+
+(re-frame/reg-event-db
+ ::events-not-counted
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::count-events
+ (fn [{:keys [db]} _]
+   (http-get db  (full-url "/events/count")
+             [::events-counted]
+             [::events-not-counted])))
+
+(re-frame/reg-event-db
+ ::tickets-counted
+ (fn [db [_ tickets]]
+   (-> db
+       (assoc :count-tickets (:body tickets)))))
+
+(re-frame/reg-event-db
+ ::tickets-not-counted
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::count-tickets
+ (fn [{:keys [db]} _]
+   (http-get db  (full-url "/tickets/count")
+             [::tickets-counted]
+             [::tickets-not-counted])))
+
+
 (reg-event-fx
  ::initialize-db
  (fn [_ _]
    {:db db/default-db
-    :fx [[:dispatch  [::download-events]]
+    :fx [[:dispatch  [::count-tickets]]
+         [:dispatch  [::count-events]]
+         [:dispatch  [::count-paging]]
+         [:dispatch  [::download-events]]
          [:dispatch  [::download-tickets]]]}))
 
 (reg-event-fx
@@ -121,6 +161,7 @@
    :coordinates {:x parse-long
                  :y parse-long}
    :type #(if (= "" %) nil %)
+   :eventId parse-long
    :price parse-double
    :discount parse-double})
 
@@ -227,7 +268,11 @@
 (reg-event-fx
  ::toggle-new
  (fn [{:keys [db]} [_]]
-   {:db (update db :toggle-new not)}))
+   {:db (cond-> (update db :toggle-new not)
+          (not (:toggle-new db))
+          (dissoc :form :event-form)
+
+          )}))
 
 (reg-event-fx
  ::toggle-delete ;; ticket
