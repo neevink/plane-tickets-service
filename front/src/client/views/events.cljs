@@ -3,6 +3,7 @@
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
    [client.events :as events]
    [client.debounce] ; to reg event :)
+   [re-com.core :as re-com]
    [goog.string :as gstring]
    [goog.string.format]
    [client.myclasses :as cls]
@@ -57,7 +58,34 @@
 (defn new-event-top []
   [:div
    (event-new-prop [:name] "Название" "name" nil true)
-   (event-new-prop [:date] "Дата мероприятия" "date" nil false)
+   #_(event-new-prop [:date] "Дата мероприятия" "date" nil false)
+   [:label {:for "event-date"
+            :class (c [:px 5])} "Дата мероприятия"]
+   [:div {:class (c [:px 5] :flex :flex-row)}
+    [re-com/datepicker-dropdown
+     :on-change
+     #(dispatch [:dispatch-debounce
+                    {:delay 500
+                     :event [::events/save-form-event [:date] %]}])
+     :show-today? true
+     :placeholder   "Дата"
+     :no-clip? false
+     :model @(subscribe [::subs/event-form-prop [:date]])
+     :format        #_"yyyy-MM-dd" "dd MMM, yyyy"
+     :attr {:id "event-date"}]
+    [re-com/input-time
+     :model @(subscribe [::subs/abc])
+     :on-change #(dispatch [::events/abc %])
+     :show-icon? true
+     :width "60px"
+     :style {:font-size "15px"}
+
+     ]
+
+    ]
+   [:div
+ ]
+
    (event-new-prop [:minAge] "Минимальный возраст" "minAge" nil true)
    (event-new-prop [:eventType] "Тип мероприятия" "type" nil false
                    [{:value "CONCERT" :desc "Концерт"}
@@ -185,8 +213,6 @@
        (components/delete-icon)
        "Удалить"]]]]])
 
-
-
 (defn events-view []
   (let [events-on-page @(re-frame/subscribe [::subs/events-on-page])
         modal-edit-opened? @(subscribe [::subs/toggle-change])
@@ -196,9 +222,7 @@
         event-to-edit-id @(subscribe [::subs/event-to-edit-id])
         count-events @(subscribe [::subs/count-events])
         page-number @(subscribe [::subs/current-page])
-        page-size @(subscribe [::subs/page-size])
-
-        ]
+        page-size @(subscribe [::subs/page-size])]
 
     [:div {:class (c :w-full)}
      [:div
@@ -206,10 +230,10 @@
                  [:mb 5] [:mx 10])}
       [:span
        (components/paging-label
-         (inc (* (dec page-number) page-size))
-         (+ (* (dec page-number) page-size)
-            (count events-on-page))
-         count-events)
+        (inc (* (dec page-number) page-size))
+        (+ (* (dec page-number) page-size)
+           (count events-on-page))
+        count-events)
 
        [components/selector [1 5 10 15 20 30 40 50 60]
         #(dispatch [::events/change-page-size

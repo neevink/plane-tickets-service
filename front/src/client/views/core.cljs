@@ -3,6 +3,7 @@
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
    [client.events :as events]
    [client.debounce] ; to reg event :)
+   [re-com.core :as re-com]
    [client.routes :as routes]
    [client.myclasses :as cls]
    [client.mycomponents :as components]
@@ -18,13 +19,13 @@
              "y"
              {:value "refundable" :desc "Возвратный"}
              {:value "type" :desc "Тип билета"}
-             "event"]
+             "eventId"]
 
    :events  ["id"
              {:value "name" :desc "Название мероприятия"}
              {:value "date" :desc "Дата мероприятия "}
-             {:value "min-age" :desc "Минимальный возраст"}
-             {:value "event-type" :desc "Тип мероприятия"}]})
+             {:value "minAge" :desc "Минимальный возраст"}
+             {:value "eventType" :desc "Тип мероприятия"}]})
 
 (defn sort-view [mode]
   [:div
@@ -34,9 +35,9 @@
      #())
 
     (components/selector
-     [{:value "netu" :desc "Без сортировки"}
-      {:value "asc" :desc "По возрастанию"}
-      {:value "desc" :desc "По убыванию"}]
+     [{:value "netu" :desc "-"}
+      {:value "asc" :desc "^"}
+      {:value "desc" :desc "v"}]
      #()
      {:default-value "netu"
       :cls
@@ -49,7 +50,7 @@
     [:div {:class (c :border [:mb 4] [:mt 4] [:p 2])}
      [:div {:class (c :flex :flex-row [:m 1] :justify-between)}
       [:i.fa-solid.fa-magnifying-glass]
-      [:h1 label]
+      [:h5 label]
       [:button {:class (c [:w 6]
                           :align-right
                           :self-end
@@ -108,10 +109,8 @@
              [:price false "Цена"]
              [:discount false "Скидка"]
              [:refundable true "Возвратный" [true false]]
-             [:type false "Тип" ["CHEAP" "BUDGETARY" "USUAL" "VIP"]]
-
-            ;; event true "event"]
-             ]
+             [:type true "Тип" ["CHEAP" "BUDGETARY" "USUAL" "VIP"]]
+             [:eventId false "ID мероприятия"]]
    :events [[:id false "id"]
             [:name true "Название мероприятия"]
             [:date false "Дата проведения"]
@@ -149,7 +148,7 @@
        [:button
         {:on-click #(dispatch [::events/set-mode :events])
          :class [(when (= :events mode) (c :font-bold))
-                 (c [:px 1] :underline  )]}
+                 (c [:px 1] :underline)]}
         "Ивенты"]
        [:div {:class (c :flex)}
         [header mode]
