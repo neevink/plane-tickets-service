@@ -103,8 +103,14 @@
             ""
             filters-map)))))
 
+(defn page-url [db]
+  (let [current-page (get-in db [:paging :current-page])
+        page-size (get-in db [:paging :page-size])]
+    (str "offset=" (* (dec current-page) page-size ) "&limit=" page-size)))
+
 (defn make-url-with-sort-and-filter [db base]
-  (cond-> (str (full-url base) "?")
+  (cond->
+    (str (full-url base) "?" (page-url db))
     (filters-map->str (filter-added-filters db))
     (str (filters-map->str (filter-added-filters db)))
 
@@ -115,7 +121,6 @@
 (reg-event-fx
  ::download-tickets
  (fn [{:keys [db]} [_]]
-   (prn "download tickets")
    (prn "url to download tickets"  (make-url-with-sort-and-filter db "/tickets"))
    (http-get db (make-url-with-sort-and-filter db "/tickets")
              [::tickets-downloaded]
@@ -342,7 +347,8 @@
 (reg-event-fx
  ::change-page
  (fn [{:keys [db]} [_ value]]
-   {:db (assoc-in db [:paging :current-page] value)}))
+   {:db (assoc-in db [:paging :current-page] value)
+    :dispatch (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])}))
 
 (reg-event-fx
  ::toggle-change
@@ -402,7 +408,8 @@
      {:db
       (if (and parsed (number? parsed) (<= 1 parsed 100))
         (assoc-in db [:paging :page-size] parsed)
-        db)})))
+        db)
+      :dispatch (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])})))
 
 (reg-event-fx
  ::ticket-start-edit

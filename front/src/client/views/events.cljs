@@ -188,7 +188,7 @@
 
 
 (defn events-view []
-  (let [events-on-page @(re-frame/subscribe [::subs/events-on-page])
+  (let [events @(re-frame/subscribe [::subs/events])
         modal-edit-opened? @(subscribe [::subs/toggle-change])
         modal-delete-opened? @(subscribe [::subs/toggle-delete])
         modal-opened? @(subscribe [::subs/toggle-new])
@@ -196,9 +196,7 @@
         event-to-edit-id @(subscribe [::subs/event-to-edit-id])
         count-events @(subscribe [::subs/count-events])
         page-number @(subscribe [::subs/current-page])
-        page-size @(subscribe [::subs/page-size])
-
-        ]
+        page-size @(subscribe [::subs/page-size])]
 
     [:div {:class (c :w-full)}
      [:div
@@ -208,7 +206,7 @@
        (components/paging-label
          (inc (* (dec page-number) page-size))
          (+ (* (dec page-number) page-size)
-            (count events-on-page))
+            (count events))
          count-events)
 
        [components/selector [1 5 10 15 20 30 40 50 60]
@@ -220,7 +218,7 @@
                        :items-center
                        :content-center
                        :justify-center)}
-       [components/paging-view (count events-on-page)]]]
+       [components/paging-view count-events]]]
 
      (when modal-opened?
        (components/modal
@@ -251,7 +249,7 @@
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]
       (doall
-       (for [[_ event] events-on-page]
+       (for [[_ event] events]
          (one-event event)))]]))
 
 
