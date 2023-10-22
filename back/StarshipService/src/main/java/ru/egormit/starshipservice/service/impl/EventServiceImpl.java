@@ -60,13 +60,25 @@ public class EventServiceImpl implements EventService {
         for (var e : filterBy){
             System.out.println(e);
         }
+        System.out.println(sortBy);
 
         EventSpecification spec = new EventSpecification(filterBy);
         var eventsStream = eventRepository.findAll(spec).stream();
 
         if (sortBy != null) {
-            if (sortBy.getAscending()) {
-                eventsStream = eventsStream.sorted((o1, o2) -> o1.getName().compareTo(o2.getName()));
+            if (sortBy.getKey().equals("id")) {
+                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+            }
+            else if (sortBy.getKey().equals("name")) {
+                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
+            }
+            else if (sortBy.getKey().equals("date")) {
+                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDate().compareTo(o2.getDate()));
+            }
+            else if (sortBy.getKey().equals("minAge")) {
+                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getMinAge().compareTo(o2.getMinAge()));
+            } else {
+                throw ErrorDescriptions.INCORRECT_SORT.exception();
             }
         }
         return eventsStream

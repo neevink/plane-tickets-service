@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.egormit.starshipservice.common.Endpoints;
 import ru.egormit.starshipservice.domain.FilterCriteria;
+import ru.egormit.starshipservice.domain.SortCriteria;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.service.EventService;
 import ru.itmo.library.CreateEventRequest;
@@ -79,7 +80,23 @@ public class EventController {
             }
         }
 
-        List<EventDto> events = eventService.getAllEvents(filters, null, limit, offset);
+        SortCriteria sc = null;
+        if (sort != null) {
+            try {
+                var descSort = sort.charAt(0) == '-';
+                var key = "";
+                if (descSort) {
+                    key = sort.substring(1);
+                } else {
+                    key = sort;
+                }
+                sc = new SortCriteria(key, !descSort);
+
+            } catch (Exception e) {
+                throw ErrorDescriptions.INCORRECT_SORT.exception();
+            }
+        }
+        List<EventDto> events = eventService.getAllEvents(filters, sc, limit, offset);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 

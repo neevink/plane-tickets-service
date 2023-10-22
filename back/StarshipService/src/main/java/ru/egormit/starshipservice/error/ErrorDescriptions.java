@@ -19,7 +19,8 @@ public enum ErrorDescriptions {
     EVENT_NOT_FOUND("Событие с заданным ID не найдено", HttpStatus.NOT_FOUND),
     CANT_DELETE_EVENT("Нельзя удалить событие, пока на него существует хотя бы один билет", HttpStatus.BAD_REQUEST),
 
-    INCORRECT_FILTER("Некорректный фильтр", HttpStatus.BAD_REQUEST);
+    INCORRECT_FILTER("Некорректный фильтр", HttpStatus.BAD_REQUEST),
+    INCORRECT_SORT("Некорректная сортировка", HttpStatus.BAD_REQUEST);
 
     /**
      * Сообщение ошибки.

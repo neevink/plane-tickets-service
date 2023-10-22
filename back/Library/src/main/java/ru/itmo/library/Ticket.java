@@ -52,7 +52,7 @@ public class Ticket {
      * Цена.
      */
     @Column(name = "price")
-    private double price; //Значение поля должно быть больше 0
+    private Double price; //Значение поля должно быть больше 0
 
     /**
      * Скидка.
