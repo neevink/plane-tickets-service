@@ -11,33 +11,30 @@
    [client.subs :as subs])
   (:require-macros [stylo.core :refer [c]]))
 
-(def selector-values
+(def sort-selector-values
   {:tickets ["id"
              {:value "name" :desc "Имя"}
              "x"
              "y"
-             {:value "refundable" :desc "Возвратный"}
-             {:value "type" :desc "Тип билета"}
-             "event"]
+             {:value "creationDate" :desc "Дата создания"}]
 
    :events  ["id"
              {:value "name" :desc "Название мероприятия"}
-             {:value "date" :desc "Дата мероприятия "}
-             {:value "min-age" :desc "Минимальный возраст"}
-             {:value "event-type" :desc "Тип мероприятия"}]})
+             {:value "date" :desc "Дата мероприятия"}
+             {:value "min-age" :desc "Минимальный возраст"}]})
 
 (defn sort-view [mode]
   [:div
    [:div {:class (c :flex)}
     (components/selector
-     (get selector-values mode)
-     #())
+     (get sort-selector-values mode)
+     #(dispatch [::events/change-sort :field  (.. % -target -value)]))
 
     (components/selector
      [{:value "netu" :desc "Без сортировки"}
       {:value "asc" :desc "По возрастанию"}
       {:value "desc" :desc "По убыванию"}]
-     #()
+     #(dispatch [::events/change-sort :sort-order (.. % -target -value)])
      {:default-value "netu"
       :cls
       (c [:px 2] :text-center [:w 35])})]])
@@ -109,7 +106,6 @@
              [:discount false "Скидка"]
              [:refundable true "Возвратный" [true false]]
              [:type false "Тип" ["CHEAP" "BUDGETARY" "USUAL" "VIP"]]
-
             ;; event true "event"]
              ]
    :events [[:id false "id"]

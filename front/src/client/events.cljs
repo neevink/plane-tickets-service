@@ -77,9 +77,9 @@
     (when mode
       (into {}
             (filter
-              (fn [[_field {:keys [value]}]]
-                (not= value ""))
-              (mode (:filters db)))))))
+             (fn [[_field {:keys [value]}]]
+               (not= value ""))
+             (mode (:filters db)))))))
 
 (defn operator-str->backend-operator [operator]
   (case operator
@@ -92,21 +92,25 @@
 (defn filters-map->str [filters-map]
   (when filters-map
     (apply
-      str
-      (drop 1
-            (reduce
-              (fn [acc [field {:keys [value operator]}]]
-                (str acc "&filter=" (name field)
-                     "%5B"
-                     (or (operator-str->backend-operator operator) "eq")
-                     "%5D%3D" value))
-              ""
-              filters-map)))))
+     str
+     (drop 1
+           (reduce
+            (fn [acc [field {:keys [value operator]}]]
+              (str acc "&filter=" (name field)
+                   "%5B"
+                   (or (operator-str->backend-operator operator) "eq")
+                   "%5D%3D" value))
+            ""
+            filters-map)))))
 
 (defn make-url-with-sort-and-filter [db base]
-  (cond-> (str (full-url base))
+  (cond-> (str (full-url base) "?")
     (filters-map->str (filter-added-filters db))
-    (str "?" (filters-map->str (filter-added-filters db)))))
+    (str (filters-map->str (filter-added-filters db)))
+
+    (and (get-in db [:sorting :sort-order])
+         (get-in db [:sorting :field]))
+    (str "sort=" (when (= "desc" (get-in db [:sorting :sort-order])) "-") (name (get-in db [:sorting :field])))))
 
 (reg-event-fx
  ::download-tickets
@@ -187,13 +191,11 @@
  ::initialize-db
  (fn [_ _]
    {:db db/default-db
-    :fx [
-         #_[:dispatch-sync  [::set-init-db]]
+    :fx [#_[:dispatch-sync  [::set-init-db]]
          [:dispatch  [::count-tickets]]
          [:dispatch  [::count-events]]
          [:dispatch  [::download-events]]
-         [:dispatch  [::download-tickets]]
-         ]}))
+         [:dispatch  [::download-tickets]]]}))
 
 (reg-event-fx
  ::set-active-panel
@@ -308,8 +310,8 @@
  ::set-mode
  (fn [{:keys [db]} [_ mode]]
    {:db (-> db
-          (assoc :mode mode)
-          (assoc :filters db/default-filters))}))
+            (assoc :mode mode)
+            (assoc :filters db/default-filters))}))
 
 (reg-event-fx
  ::toggle-new
@@ -451,7 +453,8 @@
  (fn [{:keys [db]} [_ ticket-resp]]
    (let [ticket (:body ticket-resp)]
      {:db (assoc-in db [:tickets (:id ticket)] ticket)
-      :dispatch [::toggle-new]})))
+      :fx [[:dispatch [::count-tickets]]
+           [:dispatch [::toggle-new]]]})))
 
 (re-frame/reg-event-db
  ::ticket-not-added
@@ -476,7 +479,8 @@
  (fn [{:keys [db]} [_ event-resp]]
    (let [event (:body event-resp)]
      {:db (assoc-in db [:events (:id event)] event)
-      :dispatch [::toggle-new]})))
+      :fx [[:dispatch [::count-events]]
+           [:dispatch [::toggle-new]]]})))
 
 (re-frame/reg-event-db
  ::event-not-added
@@ -487,7 +491,7 @@
  ::save-event-http
  (fn [{:keys [db]} [_ event]]
    (http-post db (full-url "/events")
-              event
+              (update event :date (fn [date-str] (str date-str ":00.000Z")))
               [::event-added]
               [::event-not-added])))
 
@@ -556,9 +560,18 @@
 (reg-event-fx
  ::change-filter
  (fn [{:keys [db]} [_ idx1 idx2 value]]
-   (prn "change filter idx1 " idx1 idx2 value)
-   (prn "mode change filter " (:mode db) )
    {:fx [[:dispatch [::change-filter-1
                      (:mode db)
                      idx1 idx2 value]]
+         [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
+
+(reg-event-fx
+  ::change-sort-1
+  (fn [{:keys [db]} [_ sort-opt value #_{:keys [sort-order field]} ]]
+    {:db (assoc-in db [:sorting sort-opt] value)}))
+
+(reg-event-fx
+ ::change-sort
+ (fn [{:keys [db]} [_ sort-opt value]]
+   {:fx [[:dispatch [::change-sort-1 sort-opt value]]
          [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
