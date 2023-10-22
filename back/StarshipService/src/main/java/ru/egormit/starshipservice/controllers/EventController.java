@@ -46,8 +46,8 @@ public class EventController {
      */
     @GetMapping(value = Endpoints.GET_ALL_EVENTS)
     public ResponseEntity<List<EventDto>> getAllEvents(
-            @RequestParam(value = "filter", required = false, defaultValue = "id") String[] filter,
-            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort,
+            @RequestParam(value = "filter", required = false) String[] filter,
+            @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "limit", required = false, defaultValue = "10") Long limit,
             @RequestParam(value = "offset", required = false, defaultValue = "0") Long offset
     ) {
@@ -57,23 +57,25 @@ public class EventController {
 //        System.out.println(sort);
 
         List<FilterCriteria> filters = new ArrayList<>();
-        try {
-            for (String f : filter) {
-                var key = f.split("\\[", 2)[0];
-                var val = f.split("\\]", 2)[1];
-                val = val.substring(1);
-                var op = f.split("\\[", 2)[1].split("\\]", 2)[0];
+        if (filter != null){
+            try {
+                for (String f : filter) {
+                    var key = f.split("\\[", 2)[0];
+                    var val = f.split("\\]", 2)[1];
+                    val = val.substring(1);
+                    var op = f.split("\\[", 2)[1].split("\\]", 2)[0];
 
-                filters.add(
-                        new FilterCriteria(
-                                key,
-                                op,
-                                val
-                        )
-                );
+                    filters.add(
+                            new FilterCriteria(
+                                    key,
+                                    op,
+                                    val
+                            )
+                    );
+                }
+            } catch (Exception e) {
+                throw ErrorDescriptions.INCORRECT_FILTER.exception();
             }
-        } catch (Exception e) {
-            throw ErrorDescriptions.INCORRECT_FILTER.exception();
         }
 
         List<EventDto> events = eventService.getAllEvents(filters, null, limit, offset);

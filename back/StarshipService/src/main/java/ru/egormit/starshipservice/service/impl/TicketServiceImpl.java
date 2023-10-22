@@ -3,8 +3,7 @@ package ru.egormit.starshipservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.egormit.starshipservice.domain.EventRepository;
-import ru.egormit.starshipservice.domain.TicketRepository;
+import ru.egormit.starshipservice.domain.*;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.TicketService;
@@ -82,8 +81,15 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDto> getAllTickets() {
-        return ticketRepository.findAll()
+    public List<TicketDto> getAllTickets(
+            List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset
+    ) {
+        for (var e : filterBy){
+            System.out.println(e);
+        }
+
+        TicketSpecification spec = new TicketSpecification(filterBy);
+        return ticketRepository.findAll(spec)
                 .stream()
                 .map(ticketModelMapper::map)
                 .collect(Collectors.toList());

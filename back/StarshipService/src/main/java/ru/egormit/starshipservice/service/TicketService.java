@@ -1,5 +1,7 @@
 package ru.egormit.starshipservice.service;
 
+import ru.egormit.starshipservice.domain.FilterCriteria;
+import ru.egormit.starshipservice.domain.SortCriteria;
 import ru.itmo.library.CreateTicketRequest;
 import ru.itmo.library.TicketDto;
 
@@ -25,7 +27,7 @@ public interface TicketService {
      *
      * @return список всех билетов
      */
-    List<TicketDto> getAllTickets();
+    List<TicketDto> getAllTickets(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset);
 
     /**
      * Получение билета

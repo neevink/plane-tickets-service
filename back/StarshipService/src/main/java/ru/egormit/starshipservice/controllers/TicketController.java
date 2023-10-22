@@ -5,10 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.egormit.starshipservice.common.Endpoints;
+import ru.egormit.starshipservice.domain.FilterCriteria;
+import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.itmo.library.CreateTicketRequest;
+import ru.itmo.library.EventDto;
 import ru.itmo.library.TicketDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,8 +46,37 @@ public class TicketController {
      * @return список билетов.
      */
     @GetMapping(value = Endpoints.GET_ALL_TICKETS)
-    public ResponseEntity<List<TicketDto>> getAllTickets() {
-        return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
+    public ResponseEntity<List<TicketDto>> getAllTickets(
+            @RequestParam(value = "filter", required = false) String[] filter,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "limit", required = false, defaultValue = "10") Long limit,
+            @RequestParam(value = "offset", required = false, defaultValue = "0") Long offset
+    ) {
+
+        List<FilterCriteria> filters = new ArrayList<>();
+        if (filter != null){
+            try {
+                for (String f : filter) {
+                    var key = f.split("\\[", 2)[0];
+                    var val = f.split("\\]", 2)[1];
+                    val = val.substring(1);
+                    var op = f.split("\\[", 2)[1].split("\\]", 2)[0];
+
+                    filters.add(
+                            new FilterCriteria(
+                                    key,
+                                    op,
+                                    val
+                            )
+                    );
+                }
+            } catch (Exception e) {
+                throw ErrorDescriptions.INCORRECT_FILTER.exception();
+            }
+        }
+
+        List<TicketDto> tickets = ticketService.getAllTickets(filters, null, limit, offset);
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
     /**
