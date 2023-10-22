@@ -7,6 +7,10 @@ import ru.itmo.library.Coordinates;
 import ru.itmo.library.Ticket;
 import ru.itmo.library.TicketDto;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 @Component
 @RequiredArgsConstructor
 public class TicketModelMapper {
@@ -15,7 +19,7 @@ public class TicketModelMapper {
         dto.setId(ticket.getId());
         dto.setName(ticket.getName());
         dto.setCoordinates(Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()));
-        dto.setCreationDate(ticket.getCreationDate());
+        dto.setCreationDate(Date.from(ticket.getCreationDate().toInstant()));
         dto.setPrice(ticket.getPrice());
         dto.setDiscount(ticket.getDiscount());
         dto.setRefundable(dto.getRefundable());

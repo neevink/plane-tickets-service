@@ -11,6 +11,7 @@ import ru.egormit.starshipservice.utils.TicketModelMapper;
 import ru.itmo.library.*;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class TicketServiceImpl implements TicketService {
         createdTicket.setId(ticket.getId());
         createdTicket.setName(ticket.getName());
         createdTicket.setCoordinates(Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()));
-        createdTicket.setCreationDate(ticket.getCreationDate());
+        createdTicket.setCreationDate(Date.from(ticket.getCreationDate().toInstant()));
         createdTicket.setPrice(ticket.getPrice());
         createdTicket.setDiscount(ticket.getDiscount());
         createdTicket.setRefundable(ticket.getRefundable());
