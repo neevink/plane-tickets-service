@@ -142,7 +142,7 @@
 (reg-sub
  ::filters
  (fn [db [_ prop]]
-   (get-in db [:filters prop])))
+   (get-in db [:filters (:mode db) prop])))
 
 (reg-sub
  ::ticket-edit-prop
@@ -192,3 +192,4 @@
  ::count-tickets
  (fn [db _]
   (get db :count-tickets)))
+

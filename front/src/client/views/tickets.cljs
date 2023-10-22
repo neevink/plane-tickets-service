@@ -158,14 +158,18 @@
          (.toLocaleString (js/Date. (:creationDate ticket))) " " (type-view (:type ticket)) " " [:span (:type ticket)] " "]
         [:div
          [:span {:class (c :text-xl :text-bold)}
-          [:span (or (:name event)
-                     "Неизвестное мероприятие")]]]]
-       [:span {:class (c :text-sm)} (:name ticket)]]
+          [:span (if (:name event)
+                   (str "Мероприятие: " (:name event))
+                   "Неизвестное мероприятие")]]]]
+       [:span {:class (c :text-sm)} (str "Название билета: " (:name ticket))]
+       [:div {:class (c :text-sm)} (if (:refundable ticket) "Возвратный" "Невозвратный")]
+       ]
       [:div
        {:class (c :text-xl [:pt 3])}
        [:div
         "СКИДКА: " (:discount ticket) "%"]
-       [:div "ЦЕНА: " (:price ticket)]]
+       [:div "ЦЕНА: " (:price ticket)]
+       [:div (str "(" (:x (:coordinates ticket)) ","  (:y (:coordinates ticket)) ")")]]
       [:div {:class (c :flex :flex-col :justify-center [:gap 5])}
        [:div
         {:class [cls/base-class (c :cursor-pointer)]
@@ -196,10 +200,10 @@
      [ticket-new-prop [:coordinates :y] "Координата y" "coordinates-y" "(целое число)" true]
      [ticket-new-prop [:price]          "Цена" "price" "(> 0)" true]
      [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
-     [ticket-new-prop [:refundable]     "Возвратный" "refundable" "true/false" true
+     [ticket-new-prop [:refundable]     "Возвратный" "refundable" nil true
       [{:value true :desc "Да"}
        {:value false :desc "Нет"}]]
-     [ticket-new-prop [:type]           "Тип" "type" "(VIP, USUAL, BUDGETARY, CHEAP)" false
+     [ticket-new-prop [:type]           "Тип" "type" nil false
       [{:value "VIP" :desc "VIP"}
        {:value "USUAL" :desc "Обычный"}
        {:value "BUDGETARY" :desc "Бюджетный"}

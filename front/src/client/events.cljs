@@ -72,10 +72,48 @@
  (fn [db [_ result]]
    (assoc db :http-result result :errors? true)))
 
+(defn filter-added-filters [db]
+  (let [mode (get db :mode)]
+    (when mode
+      (into {}
+            (filter
+              (fn [[_field {:keys [value]}]]
+                (not= value ""))
+              (mode (:filters db)))))))
+
+(defn operator-str->backend-operator [operator]
+  (case operator
+    ">"  "gt"
+    "<"  "lt"
+    "="  "eq"
+    "!="  "ne"
+    nil))
+
+(defn filters-map->str [filters-map]
+  (when filters-map
+    (apply
+      str
+      (drop 1
+            (reduce
+              (fn [acc [field {:keys [value operator]}]]
+                (str acc "&filter=" (name field)
+                     "%5B"
+                     (or (operator-str->backend-operator operator) "eq")
+                     "%5D%3D" value))
+              ""
+              filters-map)))))
+
+(defn make-url-with-sort-and-filter [db base]
+  (cond-> (str (full-url base))
+    (filters-map->str (filter-added-filters db))
+    (str "?" (filters-map->str (filter-added-filters db)))))
+
 (reg-event-fx
  ::download-tickets
- (fn [{:keys [db]} _]
-   (http-get db (full-url "/tickets")
+ (fn [{:keys [db]} [_]]
+   (prn "download tickets")
+   (prn "url to download tickets"  (make-url-with-sort-and-filter db "/tickets"))
+   (http-get db (make-url-with-sort-and-filter db "/tickets")
              [::tickets-downloaded]
              [::tickets-not-downloaded])))
 
@@ -95,7 +133,8 @@
 (reg-event-fx
  ::download-events
  (fn [{:keys [db]} _]
-   (http-get db  (full-url "/events")
+   (prn "url to download events"  (make-url-with-sort-and-filter db "/events"))
+   (http-get db (make-url-with-sort-and-filter db "/events")
              [::events-downloaded]
              [::events-not-downloaded])))
 
@@ -113,6 +152,7 @@
 (reg-event-fx
  ::count-events
  (fn [{:keys [db]} _]
+   (prn "count events")
    (http-get db  (full-url "/events/count")
              [::events-counted]
              [::events-not-counted])))
@@ -120,36 +160,40 @@
 (re-frame/reg-event-db
  ::tickets-counted
  (fn [db [_ tickets]]
+   (prn "tickets counted")
    (-> db
        (assoc :count-tickets (:body tickets)))))
 
 (re-frame/reg-event-db
  ::tickets-not-counted
  (fn [db [_ result]]
+   (prn "tcikets not counted")
    (assoc db :http-result result :errors? true)))
 
 (reg-event-fx
  ::count-tickets
  (fn [{:keys [db]} _]
+   (prn "count tickets")
    (http-get db  (full-url "/tickets/count")
              [::tickets-counted]
              [::tickets-not-counted])))
 
+(reg-event-db
+ ::set-init-db
+ (prn "set init db")
+ db/default-db)
 
 (reg-event-fx
  ::initialize-db
  (fn [_ _]
    {:db db/default-db
-    :fx [[:dispatch  [::count-tickets]]
+    :fx [
+         #_[:dispatch-sync  [::set-init-db]]
+         [:dispatch  [::count-tickets]]
          [:dispatch  [::count-events]]
-         [:dispatch  [::count-paging]]
          [:dispatch  [::download-events]]
-         [:dispatch  [::download-tickets]]]}))
-
-(reg-event-fx
- ::navigate
- (fn [_ [_ handler]]
-   {:navigate handler}))
+         [:dispatch  [::download-tickets]]
+         ]}))
 
 (reg-event-fx
  ::set-active-panel
@@ -263,16 +307,16 @@
 (reg-event-fx
  ::set-mode
  (fn [{:keys [db]} [_ mode]]
-   {:db (assoc db :mode mode)}))
+   {:db (-> db
+          (assoc :mode mode)
+          (assoc :filters db/default-filters))}))
 
 (reg-event-fx
  ::toggle-new
  (fn [{:keys [db]} [_]]
    {:db (cond-> (update db :toggle-new not)
           (not (:toggle-new db))
-          (dissoc :form :event-form)
-
-          )}))
+          (dissoc :form :event-form))}))
 
 (reg-event-fx
  ::toggle-delete ;; ticket
@@ -338,16 +382,16 @@
             (assoc-in [:event :update-id] event-id))}))))
 
 (reg-event-fx
- ::change-filter
- (fn [{:keys [db]} [_ idx value]]
-   {:db
-    (assoc-in db [:filters idx :value] value)}))
+ ::change-filter-1
+ (fn [{:keys [db]} [_ mode idx1 idx2 value]]
+   (prn "change-filter 1 " mode idx1 idx2 value)
+   {:db (assoc-in db [:filters mode idx1 idx2] value)}))
 
 (reg-event-fx
  ::hide-filter
- (fn [{:keys [db]} [_ idx]]
+ (fn [{:keys [db]} [_ prop]]
    {:db
-    (update-in db [:filters idx :shown] not)}))
+    (update-in db [:filters (:mode db) prop :shown] not)}))
 
 (reg-event-fx
  ::change-page-size
@@ -508,3 +552,13 @@
  (fn [{:keys [db]} [_]]
    {:db db
     :dispatch [::update-event-http (:event-form db)]}))
+
+(reg-event-fx
+ ::change-filter
+ (fn [{:keys [db]} [_ idx1 idx2 value]]
+   (prn "change filter idx1 " idx1 idx2 value)
+   (prn "mode change filter " (:mode db) )
+   {:fx [[:dispatch [::change-filter-1
+                     (:mode db)
+                     idx1 idx2 value]]
+         [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
