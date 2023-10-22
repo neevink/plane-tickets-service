@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * Модель ошибки.
- *
- * @author Egor Mitrofanov.
  */
 @Data
 @NoArgsConstructor

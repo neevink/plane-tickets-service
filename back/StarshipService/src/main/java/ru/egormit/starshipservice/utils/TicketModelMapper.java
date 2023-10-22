@@ -7,8 +7,6 @@ import ru.itmo.library.Coordinates;
 import ru.itmo.library.Ticket;
 import ru.itmo.library.TicketDto;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 @Component

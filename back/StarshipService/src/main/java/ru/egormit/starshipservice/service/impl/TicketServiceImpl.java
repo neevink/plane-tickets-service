@@ -16,11 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Реализация сервиса работы с starship.
- *
- * @author Egor Mitrofanov.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
