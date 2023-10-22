@@ -59,7 +59,7 @@
    (event-new-prop [:name] "Название" "name" nil true)
    (event-new-prop [:date] "Дата мероприятия" "date" nil false)
    (event-new-prop [:minAge] "Минимальный возраст" "minAge" nil true)
-   (event-new-prop [:eventType] "Тип мероприятия" "type" "(CONCERT, BASEBALL, BASKETBALL, THEATRE_PERFORMANCE)" false
+   (event-new-prop [:eventType] "Тип мероприятия" "type" nil false
                    [{:value "CONCERT" :desc "Концерт"}
                     {:value "BASEBALL" :desc "Бейсбол"}
                     {:value "BASKETBALL" :desc "Баскетбол"}
@@ -166,7 +166,6 @@
      [:div
       [:div
        [:div "ID: " id]
-
        [:span {:class (c :text-sm)} (take 10 date)  " " (event-type-icon eventType) " " [:span eventType] " "]
        [:div
         [:span {:class (c :text-xl :text-bold)} [:span name]]]]

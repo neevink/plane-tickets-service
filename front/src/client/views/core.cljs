@@ -70,24 +70,30 @@
        [:div {:class (c :w-full)}
         (when (not only=?)
           (components/selector
-           ["=" ">=" "<=" "!="]
-            ;;todo
-           #()
+           ["=" ">" "<" "!="]
+           #(dispatch
+             [:dispatch-debounce
+              {:delay 300
+               :event [::events/change-filter
+                       prop
+                       :operator
+                       (.. % -target -value)]}])
            {:default-value "="
-            :cls (c
-                  :w-full
-                  [:mb 2])}))
+            :cls (c :w-full [:mb 2])}))
 
         (if selector-values
-          (components/selector selector-values #() ;;todo
-                               {:default-value (first selector-values)})
+          (components/selector selector-values
+                               #(dispatch [::events/change-filter
+                                           prop
+                                           :value
+                                           (.. % -target -value)])                               {:default-value (first selector-values)})
           [:input
            {:class (c
                     :w-full
                     :rounded :border [:h 8])
             :on-change
             #(dispatch [:dispatch-debounce
-                        {:delay 500
+                        {:delay 1000
                          :event [::events/change-filter
                                  prop
                                  :value
@@ -97,8 +103,8 @@
 (def filter-values
   {:tickets [[:id false "id"]
              [:name true "Имя"]
-             [:x false "Координата x"]
-             [:y false "Координата y"]
+             [:coordinateX false "Координата x"]
+             [:coordinateY false "Координата y"]
              [:price false "Цена"]
              [:discount false "Скидка"]
              [:refundable true "Возвратный" [true false]]
@@ -110,7 +116,7 @@
             [:name true "Название мероприятия"]
             [:date false "Дата проведения"]
             [:min-age false "Минимальный возраст"]
-            [:event-type true "Тип мероприятия" ["CONCERT", "BASEBALL", "BASKETBALL", "THEATRE_PERFORMANCE"]]]})
+            [:eventType true "Тип мероприятия" ["CONCERT", "BASEBALL", "BASKETBALL", "THEATRE_PERFORMANCE"]]]})
 
 (defn filter-view [mode]
   (let [values (get filter-values mode)]
@@ -123,8 +129,7 @@
   [:div {:class (c :flex :flex-col)}
    (sort-view mode)
    [:hr {:class (c [:pt 2])}]
-   (filter-view mode)]
-  )
+   (filter-view mode)])
 
 (defn home-panel []
   (let [mode @(re-frame/subscribe [::subs/mode])]
@@ -136,11 +141,15 @@
       [:div
        [:button
         {:on-click #(dispatch [::events/set-mode :tickets])
-         :class (c [:px 1] :underline)}
+         :class
+         [(when (= :tickets mode) (c :font-bold))
+
+          (c [:px 1] :underline)]}
         "Билеты"]
        [:button
         {:on-click #(dispatch [::events/set-mode :events])
-         :class (c [:px 1] :underline)}
+         :class [(when (= :events mode) (c :font-bold))
+                 (c [:px 1] :underline  )]}
         "Ивенты"]
        [:div {:class (c :flex)}
         [header mode]
@@ -156,10 +165,10 @@
         all-data? @(re-frame/subscribe [::subs/initialized?])]
     (if-not
      all-data?
-     [:div.another-center
-      {:style
-       {:text-align "center"}}
-      [:center
-       [:img
-        {:src "loading2.gif"}]]]
+      [:div.another-center
+       {:style
+        {:text-align "center"}}
+       [:center
+        [:img
+         {:src "loading2.gif"}]]]
       [routes/panels @active-panel])))
