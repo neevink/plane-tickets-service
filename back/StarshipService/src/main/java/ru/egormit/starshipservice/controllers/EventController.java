@@ -5,10 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.egormit.starshipservice.common.Endpoints;
+import ru.egormit.starshipservice.domain.FilterCriteria;
+import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.service.EventService;
 import ru.itmo.library.CreateEventRequest;
 import ru.itmo.library.EventDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,8 +45,39 @@ public class EventController {
      * @return список событий.
      */
     @GetMapping(value = Endpoints.GET_ALL_EVENTS)
-    public ResponseEntity<List<EventDto>> getAllEvents() {
-        return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
+    public ResponseEntity<List<EventDto>> getAllEvents(
+            @RequestParam(value = "filter", required = false, defaultValue = "id") String[] filter,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort,
+            @RequestParam(value = "limit", required = false, defaultValue = "10") Long limit,
+            @RequestParam(value = "offset", required = false, defaultValue = "0") Long offset
+    ) {
+//        System.out.println("filter:");
+//        System.out.println(filter);
+//        System.out.println("sort:");
+//        System.out.println(sort);
+
+        List<FilterCriteria> filters = new ArrayList<>();
+        try {
+            for (String f : filter) {
+                var key = f.split("\\[", 2)[0];
+                var val = f.split("\\]", 2)[1];
+                val = val.substring(1);
+                var op = f.split("\\[", 2)[1].split("\\]", 2)[0];
+
+                filters.add(
+                        new FilterCriteria(
+                                key,
+                                op,
+                                val
+                        )
+                );
+            }
+        } catch (Exception e) {
+            throw ErrorDescriptions.INCORRECT_FILTER.exception();
+        }
+
+        List<EventDto> events = eventService.getAllEvents(filters, null, limit, offset);
+        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
     /**

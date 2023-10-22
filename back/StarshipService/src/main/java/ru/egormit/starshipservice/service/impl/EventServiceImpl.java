@@ -4,20 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.egormit.starshipservice.domain.EventRepository;
+import ru.egormit.starshipservice.domain.EventSpecification;
+import ru.egormit.starshipservice.domain.FilterCriteria;
+import ru.egormit.starshipservice.domain.SortCriteria;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.EventService;
 import ru.egormit.starshipservice.utils.EventModelMapper;
 import ru.itmo.library.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Реализация сервиса работы с starship.
- *
- * @author Egor Mitrofanov.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -55,9 +54,20 @@ public class EventServiceImpl implements EventService {
         return createdEvent;
     }
 
-    public List<EventDto> getAllEvents() {
-        return eventRepository.findAll()
-                .stream()
+    public List<EventDto> getAllEvents(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset) {
+        for (var e : filterBy){
+            System.out.println(e);
+        }
+
+        EventSpecification spec = new EventSpecification(filterBy);
+        var eventsStream = eventRepository.findAll(spec).stream();
+
+        if (sortBy != null) {
+            if (sortBy.getAscending()) {
+                eventsStream = eventsStream.sorted((o1, o2) -> o1.getName().compareTo(o2.getName()));
+            }
+        }
+        return eventsStream
                 .map(eventModelMapper::map)
                 .collect(Collectors.toList());
     }
