@@ -118,6 +118,8 @@ public class TicketServiceImpl implements TicketService {
             }
         }
         return ticketsStream
+                .skip(offset)
+                .limit(limit)
                .map(ticketModelMapper::map)
                .collect(Collectors.toList());
     }

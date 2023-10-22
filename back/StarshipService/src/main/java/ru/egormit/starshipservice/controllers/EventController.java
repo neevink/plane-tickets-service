@@ -53,11 +53,6 @@ public class EventController {
             @RequestParam(value = "limit", required = false, defaultValue = "10") Long limit,
             @RequestParam(value = "offset", required = false, defaultValue = "0") Long offset
     ) {
-//        System.out.println("filter:");
-//        System.out.println(filter);
-//        System.out.println("sort:");
-//        System.out.println(sort);
-
         List<FilterCriteria> filters = new ArrayList<>();
         if (filter != null){
             try {

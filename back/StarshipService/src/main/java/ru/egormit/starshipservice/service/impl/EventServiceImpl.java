@@ -82,6 +82,8 @@ public class EventServiceImpl implements EventService {
             }
         }
         return eventsStream
+                .skip(offset)
+                .limit(limit)
                 .map(eventModelMapper::map)
                 .collect(Collectors.toList());
     }
