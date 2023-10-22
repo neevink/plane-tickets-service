@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.egormit.library.Coordinates;
 import ru.itmo.library.enums.EventType;
-import ru.itmo.library.enums.TicketType;
 
 import java.util.Date;
 

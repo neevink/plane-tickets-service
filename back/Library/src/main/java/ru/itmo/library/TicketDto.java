@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itmo.library.Coordinates;
 import ru.itmo.library.enums.TicketType;
 
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Data
@@ -23,7 +21,7 @@ public class TicketDto {
     private Double discount;
     private Boolean refundable;
     private TicketType type;
-    Event event;
+    private Long eventId;
 
 }
 

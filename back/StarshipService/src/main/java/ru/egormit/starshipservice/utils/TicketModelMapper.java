@@ -24,7 +24,9 @@ public class TicketModelMapper {
         dto.setDiscount(ticket.getDiscount());
         dto.setRefundable(dto.getRefundable());
         dto.setType(ticket.getType());
-        dto.setEvent(ticket.getEvent());
+        if (ticket.getEvent() != null){
+            dto.setEventId(ticket.getEvent().getId());
+        }
         return dto;
     }
 }

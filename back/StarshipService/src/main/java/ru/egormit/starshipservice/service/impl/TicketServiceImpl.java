@@ -78,7 +78,9 @@ public class TicketServiceImpl implements TicketService {
         createdTicket.setDiscount(ticket.getDiscount());
         createdTicket.setRefundable(ticket.getRefundable());
         createdTicket.setType(ticket.getType());
-//        createdTicket.setEvent(eve);
+        if (ticket.getEvent() != null){
+            createdTicket.setEventId(ticket.getEvent().getId());
+        }
         return createdTicket;
     }
 
