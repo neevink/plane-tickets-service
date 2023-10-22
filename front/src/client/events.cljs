@@ -209,22 +209,10 @@
    :price parse-double
    :discount parse-double})
 
-(defn parse-date [s]
-  (println " s is " s)
-  (println " s type is " (type s))
-  (let  [year  (.getFullYear s)
-         month (.getMonth s)
-         day   (.getDay s)]
-    (str year "-" month "-" day)))
-
 (def hack-event
   {:id parse-long
    :eventType #(if (= "" %) nil %)
-   :date #(if (= "" %) nil
-            %
-            #_(parse-date %)
-            ;; 2023 10 24 T000000
-            )
+   :date #(if (= "" %) nil %)
    :minAge parse-long})
 
 (reg-event-fx
@@ -463,8 +451,7 @@
  (fn [{:keys [db]} [_ ticket-resp]]
    (let [ticket (:body ticket-resp)]
      {:db (assoc-in db [:tickets (:id ticket)] ticket)
-      :fx [[:dispatch [::count-tickets]]
-           [:dispatch [::toggle-new]]]})))
+      :dispatch [::toggle-new]})))
 
 (re-frame/reg-event-db
  ::ticket-not-added
@@ -489,8 +476,7 @@
  (fn [{:keys [db]} [_ event-resp]]
    (let [event (:body event-resp)]
      {:db (assoc-in db [:events (:id event)] event)
-      :fx [[:dispatch [::count-events]]
-           [:dispatch [::toggle-new]]]})))
+      :dispatch [::toggle-new]})))
 
 (re-frame/reg-event-db
  ::event-not-added
@@ -505,31 +491,10 @@
               [::event-added]
               [::event-not-added])))
 
-(defn parse-time [time]
-  (if (> 100 time)
-    (if (> 1000 time)
-
-      #_"10:00"
-      (let [time (str time)]
-        (str (take 2 time) \: (drop 2 (take 4 time))))
-      #_"9:00"
-      (let [time (str time)]
-        (str (take 1 time) \: (drop 1 (take 3 time)))))
-    #_"0:00"
-    (str "0:" (str time))))
-
-
-(defn hack-datetime [db]
-  (let [time (parse-time (:abc db))
-        date (parse-date (get-in db [:event-form :date]))]
-    (assoc (:event-form db) :date (str date "T" time ":00.000Z"))))
-
 (reg-event-fx
  ::save-event-from-form
  (fn [{:keys [db]} [_]]
-   {:dispatch [::save-event-http
-               #_(:event-form db)
-               (hack-datetime db)]}))
+   {:dispatch [::save-event-http (:event-form db)]}))
 
 (re-frame/reg-event-db
  ::ticket-updated
@@ -597,10 +562,3 @@
                      (:mode db)
                      idx1 idx2 value]]
          [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
-
-
-(reg-event-fx
- ::abc
- (fn [{:keys [db]} [_ value]]
-   {:db (assoc db :abc value)}
-   ))

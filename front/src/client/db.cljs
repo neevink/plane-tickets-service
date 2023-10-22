@@ -19,11 +19,10 @@
            :min-age
            {:value "" :shown false}
            :eventType
-           {:value "" :shown false}}})
-
+           {:value "" :shown false}}}
+ )
 (def default-db
   {:active-panel :home-panel
-   :abc 930
    :toggle-new false
    :toggle-change false
    :paging {:current-page 1

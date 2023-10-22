@@ -41,14 +41,13 @@
 (s/def ::type (fn [v]
                 (or
                  (nil? v)
-                 (= "-" v)
                  (get #{"VIP" "USUAL" "BUDGETARY" "CHEAP"} v))))
 
 (s/def ::creationDate (fn [v]
                         (re-matches #"([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?"
                                     v)))
 
-(s/def ::eventId #(or nil? number?))
+(s/def ::eventId number?)
 
 (s/def ::ticket (s/keys :req-un [::name
                                  ::coordinates

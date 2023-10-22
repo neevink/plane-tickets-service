@@ -19,11 +19,11 @@
             (if cls
               [cls/base-class cls]
               [cls/base-class (c :w-full)])
-            :defaultValue (or default-value nil)
+            :defaultValue (or default-value "netu")
             :on-change on-change-fn}
    (when-not default-value
      [:option {:class cls/base-class
-               :value (or default-value nil)} "-"])
+               :value "netu"} "-"])
    (doall (for [value selector-values]
             ^{:key value}
             [:option {:class cls/base-class

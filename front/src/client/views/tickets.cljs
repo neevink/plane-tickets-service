@@ -70,7 +70,7 @@
          (:message invalid-message))]]]))
 
 (defn ticket-new-prop [prop-path label label-id descr required?
-                       & [select-values default-value]]
+                       & [select-values]]
   (let [current-value  @(re-frame.core/subscribe [::subs/form-prop prop-path])
         invalid-message @(re-frame.core/subscribe [::subs/form-path-invalid-message prop-path])
         on-change-fn
@@ -84,8 +84,7 @@
        (components/selector
         select-values
         on-change-fn
-        {:cls (c :w-full [:mb 2])
-         :default-value (or nil default-value)})
+        {:cls (c :w-full [:mb 2])})
 
        [:input {:name label-id
                 :id label-id
@@ -203,13 +202,13 @@
      [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
      [ticket-new-prop [:refundable]     "Возвратный" "refundable" nil true
       [{:value true :desc "Да"}
-       {:value false :desc "Нет"}] true]
-     [ticket-new-prop [:type] "Тип" "type" "" false
+       {:value false :desc "Нет"}]]
+     [ticket-new-prop [:type]           "Тип" "type" nil false
       [{:value "VIP" :desc "VIP"}
        {:value "USUAL" :desc "Обычный"}
        {:value "BUDGETARY" :desc "Бюджетный"}
        {:value "CHEAP" :desc "Дешевый"}]]
-     [ticket-new-prop [:eventId] "Мероприятие" "eventId" "" false
+     [ticket-new-prop [:eventId]        "Мероприятие" "eventId" "" true
       nice-events]]))
 
 (defn new-ticket-bot []

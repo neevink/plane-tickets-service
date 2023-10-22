@@ -193,8 +193,3 @@
  (fn [db _]
   (get db :count-tickets)))
 
-
-(reg-sub
- ::abc
- (fn [db _]
-  (get db :abc)))
