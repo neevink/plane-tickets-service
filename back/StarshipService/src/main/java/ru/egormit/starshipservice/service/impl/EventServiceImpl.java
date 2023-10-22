@@ -3,17 +3,13 @@ package ru.egormit.starshipservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.egormit.starshipservice.domain.EventRepository;
-import ru.egormit.starshipservice.domain.EventSpecification;
-import ru.egormit.starshipservice.domain.FilterCriteria;
-import ru.egormit.starshipservice.domain.SortCriteria;
+import ru.egormit.starshipservice.domain.*;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.EventService;
 import ru.egormit.starshipservice.utils.EventModelMapper;
 import ru.itmo.library.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +27,12 @@ public class EventServiceImpl implements EventService {
      * {@link EventRepository}.
      */
     private final EventRepository eventRepository;
+
+    /**
+     * {@link EventRepository}.
+     */
+    private final TicketRepository ticketRepository;
+
 
     /**
      * {@link EventModelMapper}.
@@ -86,6 +88,10 @@ public class EventServiceImpl implements EventService {
     public void deleteEventById(Long eventId) {
         if (!eventRepository.existsById(eventId)){
             throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+        }
+
+        if (ticketRepository.allTicketsByEventId(eventId) != 0){
+            throw ErrorDescriptions.CANT_DELETE_EVENT.exception();
         }
 
         eventRepository.deleteById(eventId);

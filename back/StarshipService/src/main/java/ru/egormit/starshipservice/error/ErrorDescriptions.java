@@ -17,6 +17,7 @@ public enum ErrorDescriptions {
     TICKET_NOT_FOUND("Билет с заданным ID не найден", HttpStatus.NOT_FOUND),
 
     EVENT_NOT_FOUND("Событие с заданным ID не найдено", HttpStatus.NOT_FOUND),
+    CANT_DELETE_EVENT("Нельзя удалить событие, пока на него существует хотя бы один билет", HttpStatus.BAD_REQUEST),
 
     INCORRECT_FILTER("Некорректный фильтр", HttpStatus.BAD_REQUEST);
 
