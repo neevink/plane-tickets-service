@@ -1,9 +1,5 @@
-- [] create
-- [] update
 - [] paging
-- [] filter
 - [] sort
-- [] validation
 - [] GET /tickets/discount/sum
 - [] GET /tickets/type/count
 - [] GET /tickets/type/count
