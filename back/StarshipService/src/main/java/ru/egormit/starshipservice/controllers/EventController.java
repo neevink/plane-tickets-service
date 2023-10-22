@@ -10,6 +10,7 @@ import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.service.EventService;
 import ru.itmo.library.CreateEventRequest;
 import ru.itmo.library.EventDto;
+import ru.itmo.library.enums.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class EventController {
                             new FilterCriteria(
                                     key,
                                     op,
-                                    val
+                                    key.equals("eventType") ? EventType.valueOf(val) : val
                             )
                     );
                 }

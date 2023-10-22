@@ -9,8 +9,8 @@ import ru.egormit.starshipservice.domain.FilterCriteria;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.itmo.library.CreateTicketRequest;
-import ru.itmo.library.EventDto;
 import ru.itmo.library.TicketDto;
+import ru.itmo.library.enums.TicketType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class TicketController {
                             new FilterCriteria(
                                     key,
                                     op,
-                                    val
+                                    key.equals("refundable") ? (Boolean) val.equals("true") : key.equals("type") ? TicketType.valueOf(val) : val
                             )
                     );
                 }
