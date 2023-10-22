@@ -1,11 +1,11 @@
 _type: export
 __export_format: 4
-__export_date: 2023-10-20T15:04:11.420Z
+__export_date: 2023-10-22T12:03:44.088Z
 __export_source: insomnia.desktop.app:v8.3.0
 resources:
   - _id: req_ad61661f634f471d9010dacafc210f3f
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696934031035
+    modified: 1697927539702
     created: 1696762907618
     url: http://localhost:8080/tickets
     name: create ticket
@@ -24,7 +24,7 @@ resources:
           "discount": 0,
           "refundable": false,
           "type": "USUAL",
-          "eventId": 1
+          "eventId": null
         }
     parameters: []
     headers:
@@ -52,7 +52,7 @@ resources:
     _type: workspace
   - _id: req_944607a8ad504c189a6d1cef0f20c1f3
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696765501268
+    modified: 1697918632589
     created: 1696106588969
     url: http://localhost:8080/tickets/1
     name: get ticket by id
@@ -75,14 +75,23 @@ resources:
     _type: request
   - _id: req_da186d2c869e4423914c4193a8f20c6c
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696793419781
+    modified: 1697971506125
     created: 1696765514564
     url: http://localhost:8080/tickets
     name: get all tickets
     description: ""
     method: GET
     body: {}
-    parameters: []
+    parameters:
+      - id: pair_e379a94ddc3345b2a850c2bc13317755
+        name: sort
+        value: -id
+        description: ""
+        disabled: false
+      - id: pair_41ce2f6d646743bb86525fb96f007adc
+        name: filter
+        value: id[eq]=1
+        description: ""
     headers:
       - name: User-Agent
         value: insomnia/8.1.0
@@ -160,7 +169,7 @@ resources:
     _type: request
   - _id: req_db252f931a4a42b79338df1d21089268
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696795917942
+    modified: 1697975966198
     created: 1696765523521
     url: http://localhost:8080/events
     name: create event
@@ -170,7 +179,7 @@ resources:
       mimeType: application/json
       text: |
         {
-          "name": "Концерт Доры 777",
+          "name": "Концерт Доры 999",
           "date": "2023-12-13",
           "minAge": 12,
           "eventType": "CONCERT"
@@ -193,7 +202,7 @@ resources:
     _type: request
   - _id: req_808294859df440bbacb6734c3c3da575
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696765665264
+    modified: 1697916645752
     created: 1696765628027
     url: http://localhost:8080/events/1
     name: get event by id
@@ -220,7 +229,7 @@ resources:
     _type: request
   - _id: req_3256b1a3683e4ac5b77cb41ddaf1d107
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696934048301
+    modified: 1697975987708
     created: 1696765658438
     url: http://localhost:8080/events
     name: get all events
@@ -229,7 +238,16 @@ resources:
     body:
       mimeType: application/json
       text: ""
-    parameters: []
+    parameters:
+      - id: pair_81f2aea187284fdd98e5a1b247ae3bcc
+        name: filter
+        value: id[ne]=5
+        description: ""
+        disabled: false
+      - id: pair_b82eea2e715040e5aee2df6ffbc5b20e
+        name: filter
+        value: minAge[gt]=12
+        description: ""
     headers:
       - name: Content-Type
         value: application/json
