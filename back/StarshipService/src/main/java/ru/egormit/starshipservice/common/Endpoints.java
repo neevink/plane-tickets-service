@@ -21,4 +21,8 @@ public interface Endpoints {
     String DELETE_EVENT_BY_ID = "/events/{eventId}";
     String UPDATE_EVENT_BY_ID = "/events/{eventId}";
     String GET_EVENTS_COUNT = "/events/count";
+
+
+    String GET_EVENTS_TYPES = "/events/types";
+    String GET_TICKETS_TYPES = "/tickets/types";
 }

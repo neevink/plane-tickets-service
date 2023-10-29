@@ -16,7 +16,7 @@
            {:value "" :shown false}
            :date
            {:value "" :shown false}
-           :min-age
+           :minAge
            {:value "" :shown false}
            :eventType
            {:value "" :shown false}}}

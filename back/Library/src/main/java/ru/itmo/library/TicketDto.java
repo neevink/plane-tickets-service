@@ -15,12 +15,14 @@ public class TicketDto {
     private Long id;
     private String name;
     private Coordinates coordinates;
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date creationDate;
     private Double price;
     private Double discount;
     private Boolean refundable;
     private TicketType type;
+
+    // Event is required null is impossible
     private Long eventId;
 
 }

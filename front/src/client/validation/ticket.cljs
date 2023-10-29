@@ -15,10 +15,12 @@
    ::creationDate "Ожидалась строка в формате YYYY-MM-DD"})
 
 (s/def ::name (s/and string? (fn [s] (not= 0 (count s)))))
+
+
 (s/def ::x #(or (and
                   (integer? %)
                   (> % -686))
-                (> (parse-long %) -686)))
+                (and (some? %) (string? %) (> (parse-long %) -686))))
 
 (s/def ::y #(or
              (and (string? %) (parse-long %))
@@ -28,7 +30,7 @@
 (s/def ::price
   #(or
     (and (number? %) (pos? %))
-    (pos? (parse-double %))))
+    (and (some? %) (pos? (parse-double %)))))
 
 (s/def ::discount
   #(or
@@ -37,7 +39,8 @@
          (pos? (parse-double %))
          (<= 0 (parse-double %) 100))))
 
-(s/def ::refundable (fn [a] (#{"true" "false" true false} a)))
+(s/def ::refundable (fn [a] (some? (#{"true" "false" true false} a))))
+
 (s/def ::type (fn [v]
                 (or
                  (nil? v)

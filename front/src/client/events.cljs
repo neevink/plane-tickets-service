@@ -1,6 +1,7 @@
 (ns client.events
   (:require
    [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
+   [client.debounce]
    [client.validation :as validation]
    [re-frame-cljs-http.http-fx]
    [client.db :as db]))
@@ -95,28 +96,29 @@
      str
      (drop 1
            (reduce
-            (fn [acc [field {:keys [value operator]}]]
-              (str acc "&filter=" (name field)
-                   "%5B"
-                   (or (operator-str->backend-operator operator) "eq")
-                   "%5D%3D" value))
-            ""
-            filters-map)))))
+             (fn [acc [field {:keys [value operator]}]]
+               (str acc "&filter=" (name field)
+                    "%5B"
+                    (or (operator-str->backend-operator operator) "eq")
+                    "%5D%3D" value))
+             ""
+             filters-map)))))
 
 (defn page-url [db]
   (let [current-page (get-in db [:paging :current-page])
         page-size (get-in db [:paging :page-size])]
-    (str "offset=" (* (dec current-page) page-size ) "&limit=" page-size)))
+    (str "offset=" (* (dec current-page) page-size) "&limit=" page-size)))
 
 (defn make-url-with-sort-and-filter [db base]
   (cond->
     (str (full-url base) "?" (page-url db))
+
     (filters-map->str (filter-added-filters db))
-    (str (filters-map->str (filter-added-filters db)))
+    (str "&" (filters-map->str (filter-added-filters db)))
 
     (and (get-in db [:sorting :sort-order])
          (get-in db [:sorting :field]))
-    (str "sort=" (when (= "desc" (get-in db [:sorting :sort-order])) "-") (name (get-in db [:sorting :field])))))
+    (str "&sort=" (when (= "desc" (get-in db [:sorting :sort-order])) "-") (name (get-in db [:sorting :field])))))
 
 (reg-event-fx
  ::download-tickets
@@ -187,16 +189,36 @@
              [::tickets-counted]
              [::tickets-not-counted])))
 
-(reg-event-db
- ::set-init-db
- (prn "set init db")
- db/default-db)
+(reg-event-fx
+ ::reloading
+ (fn [{:keys [db]} _]
+   {:db (assoc db :reloading true)}))
+
+(reg-event-fx
+ ::reloading-done
+ (fn [{:keys [db]} _]
+   {:db (assoc db :reloading false)}))
+
+(reg-event-fx
+ ::reload-db
+ (fn [_ _]
+   {:fx [[:dispatch  [::reloading]]
+         [:dispatch  [::download-event-types]]
+         [:dispatch [::download-ticket-types]]
+         [:dispatch  [::count-tickets]]
+         [:dispatch  [::count-events]]
+         [:dispatch  [::download-events]]
+         [:dispatch  [::download-tickets]]
+         [:dispatch-debounce
+          {:delay 500
+           :event [::reloading-done]}]]}))
 
 (reg-event-fx
  ::initialize-db
  (fn [_ _]
    {:db db/default-db
-    :fx [#_[:dispatch-sync  [::set-init-db]]
+    :fx [[:dispatch  [::download-event-types]]
+         [:dispatch [::download-ticket-types]]
          [:dispatch  [::count-tickets]]
          [:dispatch  [::count-events]]
          [:dispatch  [::download-events]]
@@ -213,6 +235,7 @@
                  :y parse-long}
    :type #(if (= "" %) nil %)
    :eventId parse-long
+   :refundable #(if (boolean? %) % (parse-boolean %))
    :price parse-double
    :discount parse-double})
 
@@ -351,43 +374,41 @@
     :dispatch (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])}))
 
 (reg-event-fx
- ::toggle-change
- (fn [{:keys [db]} [_]]
-   (.log js/console (range 200))
-   {:db (-> db
-            (update-in [:toggle-change] not))}))
-
-(reg-event-fx
  ::start-ticket-update
  (fn [{:keys [db]} [_ ticket-id]]
-   (let [modal-opened? (get-in db [:toggle-change])]
-     (if modal-opened?
-       {:db
-        (-> db
-            (update-in [:toggle-change] not)
-            (assoc :form nil)
-            (update-in [:ticket] dissoc :update-id))}
-       {:db
-        (-> db
-            (update-in [:toggle-change] not)
-            (assoc :form (get-in db [:tickets ticket-id]))
-            (assoc-in [:ticket :update-id] ticket-id))}))))
+   {:db
+    (-> db
+        (assoc :toggle-change true)
+        (assoc :form (get-in db [:tickets ticket-id]))
+        (assoc-in [:ticket :update-id] ticket-id))}))
+
+(reg-event-fx
+ ::end-ticket-update
+ (fn [{:keys [db]} [_]]
+   (prn "end-ticket-update")
+   {:db
+    (-> db
+        (assoc :toggle-change false)
+        (assoc :form nil)
+        (update-in [:ticket] dissoc :update-id))}))
 
 (reg-event-fx
  ::start-event-update
  (fn [{:keys [db]} [_ event-id]]
-   (let [modal-opened? (get-in db [:toggle-change])]
-     (if modal-opened?
-       {:db
-        (-> db
-            (update-in [:toggle-change] not)
-            (assoc :event-form nil)
-            (update-in [:event] dissoc :update-id))}
-       {:db
-        (-> db
-            (update-in [:toggle-change] not)
-            (assoc :event-form (get-in db [:events event-id]))
-            (assoc-in [:event :update-id] event-id))}))))
+   {:db
+    (-> db
+        (assoc :toggle-change true)
+        (assoc :event-form (get-in db [:events event-id]))
+        (assoc-in [:event :update-id] event-id))}))
+
+(reg-event-fx
+ ::end-event-update
+ (fn [{:keys [db]} [_]]
+   {:db
+    (-> db
+        (assoc :toggle-change false)
+        (assoc :event-form nil)
+        (update-in [:event] dissoc :update-id))}))
 
 (reg-event-fx
  ::change-filter-1
@@ -450,7 +471,7 @@
 (reg-event-fx
  ::change-event-and-validate
  (fn [{:keys [db]} [_ prop-path value]]
-   (prn "calling change-event-and-validate")
+   (prn "calling change-event-and-validate with prop path" prop-path "and value" value)
    {:db db
     :fx [[:dispatch [::save-form-event prop-path value]]
          [:dispatch [::validate-event-form]]]}))
@@ -509,11 +530,14 @@
 
 (re-frame/reg-event-db
  ::ticket-updated
- (fn [db [_ ticket]]
-   (prn "ticket updated")
-   (let [ticket (:body ticket)
+ (fn [db [_ result]]
+   (let [ticket (:body result)
          id (:id ticket)]
-     (assoc-in db [:tickets id] ticket))))
+     (-> db
+         (assoc-in [:tickets id] ticket)
+         (assoc :toggle-change false)
+         (assoc :form nil)
+         (update-in [:ticket] dissoc :update-id)))))
 
 (re-frame/reg-event-db
  ::ticket-not-updated
@@ -527,22 +551,25 @@
    (http-put db
              (full-url (str "/tickets/" (:id ticket)))
              (dissoc ticket :event)
-             [::ticket-updated ticket]
-             [::ticket-not-updated ticket])))
+             [::ticket-updated]
+             [::ticket-not-updated])))
 
 (reg-event-fx
  ::update-ticket-from-form
  (fn [{:keys [db]} [_]]
-   (prn "update ticket from form")
    {:db db
     :dispatch [::update-ticket-http (:form db)]}))
 
 (re-frame/reg-event-db
  ::event-updated
- (fn [db [_ event]]
-   (let [event (:body event)
+ (fn [db [_ result]]
+   (let [event (:body result)
          id (:id event)]
-     (assoc-in db [:events id] event))))
+     (-> db
+         (assoc-in [:events id] event)
+         (assoc :toggle-change false)
+         (assoc :form nil)
+         (update-in [:event] dissoc :update-id)))))
 
 (re-frame/reg-event-db
  ::event-not-updated
@@ -555,8 +582,8 @@
    (http-put db
              (full-url (str "/events/" (:id event)))
              (dissoc event :event)
-             [::event-updated event]
-             [::event-not-updated event])))
+             [::event-updated]
+             [::event-not-updated])))
 
 (reg-event-fx
  ::update-event-from-form
@@ -573,12 +600,48 @@
          [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
 
 (reg-event-fx
-  ::change-sort-1
-  (fn [{:keys [db]} [_ sort-opt value #_{:keys [sort-order field]} ]]
-    {:db (assoc-in db [:sorting sort-opt] value)}))
+ ::change-sort-1
+ (fn [{:keys [db]} [_ sort-opt value #_{:keys [sort-order field]}]]
+   {:db (assoc-in db [:sorting sort-opt] value)}))
 
 (reg-event-fx
  ::change-sort
  (fn [{:keys [db]} [_ sort-opt value]]
    {:fx [[:dispatch [::change-sort-1 sort-opt value]]
          [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
+
+(re-frame/reg-event-db
+ ::event-types-downloaded
+ (fn [db [_ event-types]]
+   (let [event-types (:body event-types)]
+     (assoc db :event-types event-types))))
+
+(re-frame/reg-event-db
+ ::event-types-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::download-event-types
+ (fn [{:keys [db]} _]
+   (http-get db (full-url "/events/types")
+             [::event-types-downloaded]
+             [::event-types-not-downloaded])))
+
+(re-frame/reg-event-db
+ ::ticket-types-downloaded
+ (fn [db [_ event-types]]
+   (let [event-types (:body event-types)]
+     (assoc db :ticket-types event-types))))
+
+(re-frame/reg-event-db
+ ::ticket-types-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::download-ticket-types
+ (fn [{:keys [db]} _]
+   (http-get db (full-url "/tickets/types")
+             [::ticket-types-downloaded]
+             [::ticket-types-not-downloaded])))

@@ -11,6 +11,7 @@ import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.itmo.library.CreateTicketRequest;
 import ru.itmo.library.TicketDto;
+import ru.itmo.library.enums.EventType;
 import ru.itmo.library.enums.TicketType;
 
 import java.util.ArrayList;
@@ -127,8 +128,8 @@ public class TicketController {
             @PathVariable("ticketId") Long ticketId,
             @RequestBody CreateTicketRequest request
     ) {
-        ticketService.updateTicketById(ticketId, request);
-        return new ResponseEntity<>("updated", HttpStatus.OK);
+        var res = ticketService.updateTicketById(ticketId, request);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     // front needs this!!!!!!!!
@@ -136,4 +137,11 @@ public class TicketController {
     public ResponseEntity<Long> countTickets() {
         return new ResponseEntity<>(ticketService.countTickets(), HttpStatus.OK);
     }
+
+
+    @GetMapping(value = Endpoints.GET_TICKETS_TYPES)
+    public ResponseEntity<List<Object>> eventsTypes() {
+        return new ResponseEntity<>(ticketService.getTypes(), HttpStatus.OK);
+    }
+
 }

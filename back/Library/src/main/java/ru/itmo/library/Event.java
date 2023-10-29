@@ -7,6 +7,7 @@ import ru.itmo.library.enums.EventType;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Сущность Event.

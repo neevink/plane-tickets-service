@@ -9,11 +9,10 @@ import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.TicketService;
 import ru.egormit.starshipservice.utils.TicketModelMapper;
 import ru.itmo.library.*;
+import ru.itmo.library.enums.TicketType;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -129,7 +128,7 @@ public class TicketServiceImpl implements TicketService {
         if (!ticketRepository.existsById(ticketId)) {
             throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
         }
-        Ticket ticket = ticketRepository.getById(ticketId);
+        Ticket ticket = ticketRepository.findById(ticketId).get();
         return ticketModelMapper.map(ticket);
     }
 
@@ -142,7 +141,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void updateTicketById(Long ticketId, CreateTicketRequest request) {
+    public TicketDto updateTicketById(Long ticketId, CreateTicketRequest request) {
         if (!ticketRepository.existsById(ticketId)) {
             throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
         }
@@ -168,10 +167,23 @@ public class TicketServiceImpl implements TicketService {
             }
         }
         ticketRepository.save(updatedTicket);
+        return ticketModelMapper.map(updatedTicket);
     }
 
     @Override
     public long countTickets() {
         return ticketRepository.count();
+    }
+
+    @Override
+    public List<Object> getTypes() {
+        var res = new ArrayList<>();
+        for (var type : TicketType.values()) {
+            HashMap<String, String> a = new HashMap<>();
+            a.put("value", type.name());
+            a.put("desc", type.toString());
+            res.add(a);
+        }
+        return res;
     }
 }

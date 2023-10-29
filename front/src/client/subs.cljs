@@ -33,11 +33,6 @@
    (get db :mode)))
 
 (reg-sub
- ::form
- (fn [db [_]]
-   (get db :form)))
-
-(reg-sub
  ::form-prop
  (fn [db [_ prop-path]]
    (get-in db (into [:form] prop-path))))
@@ -67,19 +62,20 @@
  ::form-path-invalid-message
  (fn [db [_ prop-path]]
    (when (not= :ok  (get db :form-valid))
-     (first (vec (filter
-                  (fn [error-mp]
-                    (= prop-path (:path error-mp)))
-                  (get db :form-valid)))))))
+     (first (vec (mapv :message (filter
+                                 (fn [error-mp]
+                                   (= prop-path (into [] (:path error-mp))))
+                                 (get db :form-valid))))))))
 
 (reg-sub
  ::event-form-path-invalid-message
  (fn [db [_ prop-path]]
    (when (not= :ok (get db :event-form-valid))
-     (first (vec (filter
-                  (fn [error-mp]
-                    (= prop-path (:path error-mp)))
-                  (get db :event-form-valid)))))))
+     (first (vec (mapv :message
+                       (filter
+                        (fn [error-mp]
+                          (= prop-path (into [] (:path error-mp))))
+                        (get db :event-form-valid))))))))
 
 (reg-sub
  ::toggle-new
@@ -99,12 +95,12 @@
 (reg-sub
  ::last-page
  (fn [db [_]]
-  (let [mode (:mode db)
-        entity  (if (= mode :tickets) :count-tickets :count-events)]
-   (js/Math.ceil
-    (double
-     (/ (get-in db [entity])
-        (get-in db [:paging :page-size])))))))
+   (let [mode (:mode db)
+         entity  (if (= mode :tickets) :count-tickets :count-events)]
+     (js/Math.ceil
+      (double
+       (/ (get-in db [entity])
+          (get-in db [:paging :page-size])))))))
 
 (reg-sub
  ::toggle-change
@@ -122,33 +118,9 @@
    (get-in db [:paging :page-size])))
 
 (reg-sub
- ::tickets-on-page
- (fn [db [_]]
-   (let  [page (get-in db [:paging :current-page])
-          page-size (get-in db [:paging :page-size])]
-     (into {} (take page-size (drop
-                               (* page-size (dec page))
-                               (get-in db [:tickets])))))))
-
-(reg-sub
- ::events-on-page
- (fn [db [_]]
-   (let  [page (get-in db [:paging :current-page])
-          page-size (get-in db [:paging :page-size])]
-     (into {} (take page-size (drop
-                               (* page-size (dec page))
-                               (get-in db [:events])))))))
-
-(reg-sub
  ::filters
  (fn [db [_ prop]]
    (get-in db [:filters (:mode db) prop])))
-
-(reg-sub
- ::ticket-edit-prop
- (fn [db [_ prop]]
-   (get-in db (into [:ticket :edit :path] prop))))
-
 
 (reg-sub
  ::event-edit-prop
@@ -171,25 +143,37 @@
    (get-in db [:event :to-delete])))
 
 (reg-sub
- ::event-to-edit-id
+ ::event-update-id
  (fn [db [_]]
-   (get-in db [:event :to-edit])))
-
+   (get-in db [:event :update-id])))
 
 (reg-sub
  ::initialized?
  (fn [db _]
-  (and (find db :events)
-       (find db :tickets))))
+   (and (find db :events)
+        (find db :tickets))))
 
 (reg-sub
  ::count-events
  (fn [db _]
-  (get db :count-events)))
-
+   (get db :count-events)))
 
 (reg-sub
  ::count-tickets
  (fn [db _]
-  (get db :count-tickets)))
+   (get db :count-tickets)))
 
+(reg-sub
+ ::reloading
+ (fn [db _]
+   (get db :reloading)))
+
+(reg-sub
+ ::ticket-types
+ (fn [db _]
+   (get db :ticket-types)))
+
+(reg-sub
+ ::event-types
+ (fn [db _]
+   (get db :event-types)))

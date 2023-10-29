@@ -330,8 +330,34 @@ label.form-label {
 html, body {
   height: 100%;
   margin: 0;
+  text-overflow: ellipsis;
+}
+
+span, div, p, h1, h2, h3, h4, h5 {
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 #app {
   height: 100%;
+}
+
+.rotate{
+    -moz-transition: all 0.5s linear;
+    -webkit-transition: all 0.5s linear;
+    transition: all 0.2s linear;
+}
+
+.rotate.down{
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+
+.rotate.down1{
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
 }

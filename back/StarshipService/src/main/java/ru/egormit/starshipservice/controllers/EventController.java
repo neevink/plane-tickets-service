@@ -120,8 +120,8 @@ public class EventController {
             @PathVariable("eventId") Long eventId,
             @RequestBody CreateEventRequest request
     ) {
-        eventService.updateEventById(eventId, request);
-        return new ResponseEntity<>("updated", HttpStatus.OK);
+        var res = eventService.updateEventById(eventId, request);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     // front needs this!!!!!!!!
@@ -129,4 +129,11 @@ public class EventController {
     public ResponseEntity<Long> countTickets() {
         return new ResponseEntity<>(eventService.countEvents(), HttpStatus.OK);
     }
+
+
+    @GetMapping(value = Endpoints.GET_EVENTS_TYPES)
+    public ResponseEntity<List<Object>> eventsTypes() {
+        return new ResponseEntity<>(eventService.getTypes(), HttpStatus.OK);
+    }
+
 }

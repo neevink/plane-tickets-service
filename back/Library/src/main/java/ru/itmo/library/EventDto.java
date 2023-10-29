@@ -14,7 +14,7 @@ import java.util.Date;
 public class EventDto {
     private Long id;
     private String name;
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date date;
     private Integer minAge;
     private EventType eventType;

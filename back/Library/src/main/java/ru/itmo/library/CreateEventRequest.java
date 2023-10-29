@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor(staticName = "of")
 public class CreateEventRequest {
     private String name;
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date date;
     private Integer minAge;
     private EventType eventType;

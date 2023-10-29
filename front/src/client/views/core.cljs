@@ -21,7 +21,7 @@
    :events  ["id"
              {:value "name" :desc "Название мероприятия"}
              {:value "date" :desc "Дата мероприятия"}
-             {:value "min-age" :desc "Минимальный возраст"}]})
+             {:value "minAge" :desc "Минимальный возраст"}]})
 
 (defn sort-view [mode]
   [:div
@@ -88,6 +88,7 @@
            {:class (c
                     :w-full
                     :rounded :border [:h 8])
+            :maxLength 30
             :on-change
             #(dispatch [:dispatch-debounce
                         {:delay 1000
@@ -97,25 +98,26 @@
                                  (.. % -target -value)]}])
             :placeholder "Фильтр"}])])]))
 
-(def filter-values
-  {:tickets [[:id false "id"]
-             [:name true "Имя"]
-             [:coordinateX false "Координата x"]
-             [:coordinateY false "Координата y"]
-             [:price false "Цена"]
-             [:discount false "Скидка"]
-             [:refundable true "Возвратный" [true false]]
-             [:type false "Тип" ["CHEAP" "BUDGETARY" "USUAL" "VIP"]]
-            ;; event true "event"]
-             ]
-   :events [[:id false "id"]
-            [:name true "Название мероприятия"]
-            [:date false "Дата проведения"]
-            [:min-age false "Минимальный возраст"]
-            [:eventType true "Тип мероприятия" ["CONCERT", "BASEBALL", "BASKETBALL", "THEATRE_PERFORMANCE"]]]})
+(defn get-filter-values [mode]
+  (let [ticket-types @(subscribe [::subs/ticket-types])
+        event-types @(subscribe [::subs/event-types])]
+    (get {:tickets [[:id false "id"]
+                    [:name true "Имя"]
+                    [:coordinateX false "Координата x"]
+                    [:coordinateY false "Координата y"]
+                    [:price false "Цена"]
+                    [:discount false "Скидка"]
+                    [:refundable true "Возвратный" [true false]]
+                    [:type false "Тип" ticket-types]]
+          :events [[:id false "id"]
+                   [:name true "Название мероприятия"]
+                   [:date false "Дата проведения"]
+                   [:minAge false "Минимальный возраст"]
+                   [:eventType true "Тип мероприятия"
+                    event-types]]} mode)))
 
 (defn filter-view [mode]
-  (let [values (get filter-values mode)]
+  (let [values (get-filter-values mode)]
     [:div
      (doall
       (for [v values]
@@ -128,10 +130,11 @@
    (filter-view mode)])
 
 (defn home-panel []
-  (let [mode @(re-frame/subscribe [::subs/mode])]
+  (let [mode @(re-frame/subscribe [::subs/mode])
+        reloading? @(subscribe [::subs/reloading])]
     [:div {:class (c [:px 15] [:py 2])}
      [:h1 {:class (c :text-center)}
-      "SOA Lab2 Slava+Kirill24"]
+      "SOA Lab2 Slava+Kirill"]
      [:div
       {:class (c :font-mono [:pt 2])}
       [:div
@@ -145,8 +148,14 @@
        [:button
         {:on-click #(dispatch [::events/set-mode :events])
          :class [(when (= :events mode) (c :font-bold))
-                 (c [:px 1] :underline  )]}
+                 (c [:px 1] :underline)]}
         "Ивенты"]
+       [:i.fa-solid.fa-rotate-right.rotate
+        {:on-click
+         #(dispatch [::events/reload-db])
+         :class [(if reloading? :down :down1)
+                 (c :cursor-pointer)]}]
+
        [:div {:class (c :flex)}
         [header mode]
         (when (= :events mode)

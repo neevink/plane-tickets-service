@@ -4,6 +4,7 @@ import ru.egormit.starshipservice.domain.FilterCriteria;
 import ru.egormit.starshipservice.domain.SortCriteria;
 import ru.itmo.library.CreateEventRequest;
 import ru.itmo.library.EventDto;
+import ru.itmo.library.enums.EventType;
 
 import java.util.List;
 
@@ -16,7 +17,9 @@ public interface EventService {
 
     void deleteEventById(Long eventId);
 
-    void updateEventById(Long eventId, CreateEventRequest request);
+    EventDto updateEventById(Long eventId, CreateEventRequest request);
 
     long countEvents();
+
+    List<Object> getTypes();
 }

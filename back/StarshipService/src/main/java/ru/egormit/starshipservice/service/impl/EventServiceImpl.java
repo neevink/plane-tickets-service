@@ -3,13 +3,18 @@ package ru.egormit.starshipservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.egormit.starshipservice.domain.*;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
 import ru.egormit.starshipservice.service.EventService;
 import ru.egormit.starshipservice.utils.EventModelMapper;
 import ru.itmo.library.*;
+import ru.itmo.library.enums.EventType;
+import ru.itmo.library.enums.TicketType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,15 +109,15 @@ public class EventServiceImpl implements EventService {
             throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
         }
 
-        if (ticketRepository.allTicketsByEventId(eventId) != 0){
-            throw ErrorDescriptions.CANT_DELETE_EVENT.exception();
-        }
+        var ticketsToDelete = ticketRepository.allTicketsByEventId(eventId);
+        ticketsToDelete.forEach(ticket -> ticketRepository.deleteById(ticket.getId()));
+        System.out.println("hello im here");
 
         eventRepository.deleteById(eventId);
     }
 
     @Override
-    public void updateEventById(Long eventId, CreateEventRequest request) {
+    public EventDto updateEventById(Long eventId, CreateEventRequest request) {
         if (!eventRepository.existsById(eventId)) {
             throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
         }
@@ -125,10 +130,23 @@ public class EventServiceImpl implements EventService {
         updatedEvent.setEventType(request.getEventType());
 
         eventRepository.save(updatedEvent);
+        return eventModelMapper.map(updatedEvent);
     }
 
     @Override
     public long countEvents() {
         return eventRepository.count();
+    }
+
+    @Override
+    public List<Object> getTypes() {
+        var res = new ArrayList<>();
+        for (var type : EventType.values()) {
+            HashMap<String, String> a = new HashMap<>();
+            a.put("value", type.name());
+            a.put("desc", type.toString());
+            res.add(a);
+        }
+        return res;
     }
 }

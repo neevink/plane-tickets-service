@@ -4,6 +4,7 @@ import ru.egormit.starshipservice.domain.FilterCriteria;
 import ru.egormit.starshipservice.domain.SortCriteria;
 import ru.itmo.library.CreateTicketRequest;
 import ru.itmo.library.TicketDto;
+import ru.itmo.library.enums.TicketType;
 
 import java.util.List;
 
@@ -38,7 +39,9 @@ public interface TicketService {
 
     void deleteTicketById(Long ticketId);
 
-    void updateTicketById(Long ticketId, CreateTicketRequest request);
+    TicketDto updateTicketById(Long ticketId, CreateTicketRequest request);
 
     long countTickets();
+
+    List<Object> getTypes();
 }

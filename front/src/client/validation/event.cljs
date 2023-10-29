@@ -4,7 +4,7 @@
 
 (def event-messages
   {::name  "Ожидалась не пустая строка"
-   ::date "Ожидалась строка в формате yyyy-MM-dd'T'HH:mm"
+   ::date "Ожидалась строка в формате yyyy-MM-dd"
    ::minAge "Ожидалось целое число > 0"
    ::eventType "Ожидался один из: CONCERT, BASEBALL, BASKETBALL, THEATRE_PERFORMANCE"})
 
@@ -13,8 +13,7 @@
 (s/def ::date (fn [v]
                  (or (= v "") (nil? v)
                  (re-matches
-                   #"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})"
-                             v))))
+                   #"(\d{4})-(\d{2})-(\d{2})" v))))
 
 (s/def ::minAge #(or
                   (and (number? %) (pos? %))

@@ -20,7 +20,7 @@ public class TicketModelMapper {
         dto.setCreationDate(Date.from(ticket.getCreationDate().toInstant()));
         dto.setPrice(ticket.getPrice());
         dto.setDiscount(ticket.getDiscount());
-        dto.setRefundable(dto.getRefundable());
+        dto.setRefundable(ticket.getRefundable());
         dto.setType(ticket.getType());
         if (ticket.getEvent() != null){
             dto.setEventId(ticket.getEvent().getId());
