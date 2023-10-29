@@ -150,7 +150,7 @@
        "Удалить"]]]]])
 
 (defn events-view []
-  (let [events @(re-frame/subscribe [::subs/events])
+  (let [events @(re-frame/subscribe [::subs/events-1])
         modal-opened? @(subscribe [::subs/toggle-new])
         modal-delete-opened? @(subscribe [::subs/toggle-delete])
         event-to-delete-id @(subscribe [::subs/event-to-delete-id])
@@ -187,7 +187,7 @@
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]
       (doall
-       (for [[_ event] events]
+       (for [event events]
          (one-event event)))]]))
 
 

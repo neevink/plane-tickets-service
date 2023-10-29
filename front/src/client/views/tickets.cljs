@@ -201,7 +201,7 @@
                          :on-click #(dispatch [::events/toggle-new])} "Отменить"]]))
 
 (defn tickets-view []
-  (let [tickets @(re-frame/subscribe [::subs/tickets])
+  (let [tickets @(re-frame/subscribe [::subs/tickets-1])
         modal-opened? @(subscribe [::subs/toggle-new])
         modal-delete-opened? @(subscribe [::subs/toggle-delete])
         to-delete-id @(subscribe [::subs/ticket-to-delete-id])
@@ -222,9 +222,9 @@
              :on-click #(dispatch [::events/toggle-new])}
        "НОВЫЙ"]
       (doall
-       (for [[ticket-id _ticket] tickets]
-         ^{:key ticket-id}
-         [one-ticket ticket-id (fn [] (dispatch [::events/delete-ticket ticket-id]))]))
+       (for [ticket tickets]
+         ^{:key (:id ticket)}
+         [one-ticket (:id ticket) (fn [] (dispatch [::events/delete-ticket (:id ticket)]))]))
       (when modal-edit-opened?
         [components/modal
          (str "Изменение билета " to-edit-id)

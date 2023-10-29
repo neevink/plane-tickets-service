@@ -13,9 +13,19 @@
    (get-in db [:tickets])))
 
 (reg-sub
+ ::tickets-1
+ (fn [db _]
+   (vals (get-in db [:tickets]))))
+
+(reg-sub
  ::events
  (fn [db _]
    (get-in db [:events])))
+
+(reg-sub
+ ::events-1
+ (fn [db _]
+   (vals (get-in db [:events]))))
 
 (reg-sub
  ::ticket-by-id
@@ -123,11 +133,6 @@
    (get-in db [:filters (:mode db) prop])))
 
 (reg-sub
- ::event-edit-prop
- (fn [db [_ prop]]
-   (get-in db (into [:event :edit :path] prop))))
-
-(reg-sub
  ::ticket-to-delete-id
  (fn [db [_]]
    (get-in db [:ticket :to-delete])))
@@ -177,3 +182,13 @@
  ::event-types
  (fn [db _]
    (get db :event-types)))
+
+(reg-sub
+ ::sortings
+ (fn [db [_ mode]]
+   (get-in db [(if (= mode :tickets) :ticket :event) :sorting])))
+
+(reg-sub
+ ::sorting-by-id
+ (fn [db [_ mode id]]
+   (get-in db [(if (= mode :tickets) :ticket :event) :sorting id])))

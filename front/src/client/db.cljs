@@ -27,7 +27,9 @@
    :toggle-change false
    :paging {:current-page 1
             :page-size 5}
+   :event {:sorting {0 {:field :id :sort-order nil}}}
    :ticket {:update-id 1
+            :sorting {0 {:field :id :sort-order nil}}
             :edit {:ticket-id 1
                    :path {:name false
                          ;; ...

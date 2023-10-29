@@ -4,6 +4,7 @@
    [client.debounce]
    [client.validation :as validation]
    [re-frame-cljs-http.http-fx]
+   [clojure.string :as str]
    [client.db :as db]))
 
 (def back-url "http://localhost:8080")
@@ -96,29 +97,40 @@
      str
      (drop 1
            (reduce
-             (fn [acc [field {:keys [value operator]}]]
-               (str acc "&filter=" (name field)
-                    "%5B"
-                    (or (operator-str->backend-operator operator) "eq")
-                    "%5D%3D" value))
-             ""
-             filters-map)))))
+            (fn [acc [field {:keys [value operator]}]]
+              (str acc "&filter=" (name field)
+                   "%5B"
+                   (or (operator-str->backend-operator operator) "eq")
+                   "%5D%3D" value))
+            ""
+            filters-map)))))
 
 (defn page-url [db]
   (let [current-page (get-in db [:paging :current-page])
         page-size (get-in db [:paging :page-size])]
     (str "offset=" (* (dec current-page) page-size) "&limit=" page-size)))
 
+(defn sortings->str [db part]
+  (let [sorting-map
+        (get-in db [part :sorting])]
+    (str "&sort="
+         (str/join ","
+                   (mapv (fn [[_id {field :field sort-order :sort-order}]]
+                           (str (when (= "desc" sort-order) "-")
+                                (name field))) sorting-map)))))
+
 (defn make-url-with-sort-and-filter [db base]
-  (cond->
-    (str (full-url base) "?" (page-url db))
+  (let [mode (:mode db)
+        part (if (= mode :events) :event :ticket)]
+    (cond->
+     (str (full-url base) "?" (page-url db))
 
-    (filters-map->str (filter-added-filters db))
-    (str "&" (filters-map->str (filter-added-filters db)))
+      (filters-map->str (filter-added-filters db))
+      (str "&" (filters-map->str (filter-added-filters db)))
 
-    (and (get-in db [:sorting :sort-order])
-         (get-in db [:sorting :field]))
-    (str "&sort=" (when (= "desc" (get-in db [:sorting :sort-order])) "-") (name (get-in db [:sorting :field])))))
+      (get-in db [part :sorting])
+
+      (str (sortings->str db part)))))
 
 (reg-event-fx
  ::download-tickets
@@ -433,34 +445,6 @@
       :dispatch (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])})))
 
 (reg-event-fx
- ::ticket-start-edit
- (fn [{:keys [db]} [_ ticket-id prop]]
-   (let
-    [val-path  (into [:ticket :edit :path] prop)
-     old-value (get-in db val-path)]
-     {:db
-      (if old-value
-        (-> db
-            (assoc-in [:ticket :edit :ticket-id] ticket-id)
-            (update-in val-path not))
-        (-> (assoc-in db [:ticket :edit :ticket-id] ticket-id)
-            (assoc-in val-path true)))})))
-
-(reg-event-fx
- ::event-start-edit
- (fn [{:keys [db]} [_ ticket-id prop]]
-   (let
-    [val-path  (into [:event :edit :path] prop)
-     old-value (get-in db val-path)]
-     {:db
-      (if old-value
-        (-> db
-            (assoc-in [:event :edit :event-id] ticket-id)
-            (update-in val-path not))
-        (-> (assoc-in db [:event :edit :event-id] ticket-id)
-            (assoc-in val-path true)))})))
-
-(reg-event-fx
  ::change-ticket-and-validate
  (fn [{:keys [db]} [_ prop-path value]]
    (prn "calling change-ticket-and-validate")
@@ -601,14 +585,15 @@
 
 (reg-event-fx
  ::change-sort-1
- (fn [{:keys [db]} [_ sort-opt value #_{:keys [sort-order field]}]]
-   {:db (assoc-in db [:sorting sort-opt] value)}))
+ (fn [{:keys [db]} [_ sort-id sort-opt value]]
+   (let [mode (:mode db)]
+     {:db (assoc-in db [(if (= mode :tickets) :ticket :event) :sorting sort-id sort-opt] value)})))
 
 (reg-event-fx
  ::change-sort
- (fn [{:keys [db]} [_ sort-opt value]]
-   {:fx [[:dispatch [::change-sort-1 sort-opt value]]
-         [:dispatch  (if (= :tickets (:mode db)) [::download-tickets]  [::download-events])]]}))
+ (fn [{:keys [db]} [_ sort-id sort-opt value]]
+   {:fx [[:dispatch [::change-sort-1 sort-id sort-opt value]]
+         [:dispatch  (if (= :tickets (:mode db)) [::download-tickets] [::download-events])]]}))
 
 (re-frame/reg-event-db
  ::event-types-downloaded
@@ -645,3 +630,11 @@
    (http-get db (full-url "/tickets/types")
              [::ticket-types-downloaded]
              [::ticket-types-not-downloaded])))
+
+(reg-event-fx
+ ::add-sorting
+ (fn [{:keys [db]} [_ mode]]
+   (let [part (if (= mode :tickets) :ticket :event)
+         new-sort-id (inc (key (apply max-key key (get-in db [part :sorting]))))]
+     {:db
+      (assoc-in db [part :sorting new-sort-id] {:field nil :sort-order nil})})))

@@ -16,28 +16,52 @@
              {:value "name" :desc "Имя"}
              "x"
              "y"
-             {:value "creationDate" :desc "Дата создания"}]
+             {:value "creationDate" :desc "Дата создания"}
+             {:value "price" :desc "Цена"}
+             {:value "discount" :desc "Скидка"}
+             {:value "refundable" :desc "Возвратный"}
+             {:value "type" :desc "Тип мероприятия"}]
 
    :events  ["id"
              {:value "name" :desc "Название мероприятия"}
              {:value "date" :desc "Дата мероприятия"}
-             {:value "minAge" :desc "Минимальный возраст"}]})
+             {:value "minAge" :desc "Минимальный возраст"}
+             {:value "eventType" :desc "Тип ивента"}]})
 
-(defn sort-view [mode]
-  [:div
-   [:div {:class (c :flex)}
-    (components/selector
+(defn one-sort [id mode]
+  [:div {:class (c :flex)}
+   (components/selector
      (get sort-selector-values mode)
-     #(dispatch [::events/change-sort :field  (.. % -target -value)]))
+     #(dispatch [::events/change-sort id :field  (.. % -target -value)]))
 
-    (components/selector
+   (components/selector
      [{:value "netu" :desc "Без сортировки"}
       {:value "asc" :desc "По возрастанию"}
       {:value "desc" :desc "По убыванию"}]
-     #(dispatch [::events/change-sort :sort-order (.. % -target -value)])
+     #(dispatch [::events/change-sort id :sort-order (.. % -target -value)])
      {:default-value "netu"
       :cls
-      (c [:px 2] :text-center [:w 35])})]])
+      (c [:px 2] :text-center [:w 35])})])
+
+(defn sort-view [mode]
+  (let [sortings @(subscribe [::subs/sortings mode])]
+    [:div
+     [:div {:class (c :text-center)}
+      (for [[sort-id _sort-map] sortings]
+        ^{:key sort-id}
+        [one-sort sort-id mode])
+      [:div {:class [(c :cursor-pointer
+                        [:my 2]
+                        [:border "#FAFAFA"]
+                        :rounded
+                        [:bg "#FAFAFA"]
+                        :transition-all [:duration 200] :ease-in-out
+                        [:focus-within :outline-none :shadow-none [:border "#2e3633"]]
+                        [:focus :outline-none :shadow-none [:border "#2e3633"]]
+                        [:hover [:border "#2e3633"]]) (c :text-center :w-full)]
+             :on-click
+             #(dispatch [::events/add-sorting mode])}
+       [:i.fa-solid.fa-plus]]]]))
 
 (defn filter-view-one [prop only=? label & [selector-values]]
   (let [filter-db @(subscribe [::subs/filters prop])
@@ -105,6 +129,7 @@
                     [:name true "Имя"]
                     [:coordinateX false "Координата x"]
                     [:coordinateY false "Координата y"]
+                    [:creationDate false "Дата создания"]
                     [:price false "Цена"]
                     [:discount false "Скидка"]
                     [:refundable true "Возвратный" [true false]]
