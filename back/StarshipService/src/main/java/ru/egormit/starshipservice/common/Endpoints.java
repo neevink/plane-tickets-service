@@ -25,4 +25,7 @@ public interface Endpoints {
 
     String GET_EVENTS_TYPES = "/events/types";
     String GET_TICKETS_TYPES = "/tickets/types";
+    String GET_TICKETS_DISCOUNT_SUM = "/tickets/discount/sum";
+    String GET_TICKETS_DISCOUNT_COUNT = "/tickets/discount/count";
+    String GET_TICKETS_TYPE_COUNT = "/tickets/type/count";
 }

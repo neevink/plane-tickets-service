@@ -44,4 +44,10 @@ public interface TicketService {
     long countTickets();
 
     List<Object> getTypes();
+
+    Double sumOfDiscount();
+
+    Object sumOfDiscountCount();
+
+    Object getTicketsTypeCount(TicketType type);
 }

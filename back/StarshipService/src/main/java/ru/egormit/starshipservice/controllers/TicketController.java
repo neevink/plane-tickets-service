@@ -144,4 +144,28 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getTypes(), HttpStatus.OK);
     }
 
+
+//- [] GET /tickets/discount/sum
+    @GetMapping(value = Endpoints.GET_TICKETS_DISCOUNT_SUM)
+    public ResponseEntity<Double> getSumOfDiscount() {
+        return new ResponseEntity<>(ticketService.sumOfDiscount(), HttpStatus.OK);
+    }
+
+//-  GET /tickets/discount/count
+    @GetMapping(value = Endpoints.GET_TICKETS_DISCOUNT_COUNT)
+    public ResponseEntity<Object> getSumOfDiscountCount() {
+        return new ResponseEntity<>(ticketService.sumOfDiscountCount(), HttpStatus.OK);
+    }
+
+//- [] GET /tickets/type/count
+
+    @GetMapping(value = Endpoints.GET_TICKETS_TYPE_COUNT)
+    public ResponseEntity<Object> getTicketsTypeCount(
+            @RequestParam("type") TicketType type
+    ) {
+        if (type == null) {
+            return new ResponseEntity<>("type parameter is required", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(ticketService.getTicketsTypeCount(type), HttpStatus.OK);
+    }
 }

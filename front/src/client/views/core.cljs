@@ -29,27 +29,34 @@
              {:value "eventType" :desc "Тип ивента"}]})
 
 (defn one-sort [id mode]
-  [:div {:class (c :flex)}
-   (components/selector
-     (get sort-selector-values mode)
-     #(dispatch [::events/change-sort id :field  (.. % -target -value)]))
+  [:div
+   [:div {:class (c :flex)}
+    [:div {:class (c [:pr 5]
+                     [:pt 2]
+                     :cursor-pointer)
+           :on-click #(dispatch [::events/remove-sorting mode id])}
+     "[X]"]
+    (components/selector
+      (get sort-selector-values mode)
+      #(dispatch [::events/change-sort id :field  (.. % -target -value)]))
 
-   (components/selector
-     [{:value "netu" :desc "Без сортировки"}
-      {:value "asc" :desc "По возрастанию"}
-      {:value "desc" :desc "По убыванию"}]
-     #(dispatch [::events/change-sort id :sort-order (.. % -target -value)])
-     {:default-value "netu"
-      :cls
-      (c [:px 2] :text-center [:w 35])})])
+    (components/selector
+      [{:value "netu" :desc "Без сортировки"}
+       {:value "asc" :desc "По возрастанию"}
+       {:value "desc" :desc "По убыванию"}]
+      #(dispatch [::events/change-sort id :sort-order (.. % -target -value)])
+      {:default-value "netu"
+       :cls
+       (c [:px 2] :text-center [:w 35])})]])
 
 (defn sort-view [mode]
   (let [sortings @(subscribe [::subs/sortings mode])]
     [:div
-     [:div {:class (c :text-center)}
-      (for [[sort-id _sort-map] sortings]
+     [:div {:class (c :text-center :font-bold)}
+      [:h3 "Сортировки"]
+      (when sortings (for [[sort-id _sort-map] sortings]
         ^{:key sort-id}
-        [one-sort sort-id mode])
+        [one-sort sort-id mode]))
       [:div {:class [(c :cursor-pointer
                         [:my 2]
                         [:border "#FAFAFA"]
@@ -144,15 +151,76 @@
 (defn filter-view [mode]
   (let [values (get-filter-values mode)]
     [:div
+     [:h3 {:class (c :text-center :font-bold)} "Фильтры"]
      (doall
       (for [v values]
         (apply filter-view-one v)))]))
 
+(def button-cls (c :cursor-pointer
+                   [:my 2]
+                   [:border "#FAFAFA"]
+                   :rounded
+                   [:bg "#FAFAFA"]
+                   :transition-all [:duration 200] :ease-in-out
+                   [:focus-within :outline-none :shadow-none [:border "#2e3633"]]
+                   [:focus :outline-none :shadow-none [:border "#2e3633"]]
+                   [:hover [:border "#2e3633"]]))
+
 (defn header [mode]
-  [:div {:class (c :flex :flex-col)}
-   (sort-view mode)
-   [:hr {:class (c [:pt 2])}]
-   (filter-view mode)])
+  (let [tickets-discount-sum @(subscribe [::subs/tickets-discount-sum])
+        tickets-discount-count @(subscribe [::subs/tickets-discount-count])
+        tickets-types-count @(subscribe [::subs/tickets-types-count])
+        ticket-types @(subscribe [::subs/ticket-types])
+        ticket-discount-count-opened? @(subscribe [::subs/ticket-discount-count-opened])]
+    [:div {:class (c :flex :flex-col)}
+     [:h3 {:class (c :text-center :font-bold)} "Крутые запросы"]
+     [:div {:class [(c :flex :flex-col) (c :text-center :w-full)]}
+
+      [:div {:class (c :flex)}
+       [:div
+        [:button {:class button-cls
+                  :on-click
+                  #(dispatch [::events/download-ticket-discount-sum])}
+         "Сумма скидок"]
+        [:h5 tickets-discount-sum]]
+       [:div
+        [:button {:class button-cls
+                  :on-click
+                  #(dispatch [::events/download-ticket-discount-count])}
+         "Количество билетов в зависимости от скидки"]
+        (when ticket-discount-count-opened?
+          [components/modal
+           "Количество билетов в зависимости от скидки"
+           [:div
+            [:table {:class [(c :border :table :w-full)
+                             cls/div-center]}
+
+             [:thead
+              [:tr [:th "Скидка"]
+               [:th "Количество билетов"]]]
+             (for [one-map tickets-discount-count]
+               ^{:key (:discount one-map)}
+               [:tr
+                [:td (:discount one-map)]
+                [:td (:count one-map)]])]]
+           [:button.cancelBtn {:class (c [:w-min 100])
+                               :on-click #(dispatch [::events/close-hueta])}
+            "Очень информативно, спасибо"]
+           :modal-medium])]]
+
+      [:div
+       [:button {:class button-cls
+                 :on-click
+                 #(dispatch [::events/download-ticket-types-count])}
+        "Количество билетов меньших заданного типа"]
+       [components/selector ticket-types #(dispatch [::events/change-ticket-type (.. % -target -value)])]
+
+       [:h5 tickets-types-count]]]
+
+     [:hr {:class (c [:pt 2])}]
+     (sort-view mode)
+     [:hr {:class (c [:pt 2])}]
+     (filter-view mode)]))
 
 (defn home-panel []
   (let [mode @(re-frame/subscribe [::subs/mode])

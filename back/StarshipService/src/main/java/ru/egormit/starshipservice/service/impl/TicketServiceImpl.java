@@ -14,6 +14,9 @@ import ru.itmo.library.enums.TicketType;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @Service
@@ -185,5 +188,42 @@ public class TicketServiceImpl implements TicketService {
             res.add(a);
         }
         return res;
+    }
+
+    @Override
+    public Double sumOfDiscount() {
+        var all = ticketRepository.findAll();
+        return StreamSupport.stream(all.spliterator(), false).map(Ticket::getDiscount).reduce((double) 0, Double::sum);
+    }
+
+    @Override
+    public Object sumOfDiscountCount() {
+        var all = ticketRepository.findAll();
+//        [
+//        {discount: 10
+//         count: 100}
+//        {discount: 11
+//         count: 101}
+//        ]
+        var groupedByDiscount = StreamSupport.stream(all.spliterator(), false)
+                .collect(groupingBy(
+                        Ticket::getDiscount
+                ));
+        var res = new ArrayList<Map<String, Number>>();
+
+        for(var t : groupedByDiscount.entrySet()){
+            var hueta =
+                    Map.of("discount", t.getKey(), "count", (Number) t.getValue().size());
+            res.add(hueta);
+        }
+        return res;
+    }
+
+    @Override
+    public Long getTicketsTypeCount(TicketType ticketType) {
+        var all = ticketRepository.findAll();
+        return StreamSupport.stream(all.spliterator(), false)
+                .filter(ticket -> ticket.getType().getValue() < ticketType.getValue())
+                .count();
     }
 }

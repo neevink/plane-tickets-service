@@ -189,6 +189,21 @@
    (get-in db [(if (= mode :tickets) :ticket :event) :sorting])))
 
 (reg-sub
- ::sorting-by-id
- (fn [db [_ mode id]]
-   (get-in db [(if (= mode :tickets) :ticket :event) :sorting id])))
+ ::tickets-discount-sum
+ (fn [db [_]]
+   (get db :tickets-discount-sum)))
+
+(reg-sub
+ ::tickets-discount-count
+ (fn [db [_]]
+   (get db :tickets-discount-count)))
+
+(reg-sub
+ ::tickets-types-count
+ (fn [db [_]]
+   (get db :tickets-types-count)))
+
+(reg-sub
+ ::ticket-discount-count-opened
+ (fn [db [_]]
+  (get db :ticket-discount-count-opened)))

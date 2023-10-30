@@ -4,13 +4,14 @@ DONE
 1. Получать список категорий и тип enum с бэкенда
 4. При нажатии по кнопке редактировать выводить предыдущее значение и там бага
 14. На фронте слишком длинные строки обрезать
+- GET /tickets/type/count
+- GET /tickets/discount/sum
+- GET /tickets/discount/count 
+3. фронт Сделать сортировку по нескольким полям
+* delete sorting
+
 
 ФРОНТ 
-3. Сделать сортировку по нескольким полям
-* Сделать фильтры и сортировку по полям на которые мы забили
-- [] GET /tickets/type/count
-- [] GET /tickets/discount/sum
-- [] GET /tickets/discount/count 
 - [] post /sell/vip/ticket-id/person-id
 - [] post /sell/discount/ticket-id/person-id/discount
 * post/put со вложенным event
@@ -18,6 +19,7 @@ DONE
 
 БЭК
 * Сделать фильтры и сортировку по полям на которые мы забили
+* post/put со вложенным event
 3. Сделать сортировку по нескольким полям
 5. Нет валидации слишком длинных параметров фильтрации, нет валидации названия фильтра (в интежер не вмещается большое число и 500 падает)
 6. Не найден по фильтру при кастинге энам выводить 
@@ -31,8 +33,6 @@ DONE
 15. Можно сделать refundable = -562825 (должно кидать ошибку т.к. там только булин)
 16. При post если отправляют вложенный event, то создавать его
 18. При удалении мероприятия удалять тикеты рекурсивно
-- [] GET /tickets/type/count
-- [] GET /tickets/discount/sum
-- [] GET /tickets/discount/count 
 - [] post /sell/vip/ticket-id/person-id
 - [] post /sell/discount/ticket-id/person-id/discount
+* Проверить что ВСЕ запросы и ответы такие же как в swagger api отчете

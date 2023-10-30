@@ -635,6 +635,80 @@
  ::add-sorting
  (fn [{:keys [db]} [_ mode]]
    (let [part (if (= mode :tickets) :ticket :event)
-         new-sort-id (inc (key (apply max-key key (get-in db [part :sorting]))))]
+         new-sort-id (if (< 0 (count (get-in db [part :sorting])))
+                       (inc (key (apply max-key key (get-in db [part :sorting]))))
+                       0)]
      {:db
       (assoc-in db [part :sorting new-sort-id] {:field nil :sort-order nil})})))
+
+(re-frame/reg-event-db
+ ::ticket-types-count-downloaded
+ (fn [db [_ type-count]]
+   (let [event-types (:body type-count)]
+     (assoc db :tickets-types-count event-types))))
+
+(re-frame/reg-event-db
+ ::ticket-types-count-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::download-ticket-types-count
+ (fn [{:keys [db]} [_]]
+   (http-get db (full-url (str "/tickets/type/count?type=" (get db :ticket-type)))
+             [::ticket-types-count-downloaded]
+             [::ticket-types-count-not-downloaded])))
+
+(re-frame/reg-event-db
+ ::ticket-discount-count-downloaded
+ (fn [db [_ type-count]]
+   (let [event-types (:body type-count)]
+     (assoc db :tickets-discount-count event-types
+            :ticket-discount-count-opened true))))
+
+(re-frame/reg-event-db
+ ::ticket-discount-count-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::download-ticket-discount-count
+ (fn [{:keys [db]} _]
+   (http-get db (full-url "/tickets/discount/count")
+             [::ticket-discount-count-downloaded]
+             [::ticket-discount-count-not-downloaded])))
+
+(re-frame/reg-event-db
+ ::ticket-discount-sum-downloaded
+ (fn [db [_ type-count]]
+   (let [event-types (:body type-count)]
+     (assoc db :tickets-discount-sum event-types))))
+
+(re-frame/reg-event-db
+ ::ticket-discount-sum-not-downloaded
+ (fn [db [_ result]]
+   (assoc db :http-result result :errors? true)))
+
+(reg-event-fx
+ ::download-ticket-discount-sum
+ (fn [{:keys [db]} _]
+   (http-get db (full-url "/tickets/discount/sum")
+             [::ticket-discount-sum-downloaded]
+             [::ticket-discount-sum-not-downloaded])))
+
+(reg-event-fx
+ ::change-ticket-type
+ (fn [{:keys [db]} [_ ticket-type]]
+   {:db (assoc db :ticket-type ticket-type)}))
+
+(reg-event-fx
+ ::close-hueta
+ (fn [{:keys [db]} [_]]
+   {:db (assoc db :ticket-discount-count-opened false)}))
+
+(reg-event-fx
+ ::remove-sorting
+ (fn [{:keys [db]} [_ mode id]]
+   {:db (update-in db
+               [(if (= mode :tickets) :ticket :event) :sorting] dissoc id
+               false)}))
