@@ -21,9 +21,6 @@ public class TicketDto {
     private Double discount;
     private Boolean refundable;
     private TicketType type;
-
-    // Event is required null is impossible
-    private Long eventId;
-
+    private Event event;
 }
 

@@ -55,12 +55,12 @@ public class TicketServiceImpl implements TicketService {
         ticket.setRefundable(request.getRefundable());
         ticket.setType(request.getType());
 
-        if (request.getEventId() != null) {
-            if (!eventRepository.existsById(request.getEventId())) {
+        if (request.getEvent() != null && request.getEvent().getId() != null) {
+            if (!eventRepository.existsById(request.getEvent().getId())) {
                 throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
             }
             else {
-                Optional<Event> event = eventRepository.findById(request.getEventId());
+                Optional<Event> event = eventRepository.findById(request.getEvent().getId());
                 ticket.setEvent(event.get());
             }
         }
@@ -75,9 +75,7 @@ public class TicketServiceImpl implements TicketService {
         createdTicket.setDiscount(ticket.getDiscount());
         createdTicket.setRefundable(ticket.getRefundable());
         createdTicket.setType(ticket.getType());
-        if (ticket.getEvent() != null){
-            createdTicket.setEventId(ticket.getEvent().getId());
-        }
+        // createdTicket.setEvent(event);
         return createdTicket;
     }
 
@@ -160,12 +158,12 @@ public class TicketServiceImpl implements TicketService {
         updatedTicket.setRefundable(request.getRefundable());
         updatedTicket.setType(request.getType());
 
-        if (request.getEventId() != null) {
-            if (!eventRepository.existsById(request.getEventId())) {
+        if (request.getEvent() != null && request.getEvent().getId() != null) {
+            if (!eventRepository.existsById(request.getEvent().getId())) {
                 throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
             }
             else {
-                Optional<Event> event = eventRepository.findById(request.getEventId());
+                Optional<Event> event = eventRepository.findById(request.getEvent().getId());
                 updatedTicket.setEvent(event.get());
             }
         }

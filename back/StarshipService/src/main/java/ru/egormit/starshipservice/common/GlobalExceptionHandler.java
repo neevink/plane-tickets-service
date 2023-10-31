@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import ru.itmo.library.common.ErrorResponse;
 import ru.egormit.starshipservice.error.ApplicationException;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
+import ru.itmo.library.common.ErrorResponse;
 
 import javax.servlet.http.HttpServletResponse;
 

@@ -1,0 +1,13 @@
+com\lab2\secservice\EngineResource.class
+com\lab2\secservice\WhellsResource.class
+com\lab2\secservice\dto\VehicleType.class
+com\lab2\secservice\RestClient.class
+com\lab2\secservice\CORSFilter.class
+com\lab2\secservice\services\EngineService.class
+com\lab2\secservice\services\WhellsService.class
+com\lab2\secservice\dto\VehicleDTO.class
+com\lab2\secservice\HelloResource.class
+com\lab2\secservice\dto\VehiclesListDTO.class
+com\lab2\secservice\dto\FuelType.class
+com\lab2\secservice\dto\CoordinatesDTO.class
+com\lab2\secservice\HelloApplication.class

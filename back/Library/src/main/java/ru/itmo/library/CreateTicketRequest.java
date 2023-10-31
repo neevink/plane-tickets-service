@@ -19,5 +19,5 @@ public class CreateTicketRequest {
     private Double discount;
     private Boolean refundable;
     private TicketType type;
-    private Long eventId;
+    private EventDto event;
 }

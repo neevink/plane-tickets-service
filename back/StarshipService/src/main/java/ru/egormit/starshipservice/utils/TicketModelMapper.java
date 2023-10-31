@@ -22,9 +22,7 @@ public class TicketModelMapper {
         dto.setDiscount(ticket.getDiscount());
         dto.setRefundable(ticket.getRefundable());
         dto.setType(ticket.getType());
-        if (ticket.getEvent() != null){
-            dto.setEventId(ticket.getEvent().getId());
-        }
+        dto.setEvent(ticket.getEvent());
         return dto;
     }
 }
