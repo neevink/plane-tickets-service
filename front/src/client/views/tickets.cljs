@@ -66,7 +66,7 @@
                :class (c :text-lg :font-light :italic)} (when descr descr)]]
      [:div {:class (c :text-sm)}
       (when invalid-message
-        (:message invalid-message))]]))
+        invalid-message)]]))
 
 (defn edit-ticket-icon []
   [:span [:i.fa-solid.fa-pen-to-square
@@ -164,6 +164,11 @@
          :on-click #(dispatch [::events/start-ticket-update id])}
         (edit-ticket-icon)
         "Изменить"]
+       [:div
+        {:class [cls/base-class (c :cursor-pointer)]
+         :on-click #(dispatch [::events/start-ticket-copy id])}
+        (edit-ticket-icon)
+        "Скопировать..."]
 
        [:div
         {:class [cls/base-class (c :cursor-pointer)]
@@ -200,13 +205,79 @@
      [:button.cancelBtn {:class (c [:w-min 100])
                          :on-click #(dispatch [::events/toggle-new])} "Отменить"]]))
 
+(defn ticket-info [ticket]
+  [:div
+   {:class (c :grid [:grid-cols 2])}
+   [:div "Название: " (:name ticket)]
+   [:div "X: " (get-in ticket [:coordinates :x])]
+   [:div "Y: " (get-in ticket [:coordinates :y])]
+   [:div "Дата создания:" (get-in ticket [:creationDate])]
+   [:div "Цена: " (get-in ticket [:price])]
+   [:div "Скидка: " (get-in ticket [:discount])]
+   [:div "Возвратный: "
+    (cond
+      (nil?  (get-in ticket [:refundable]))
+      "-"
+
+      (false?  (get-in ticket [:refundable]))
+      "Нет"
+
+      (true?  (get-in ticket [:refundable]))
+      "Да")]
+   [:div "Тип: " (get-in ticket [:type])]
+   [:div "Мероприятие: "  (get-in ticket [:eventId])]])
+
+(defn copy-ticket-view-top [ticket-id]
+  (let [copy-mode @(subscribe [::subs/ticket-copy-mode])
+        ticket @(subscribe [::subs/ticket-by-id ticket-id])]
+    [:div {:class (c :text-sm)}
+     [components/selector
+      [{:value "hui1"
+        :desc "Скопировать указанный билет, создав такой же, но с категорией VIP и с удвоенной ценой"}
+       {:value "hui2"
+        :desc "Создать новый билет на основе указанного, указав скидку в заданное число %, и, одновременно, увеличив цену билета на ту же самую сумму"}]
+      #(dispatch [::events/change-ticket-copy-mode  (.. % -target -value)])
+      {:default-value "hui1"}]
+     [:h1 {:class (c :text-xl :text-bold :text-center)} "Билет для копирования"]
+     [ticket-info ticket copy-mode]
+
+     (when (= "hui2" copy-mode)
+       (let [invalid-message @(re-frame.core/subscribe
+                               [::subs/form-path-invalid-message [:discount]])
+             on-change-fn
+             #(dispatch [:dispatch-debounce
+                         {:delay 300
+                          :event [::events/change-ticket-and-validate [:discount] (.. % -target -value)]}])]
+         [:div {:class (c [:px 5] :flex :flex-col)}
+          [:label "Новая скидка"]
+          [:input {:class (c :border [:h 10] :text-2xl)
+                   :maxLength 30
+                   :on-change
+                   on-change-fn}]
+          [:div {:class (c :text-sm)}
+           (when invalid-message
+             invalid-message)]]))]))
+
+(defn copy-ticket-view-bot []
+  (let [form-valid? @(subscribe [::subs/form-valid?])]
+    [:<>
+     (when form-valid?
+       [:button.submitBtn
+        {:class (c [:w-min 100]) :on-click #(dispatch [::events/copy-ticket-from-form])}
+        "Скопировать"])
+     [:button.cancelBtn {:class (c [:w-min 100])
+                         :on-click #(dispatch [::events/end-ticket-copy])}
+      "Отменить"]]))
+
 (defn tickets-view []
   (let [tickets @(re-frame/subscribe [::subs/tickets-1])
         modal-opened? @(subscribe [::subs/toggle-new])
         modal-delete-opened? @(subscribe [::subs/toggle-delete])
         to-delete-id @(subscribe [::subs/ticket-to-delete-id])
         modal-edit-opened?   @(subscribe [::subs/toggle-change])
-        to-edit-id @(subscribe [::subs/ticket-update-id])]
+        to-edit-id @(subscribe [::subs/ticket-update-id])
+        ticket-copy? @(subscribe [::subs/ticket-copy])
+        ticket-copy-id @(subscribe [::subs/ticket-copy-id])]
 
     [:div {:class (c :w-full)}
      [components/paging]
@@ -231,6 +302,13 @@
          [edit-ticket-view-top to-edit-id]
          [edit-ticket-view-bot]
          :modal-medium])
+      (when ticket-copy?
+        [components/modal
+         (str "Копирование билета " ticket-copy-id)
+         [copy-ticket-view-top ticket-copy-id]
+         [copy-ticket-view-bot]
+         :modal-medium])
+
       (when modal-delete-opened?
         [components/modal
          "Удаление"

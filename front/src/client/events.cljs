@@ -9,8 +9,13 @@
 
 (def back-url "http://localhost:8080")
 
+(def back-2-url "http://localhost:9090")
+
 (defn full-url [endpoint]
   (str back-url endpoint))
+
+(defn full-url-2 [endpoint]
+  (str back-2-url endpoint))
 
 (defn call-http
   ([db url method on-success on-failure]
@@ -230,7 +235,7 @@
  (fn [_ _]
    {:db db/default-db
     :fx [[:dispatch  [::download-event-types]]
-         [:dispatch [::download-ticket-types]]
+         [:dispatch  [::download-ticket-types]]
          [:dispatch  [::count-tickets]]
          [:dispatch  [::count-events]]
          [:dispatch  [::download-events]]
@@ -710,5 +715,57 @@
  ::remove-sorting
  (fn [{:keys [db]} [_ mode id]]
    {:db (update-in db
-               [(if (= mode :tickets) :ticket :event) :sorting] dissoc id
-               false)}))
+                   [(if (= mode :tickets) :ticket :event) :sorting] dissoc id
+                   false)}))
+
+(reg-event-fx
+ ::start-ticket-copy
+ (fn [{:keys [db]} [_ ticket-id]]
+   {:db
+    (-> db
+        (assoc :toggle-copy true)
+        (assoc :form (get-in db [:tickets ticket-id]))
+        (assoc-in [:ticket :copy-id] ticket-id))}))
+
+(reg-event-fx
+ ::end-ticket-copy
+ (fn [{:keys [db]} [_]]
+   {:db
+    (-> db
+        (assoc :toggle-copy false)
+        (assoc :form nil)
+        (update-in [:ticket] dissoc :copy-id))}))
+
+(reg-event-fx
+ ::change-ticket-copy-mode
+ (fn [{:keys [db]} [_ mode]]
+   {:db
+    (-> db
+        (assoc :ticket-copy-mode mode))}))
+
+(reg-event-fx
+ ::ticket-copied
+ (fn [_ [_]]
+   {:fx [[:dispatch  [::count-tickets]]
+         [:dispatch  [::count-events]]
+         [:dispatch  [::download-events]]
+         [:dispatch  [::download-tickets]]
+         [:dispatch  [::end-ticket-copy]]]}))
+
+(reg-event-fx
+ ::copy-ticket-http
+ (fn [{:keys [db]} [_ mode ticket]]
+   (let [hui1-url (full-url-2 (str "/booking/sell/vip/" (:id ticket) "/1"))
+         hui2-url (full-url-2 (str "/booking/sell/discount/" (:id ticket) "/1/" (:discount ticket)))
+         url (if (= "hui1" mode) hui1-url hui2-url)]
+     (http-post db
+                url
+                nil
+                [::ticket-copied]
+                [::ticket-not-added]))))
+
+(reg-event-fx
+ ::copy-ticket-from-form
+ (fn [{:keys [db]} [_]]
+   (let [mode (:ticket-copy-mode db)]
+     {:dispatch [::copy-ticket-http mode (:form db)]})))
