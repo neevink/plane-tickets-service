@@ -2,6 +2,7 @@ package com.soa.repository;
 
 import com.soa.model.Ticket;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -17,8 +18,9 @@ public interface TicketRepository extends CrudRepository<Ticket, Long>, JpaSpeci
             @Param("id") Long id
     );
 
-//    List<Long> deleteAllByEventId();
-//    @Modifying
-//    @Query("delete from ticket t where t.event_id=:id")
-//    void deleteAllByEventId(@Param("id") Long eventId);
+    @Modifying
+    @Query(value = "delete from ticket t where t.event_id=:id", nativeQuery = true)
+    void deleteAllByEventId(
+            @Param("id") Long eventId
+    );
 }

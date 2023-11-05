@@ -1,7 +1,6 @@
 package com.soa.handler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.soa.controller.LabWorkController;
 import com.soa.dto.ErrorMessage;
 import com.soa.exception.EntityNotFoundException;
 import com.soa.exception.IncreaseNotAvailableException;
@@ -21,7 +20,7 @@ import java.time.format.DateTimeParseException;
 import java.util.stream.Collectors;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@ControllerAdvice(assignableTypes = {LabWorkController.class})
+//@ControllerAdvice(assignableTypes = {LabWorkController.class})
 public class ProcessExceptionHandler {
     private final ErrorMessage errorMessage = new ErrorMessage();
 

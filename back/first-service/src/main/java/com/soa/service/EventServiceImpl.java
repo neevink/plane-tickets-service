@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.soa.error.ErrorDescriptions;
 
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,15 +96,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void deleteEventById(Long eventId) {
         if (!eventRepository.existsById(eventId)){
             throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
         }
-
-        var ticketsToDelete = ticketRepository.allTicketsByEventId(eventId);
-        ticketsToDelete.forEach(ticket -> ticketRepository.deleteById(ticket.getId()));
-        System.out.println("hello im here");
-
+        ticketRepository.deleteAllByEventId(eventId);
         eventRepository.deleteById(eventId);
     }
 
