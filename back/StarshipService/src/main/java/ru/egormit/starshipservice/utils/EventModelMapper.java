@@ -17,4 +17,14 @@ public class EventModelMapper {
         dto.setEventType(event.getEventType());
         return dto;
     }
+
+    public Event map(EventDto event) {
+        Event dto = new Event();
+        dto.setId(event.getId());
+        dto.setName(event.getName());
+        dto.setDate(event.getDate());
+        dto.setMinAge(event.getMinAge());
+        dto.setEventType(event.getEventType());
+        return dto;
+    }
 }

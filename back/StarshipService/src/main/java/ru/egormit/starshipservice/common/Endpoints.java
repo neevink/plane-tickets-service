@@ -13,6 +13,8 @@ public interface Endpoints {
     String GET_TICKET_BY_ID = "/tickets/{ticketId}";
     String DELETE_TICKET_BY_ID = "/tickets/{ticketId}";
     String UPDATE_TICKET_BY_ID = "/tickets/{ticketId}";
+    String NEW_VIP_TICKET_BY_ID = "/tickets/vip/{ticketId}";
+
 
 
     String CREATE_EVENT = "/events";

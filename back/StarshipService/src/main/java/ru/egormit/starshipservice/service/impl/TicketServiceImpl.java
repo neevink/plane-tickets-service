@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.egormit.starshipservice.domain.*;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.egormit.starshipservice.integration.FirstService;
+import ru.egormit.starshipservice.service.EventService;
 import ru.egormit.starshipservice.service.TicketService;
+import ru.egormit.starshipservice.utils.EventModelMapper;
 import ru.egormit.starshipservice.utils.TicketModelMapper;
 import ru.itmo.library.*;
 import ru.itmo.library.enums.TicketType;
@@ -39,9 +41,19 @@ public class TicketServiceImpl implements TicketService {
     private final EventRepository eventRepository;
 
     /**
+     * {@link EventRepository}.
+     */
+    private final EventService eventService;
+
+    /**
      * {@link TicketModelMapper}.
      */
     private final TicketModelMapper ticketModelMapper;
+
+    /**
+     * {@link EventModelMapper}.
+     */
+    private final EventModelMapper eventModelMapper;
 
     @Override
     public TicketDto createTicket(CreateTicketRequest request) {
@@ -55,18 +67,33 @@ public class TicketServiceImpl implements TicketService {
         ticket.setRefundable(request.getRefundable());
         ticket.setType(request.getType());
 
-        if (request.getEvent() != null && request.getEvent().getId() != null) {
-            if (!eventRepository.existsById(request.getEvent().getId())) {
-                throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
-            }
-            else {
-                Optional<Event> event = eventRepository.findById(request.getEvent().getId());
-                ticket.setEvent(event.get());
+        TicketDto createdTicket = new TicketDto();
+
+        if (request.getEvent() != null) {
+            if (request.getEvent().getId() != null) {
+                if (!eventRepository.existsById(request.getEvent().getId())) {
+                    throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+                }
+                else {
+                    Event event = eventRepository.findById(request.getEvent().getId()).get();
+                    ticket.setEvent(event);
+                    createdTicket.setEvent(event);
+                }
+            } else {  // create a new one
+                EventDto newEvent = eventService.createEvent(CreateEventRequest.of(
+                        request.getEvent().getName(),
+                        request.getEvent().getDate(),
+                        request.getEvent().getMinAge(),
+                        request.getEvent().getEventType()
+                ));
+                System.out.println(newEvent.getId());
+                Event event = eventRepository.findById(newEvent.getId()).get();
+                ticket.setEvent(event);
+                createdTicket.setEvent(event);
             }
         }
         ticketRepository.save(ticket);
 
-        TicketDto createdTicket = new TicketDto();
         createdTicket.setId(ticket.getId());
         createdTicket.setName(ticket.getName());
         createdTicket.setCoordinates(Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()));
@@ -75,7 +102,6 @@ public class TicketServiceImpl implements TicketService {
         createdTicket.setDiscount(ticket.getDiscount());
         createdTicket.setRefundable(ticket.getRefundable());
         createdTicket.setType(ticket.getType());
-        // createdTicket.setEvent(event);
         return createdTicket;
     }
 
@@ -131,6 +157,25 @@ public class TicketServiceImpl implements TicketService {
         }
         Ticket ticket = ticketRepository.findById(ticketId).get();
         return ticketModelMapper.map(ticket);
+    }
+
+    @Override
+    public TicketDto newVipTicketById(Long ticketId) {
+        if (!ticketRepository.existsById(ticketId)) {
+            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
+        }
+        Ticket ticket = ticketRepository.findById(ticketId).get();
+        System.out.println(ticket.getEvent());
+        TicketDto newVipTicket = createTicket(CreateTicketRequest.of(
+                ticket.getName(),
+                Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()),
+                ticket.getPrice() * 2,
+                ticket.getDiscount(),
+                ticket.getRefundable(),
+                TicketType.VIP,
+                eventModelMapper.map(ticket.getEvent())
+        ));
+        return newVipTicket;
     }
 
     @Override

@@ -168,4 +168,12 @@ public class TicketController {
         }
         return new ResponseEntity<>(ticketService.getTicketsTypeCount(type), HttpStatus.OK);
     }
+
+    @PostMapping(value = Endpoints.NEW_VIP_TICKET_BY_ID)
+    public ResponseEntity<Object> createVipTicketById(
+            @PathVariable("ticketId") Long ticketId
+    ) {
+        var res = ticketService.newVipTicketById(ticketId);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

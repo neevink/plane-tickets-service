@@ -37,6 +37,8 @@ public interface TicketService {
      */
     TicketDto getTicketById(Long ticketId);
 
+    TicketDto newVipTicketById(Long ticketId);
+
     void deleteTicketById(Long ticketId);
 
     TicketDto updateTicketById(Long ticketId, CreateTicketRequest request);
