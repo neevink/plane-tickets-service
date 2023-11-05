@@ -19,7 +19,7 @@ public class RestClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         String url = mainServiceUrl + "/tickets/vip/" + ticketId;
         HttpEntity<?> httpEntity = new HttpEntity<>(headers);
-        return restTemplate.exchange(url, HttpMethod.PUT, httpEntity, Object.class);
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, Object.class);
     }
 
     public ResponseEntity<Object> makeDiscountTicket(Integer ticketId, Integer personId, Double discount) {

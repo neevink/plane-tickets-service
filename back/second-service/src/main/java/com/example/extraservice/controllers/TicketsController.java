@@ -18,7 +18,7 @@ public class TicketsController {
         return "Hello, World!";
     }
 
-    @PutMapping(value = "/vip/{ticket-id}/{person-id}")
+    @PostMapping(value = "/vip/{ticket-id}/{person-id}")
     public ResponseEntity<?> increaseStepsCount(@PathVariable("ticket-id") Integer ticketId, @PathVariable("person-id") Integer personId) {
         return sellingService.increaseStepsCount(ticketId, personId);
     }

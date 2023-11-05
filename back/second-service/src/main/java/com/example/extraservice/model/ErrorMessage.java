@@ -5,10 +5,12 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 public class ErrorMessage {
-    private String message;
+    private List<String> errors;
 }

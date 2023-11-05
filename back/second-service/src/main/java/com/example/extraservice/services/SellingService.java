@@ -1,9 +1,13 @@
 package com.example.extraservice.services;
 
+import com.example.extraservice.model.ErrorMessage;
 import com.example.extraservice.utils.RestClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SellingService {
@@ -23,7 +27,11 @@ public class SellingService {
         } catch (HttpClientErrorException.UnprocessableEntity e) {
             return ResponseEntity.status(422).body(e.getResponseBodyAsString());
         } catch (Exception e) {
-            return ResponseEntity.status(504).body("Service unavailable");
+            ErrorMessage err = new ErrorMessage();
+            List l = new ArrayList();
+            l.add(e.getMessage());
+            err.setErrors(l);
+            return ResponseEntity.status(504).body(err);
         }
     }
 
@@ -37,7 +45,11 @@ public class SellingService {
         } catch (HttpClientErrorException.UnprocessableEntity e) {
             return ResponseEntity.status(422).body(e.getResponseBodyAsString());
         } catch (Exception e) {
-            return ResponseEntity.status(504).body("Service unavailable");
+            ErrorMessage err = new ErrorMessage();
+            List l = new ArrayList();
+            l.add(e.getMessage());
+            err.setErrors(l);
+            return ResponseEntity.status(504).body(err);
         }
     }
 
