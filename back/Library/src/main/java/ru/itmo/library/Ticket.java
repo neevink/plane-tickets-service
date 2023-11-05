@@ -2,6 +2,7 @@ package ru.itmo.library;
 
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import ru.itmo.library.enums.TicketType;
 
@@ -28,6 +29,7 @@ public class Ticket {
      * Название.
      */
     @Column(name = "name")
+    @Lob
     private String name;
 
     /**

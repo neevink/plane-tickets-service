@@ -57,6 +57,9 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDto createTicket(CreateTicketRequest request) {
+        if (request.getRefundable() == null) {
+            throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+        }
         Ticket ticket = new Ticket();
         ticket.setName(request.getName());
         ticket.setCoordinateX(request.getCoordinates().getX());
@@ -211,6 +214,9 @@ public class TicketServiceImpl implements TicketService {
             throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
         }
 
+        if (request.getRefundable() == null) {
+            throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+        }
         Ticket updatedTicket = new Ticket();
         updatedTicket.setId(ticketId);
         updatedTicket.setName(request.getName());

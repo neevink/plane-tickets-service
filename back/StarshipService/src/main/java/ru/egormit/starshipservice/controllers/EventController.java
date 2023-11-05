@@ -53,6 +53,18 @@ public class EventController {
             @RequestParam(value = "limit", required = false, defaultValue = "10") Long limit,
             @RequestParam(value = "offset", required = false, defaultValue = "0") Long offset
     ) {
+        if (limit != null) {
+            if (limit <= 0) {
+                throw ErrorDescriptions.INCORRECT_LIMIT.exception();
+            }
+        }
+
+        if (offset != null) {
+            if (offset < 0) {
+                throw ErrorDescriptions.INCORRECT_OFFSET.exception();
+            }
+        }
+
         List<FilterCriteria> filters = new ArrayList<>();
         if (filter != null){
             try {

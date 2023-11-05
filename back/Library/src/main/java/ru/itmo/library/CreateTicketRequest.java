@@ -19,4 +19,13 @@ public class CreateTicketRequest {
     private Boolean refundable;
     private TicketType type;
     private EventDto event;
+
+    public void setRefundable(Object value) throws Exception {
+        if (value instanceof Boolean) {
+            refundable = (Boolean) value;
+        } else {
+            throw new Exception("refundable only boolean");
+        }
+    }
+
 }

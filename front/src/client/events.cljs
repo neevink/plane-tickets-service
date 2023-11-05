@@ -9,7 +9,7 @@
 
 (def back-url "http://localhost:8080")
 
-(def back-2-url "http://localhost:9090")
+(def back-2-url "https://localhost:9090")
 
 (defn full-url [endpoint]
   (str back-url endpoint))
