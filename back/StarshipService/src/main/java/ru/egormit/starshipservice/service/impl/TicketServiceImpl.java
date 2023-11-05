@@ -60,6 +60,20 @@ public class TicketServiceImpl implements TicketService {
         if (request.getRefundable() == null) {
             throw ErrorDescriptions.REFUNDABLE_MUST_PRESENT.exception();
         }
+
+
+        if (request.getCoordinates() == null ||
+                request.getCoordinates().getX() == null ||
+                request.getCoordinates().getY() == null
+        ) {
+            throw ErrorDescriptions.COORDINATES_MUST_PRESENT.exception();
+        }
+
+        if (request.getCoordinates().getX() <= -686L) {
+            throw ErrorDescriptions.X_BAD.exception();
+        }
+
+
         Ticket ticket = new Ticket();
         ticket.setName(request.getName());
         ticket.setCoordinateX(request.getCoordinates().getX());
@@ -217,6 +231,19 @@ public class TicketServiceImpl implements TicketService {
         if (request.getRefundable() == null) {
             throw ErrorDescriptions.REFUNDABLE_MUST_PRESENT.exception();
         }
+
+        if (request.getCoordinates() == null ||
+                request.getCoordinates().getX() == null ||
+                request.getCoordinates().getY() == null
+        ) {
+            throw ErrorDescriptions.COORDINATES_MUST_PRESENT.exception();
+        }
+
+        if (request.getCoordinates().getX() <= -686L) {
+            throw ErrorDescriptions.X_BAD.exception();
+        }
+        
+
         Ticket updatedTicket = new Ticket();
         updatedTicket.setId(ticketId);
         updatedTicket.setName(request.getName());
