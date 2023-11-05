@@ -222,13 +222,29 @@ public class TicketServiceImpl implements TicketService {
         updatedTicket.setRefundable(request.getRefundable());
         updatedTicket.setType(request.getType());
 
-        if (request.getEvent() != null && request.getEvent().getId() != null) {
-            if (!eventRepository.existsById(request.getEvent().getId())) {
-                throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
-            }
-            else {
-                Optional<Event> event = eventRepository.findById(request.getEvent().getId());
-                updatedTicket.setEvent(event.get());
+        TicketDto createdTicket = new TicketDto();
+
+        if (request.getEvent() != null) {
+            if (request.getEvent().getId() != null) {
+                if (!eventRepository.existsById(request.getEvent().getId())) {
+                    throw ErrorDescriptions.EVENT_NOT_FOUND.exception();
+                }
+                else {
+                    Event event = eventRepository.findById(request.getEvent().getId()).get();
+                    updatedTicket.setEvent(event);
+                    createdTicket.setEvent(event);
+                }
+            } else {  // create a new one
+                EventDto newEvent = eventService.createEvent(CreateEventRequest.of(
+                        request.getEvent().getName(),
+                        request.getEvent().getDate(),
+                        request.getEvent().getMinAge(),
+                        request.getEvent().getEventType()
+                ));
+                System.out.println(newEvent.getId());
+                Event event = eventRepository.findById(newEvent.getId()).get();
+                updatedTicket.setEvent(event);
+                createdTicket.setEvent(event);
             }
         }
         ticketRepository.save(updatedTicket);
