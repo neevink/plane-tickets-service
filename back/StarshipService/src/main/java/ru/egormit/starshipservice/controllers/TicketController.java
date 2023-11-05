@@ -176,4 +176,13 @@ public class TicketController {
         var res = ticketService.newVipTicketById(ticketId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @PostMapping(value = Endpoints.DISCOUNT_TICKET_BY_ID)
+    public ResponseEntity<Object> createDiscountTicketById(
+            @PathVariable("ticketId") Long ticketId,
+            @PathVariable("discount") Double discount
+    ) {
+        var res = ticketService.newDiscountTicketById(ticketId, discount);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

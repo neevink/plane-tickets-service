@@ -14,6 +14,7 @@ public interface Endpoints {
     String DELETE_TICKET_BY_ID = "/tickets/{ticketId}";
     String UPDATE_TICKET_BY_ID = "/tickets/{ticketId}";
     String NEW_VIP_TICKET_BY_ID = "/tickets/vip/{ticketId}";
+    String DISCOUNT_TICKET_BY_ID = "/tickets/discount/{ticketId}/{discount}";
 
 
 

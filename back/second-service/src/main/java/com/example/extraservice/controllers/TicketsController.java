@@ -27,7 +27,7 @@ public class TicketsController {
     public ResponseEntity<?> makeHardcore(
             @PathVariable("ticket-id") Integer ticketId,
             @PathVariable("person-id") Integer personId,
-            @PathVariable("person-id") Double discount
+            @PathVariable("discount") Double discount
     ) {
         return sellingService.makeDiscount(ticketId, personId, discount);
     }
