@@ -1,11 +1,11 @@
 _type: export
 __export_format: 4
-__export_date: 2023-10-22T12:03:44.088Z
+__export_date: 2023-11-05T16:34:22.991Z
 __export_source: insomnia.desktop.app:v8.3.0
 resources:
-  - _id: req_ad61661f634f471d9010dacafc210f3f
+  - _id: req_8bdd4214e4c94c94b68402b3321ec40c
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1697927539702
+    modified: 1699190344431
     created: 1696762907618
     url: http://localhost:8080/tickets
     name: create ticket
@@ -24,7 +24,12 @@ resources:
           "discount": 0,
           "refundable": false,
           "type": "USUAL",
-          "eventId": null
+          "event": {
+        		"name": "Концерт Доры",
+        		"date": "2023-12-13",
+        		"minAge": 12,
+        		"eventType": "CONCERT"
+          }
         }
     parameters: []
     headers:
@@ -50,7 +55,53 @@ resources:
     description: ""
     scope: design
     _type: workspace
-  - _id: req_944607a8ad504c189a6d1cef0f20c1f3
+  - _id: req_04e8cb17ffa84e92a5c3beabd3b8a460
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1699190851370
+    created: 1699187719751
+    url: https://localhost:9090/booking/sell/vip/1/1
+    name: create vip ticket
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1696106589019
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_84c0513378fb489db0ac75fca0bb367f
+    parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
+    modified: 1699190887563
+    created: 1699190878086
+    url: https://localhost:9090/booking/sell/hello
+    name: ping second service
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1696106588994
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_6fc48db4587e41d081d5348469a55881
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
     modified: 1697918632589
     created: 1696106588969
@@ -75,7 +126,7 @@ resources:
     _type: request
   - _id: req_da186d2c869e4423914c4193a8f20c6c
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1697971506125
+    modified: 1699189345407
     created: 1696765514564
     url: http://localhost:8080/tickets
     name: get all tickets
@@ -87,11 +138,42 @@ resources:
         name: sort
         value: -id
         description: ""
-        disabled: false
+        disabled: true
       - id: pair_41ce2f6d646743bb86525fb96f007adc
         name: filter
-        value: id[eq]=1
+        value: refundable[eq]=true
         description: ""
+        disabled: true
+      - id: pair_1bc3f8aa0a5444af8f521750cdc2ec27
+        name: sort
+        value: id
+        description: ""
+        disabled: true
+      - id: pair_e68e0efc7c454724a86bbc5530c0a8ff
+        name: filter
+        value: id[ne]=1
+        description: ""
+        disabled: true
+      - id: pair_4f57b8fd274143ab84fd398e2fefb02e
+        name: sort
+        value: name
+        description: ""
+        disabled: true
+      - id: pair_609b475e1c0e4596a3ef03b2dbc412cf
+        name: filter
+        value: type[gt]=USUAL
+        description: ""
+        disabled: true
+      - id: pair_f748fb3a21c044fc87a88df951d19236
+        name: limit
+        value: "3"
+        description: ""
+        disabled: true
+      - id: pair_3bf610e61eca46f59f7db75097d0f031
+        name: offset
+        value: "1"
+        description: ""
+        disabled: true
     headers:
       - name: User-Agent
         value: insomnia/8.1.0
@@ -107,7 +189,7 @@ resources:
     _type: request
   - _id: req_ca2cdf24eef74a769572167c2c25a957
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1696934409847
+    modified: 1699199661338
     created: 1696934082120
     url: http://localhost:8080/tickets/1
     name: update ticket by id
@@ -115,9 +197,9 @@ resources:
     method: PUT
     body:
       mimeType: application/json
-      text: |-
+      text: |
         {
-          "name": "Билет на концерт Доры",
+          "name": "Билет на концерт GSPD",
           "coordinates": {
             "x": 100,
             "y": 100
@@ -126,7 +208,13 @@ resources:
           "discount": 0,
           "refundable": false,
           "type": "USUAL",
-          "eventId": 1
+          "event": {
+        		"id": 1,
+        		"name": "Концерт GSPD",
+        		"date": "2023-12-13",
+        		"minAge": 18,
+        		"eventType": "CONCERT"
+        	}
         }
     parameters: []
     headers:
@@ -144,7 +232,7 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_c3cecc76a2114635950f29b1ddb70ad1
+  - _id: req_2267abe188464f64b7f8b90d670b9906
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
     modified: 1696934067120
     created: 1696934062228
@@ -167,7 +255,7 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_db252f931a4a42b79338df1d21089268
+  - _id: req_9a5b713d9e1f4ddba97e640bc76274b0
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
     modified: 1697975966198
     created: 1696765523521
@@ -200,7 +288,7 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_808294859df440bbacb6734c3c3da575
+  - _id: req_5f161bbe9324437caac902883dec403a
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
     modified: 1697916645752
     created: 1696765628027
@@ -229,7 +317,7 @@ resources:
     _type: request
   - _id: req_3256b1a3683e4ac5b77cb41ddaf1d107
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
-    modified: 1697975987708
+    modified: 1699189863171
     created: 1696765658438
     url: http://localhost:8080/events
     name: get all events
@@ -243,11 +331,27 @@ resources:
         name: filter
         value: id[ne]=5
         description: ""
-        disabled: false
+        disabled: true
       - id: pair_b82eea2e715040e5aee2df6ffbc5b20e
         name: filter
         value: minAge[gt]=12
         description: ""
+        disabled: true
+      - id: pair_32de340c78ce4ce1af0af068339c6aa8
+        name: sort
+        value: id
+        description: ""
+        disabled: true
+      - id: pair_34482be9602648bf8fbbc0c41089d3c1
+        name: limit
+        value: "2"
+        description: ""
+        disabled: true
+      - id: pair_1e128d74bda544b0a9df50707b5dd4a1
+        name: offset
+        value: "1"
+        description: ""
+        disabled: true
     headers:
       - name: Content-Type
         value: application/json
@@ -263,7 +367,7 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_fd573cb20b614166bc195cdd0c5f6418
+  - _id: req_99f3955b3c2941aba3c504dbdddeb983
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
     modified: 1696934384337
     created: 1696934123335
@@ -296,7 +400,7 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_5e9078e790634216af629e6b9c4fa4e3
+  - _id: req_0e6f2bdef60e4bf989a28522dcdd9029
     parentId: wrk_71dda5c8e70440e7b52ad35e5834f005
     modified: 1696798832259
     created: 1696798807275
