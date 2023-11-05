@@ -1,4 +1,7 @@
 spring:
+  jackson:
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_ENUMS: true
   application:
     name: SOA-Lab2-Service2
   datasource:

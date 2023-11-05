@@ -190,7 +190,7 @@
      [ticket-new-prop [:discount]       "Скидка" "discount" "(от 0 до 100)" true]
      [ticket-new-prop [:refundable]     "Возвратный" "refundable" nil true
       [{:value true :desc "Да"}
-       {:value false :desc "Нет"}] true]
+       {:value false :desc "Нет"}] nil]
      [ticket-new-prop [:type]           "Тип" "type" "" false
       ticket-types]
      [ticket-new-prop [:eventId]        "Мероприятие" "eventId" "" false
@@ -237,7 +237,7 @@
        {:value "hui2"
         :desc "Создать новый билет на основе указанного, указав скидку в заданное число %, и, одновременно, увеличив цену билета на ту же самую сумму"}]
       #(dispatch [::events/change-ticket-copy-mode  (.. % -target -value)])
-      {:default-value "hui1"}]
+      {:default-value "hui2"}]
      [:h1 {:class (c :text-xl :text-bold :text-center)} "Билет для копирования"]
      [ticket-info ticket copy-mode]
 

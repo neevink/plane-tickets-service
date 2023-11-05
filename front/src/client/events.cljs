@@ -9,7 +9,7 @@
 
 (def back-url "http://localhost:8080")
 
-(def back-2-url "http://localhost:9090")
+(def back-2-url "https://localhost:9090")
 
 (defn full-url [endpoint]
   (str back-url endpoint))
@@ -508,7 +508,7 @@
  ::save-event-http
  (fn [{:keys [db]} [_ event]]
    (http-post db (full-url "/events")
-              (update event :date (fn [date-str] (str date-str ":00.000Z")))
+              (update event :date (fn [date-str] (when date-str (str date-str ":00.000Z"))))
               [::event-added]
               [::event-not-added])))
 

@@ -23,6 +23,7 @@ public class Event {
     private Long id;
 
     @Column(name = "name")
+    @Lob
     private String name;
 
     @Column(name = "date")

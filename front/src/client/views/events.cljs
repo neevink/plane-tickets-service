@@ -39,8 +39,7 @@
        (components/selector
         select-values
         on-change-fn
-        {:default-value "="
-         :cls (c :w-full [:mb 2])})
+        {:cls (c :w-full [:mb 2])})
        [:input {:name label-id
                 :id label-id
                 :class (c :border [:h 10] :text-2xl)
@@ -59,10 +58,10 @@
 (defn new-event-top []
   (let [event-types @(subscribe [::subs/event-types])]
     [:div
-     ;; [event-new-prop [:name] "Название" "name" nil true]
-     ;; [event-new-prop [:date] "Дата мероприятия" "date" nil false]
+     [event-new-prop [:name] "Название" "name" nil true]
+     [event-new-prop [:date] "Дата мероприятия" "date" nil false]
      [event-new-prop [:minAge] "Минимальный возраст" "minAge" nil true]
-     #_[event-new-prop [:eventType] "Тип мероприятия" "type" nil false
+     [event-new-prop [:eventType] "Тип мероприятия" "type" nil false
                      event-types]]))
 
 (defn new-event-bot []

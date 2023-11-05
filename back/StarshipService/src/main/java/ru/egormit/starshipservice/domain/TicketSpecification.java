@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import ru.egormit.starshipservice.error.ErrorDescriptions;
 import ru.itmo.library.Event;
 import ru.itmo.library.Ticket;
+import ru.itmo.library.enums.TicketType;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,6 +19,16 @@ public class TicketSpecification implements Specification<Ticket> {
 
     public TicketSpecification(List<FilterCriteria> filterCriteria) {
         this.criteries = filterCriteria;
+    }
+
+
+    private String hackEnums(String maybeEnum) {
+        if ("usual".equals(maybeEnum) || "budgetary".equals(maybeEnum) || "cheap".equals(maybeEnum) || "vip".equals(maybeEnum)
+                || "concert".equals(maybeEnum) || "baseball".equals(maybeEnum) || "basketball".equals(maybeEnum)
+                || "theatre_performance".equals(maybeEnum)){
+            return maybeEnum.toUpperCase();
+        }
+        return maybeEnum;
     }
 
     @Override
@@ -38,6 +49,12 @@ public class TicketSpecification implements Specification<Ticket> {
                     predicates.add(builder.like(
                             root.<String>get(crit.getKey()), "%" + crit.getValue() + "%"));
                 } else {
+                    if (root.get(crit.getKey()).getJavaType() == TicketType.class) {
+
+                        predicates.add(builder.equal(root.get(crit.getKey()),
+
+                                crit.getValue()));
+                    }
                     predicates.add(builder.equal(root.get(crit.getKey()), crit.getValue()));
                 }
             }
