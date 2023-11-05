@@ -508,7 +508,7 @@
  ::save-event-http
  (fn [{:keys [db]} [_ event]]
    (http-post db (full-url "/events")
-              (update event :date (fn [date-str] (str date-str ":00.000Z")))
+              (update event :date (fn [date-str] (when date-str (str date-str ":00.000Z"))))
               [::event-added]
               [::event-not-added])))
 
