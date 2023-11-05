@@ -94,7 +94,7 @@ public class TicketServiceImpl implements TicketService {
                 else {
                     Event event = eventRepository.findById(request.getEvent().getId()).get();
                     ticket.setEvent(event);
-                    createdTicket.setEvent(event);
+                    createdTicket.setEvent(eventModelMapper.map(event));
                 }
             } else {  // create a new one
                 EventDto newEvent = eventService.createEvent(CreateEventRequest.of(
@@ -106,7 +106,7 @@ public class TicketServiceImpl implements TicketService {
                 System.out.println(newEvent.getId());
                 Event event = eventRepository.findById(newEvent.getId()).get();
                 ticket.setEvent(event);
-                createdTicket.setEvent(event);
+                createdTicket.setEvent(eventModelMapper.map(event));
             }
         }
         ticketRepository.save(ticket);
@@ -265,7 +265,7 @@ public class TicketServiceImpl implements TicketService {
                 else {
                     Event event = eventRepository.findById(request.getEvent().getId()).get();
                     updatedTicket.setEvent(event);
-                    createdTicket.setEvent(event);
+                    createdTicket.setEvent(eventModelMapper.map(event));
                 }
             } else {  // create a new one
                 EventDto newEvent = eventService.createEvent(CreateEventRequest.of(
@@ -277,7 +277,7 @@ public class TicketServiceImpl implements TicketService {
                 System.out.println(newEvent.getId());
                 Event event = eventRepository.findById(newEvent.getId()).get();
                 updatedTicket.setEvent(event);
-                createdTicket.setEvent(event);
+                createdTicket.setEvent(eventModelMapper.map(event));
             }
         }
         ticketRepository.save(updatedTicket);

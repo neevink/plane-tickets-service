@@ -21,6 +21,6 @@ public class TicketDto {
     private Double discount;
     private Boolean refundable;
     private TicketType type;
-    private Event event;
+    private EventDto event;
 }
 

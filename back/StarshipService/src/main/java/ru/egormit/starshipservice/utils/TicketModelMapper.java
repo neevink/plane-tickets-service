@@ -4,6 +4,7 @@ package ru.egormit.starshipservice.utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.itmo.library.Coordinates;
+import ru.itmo.library.EventDto;
 import ru.itmo.library.Ticket;
 import ru.itmo.library.TicketDto;
 
@@ -22,7 +23,15 @@ public class TicketModelMapper {
         dto.setDiscount(ticket.getDiscount());
         dto.setRefundable(ticket.getRefundable());
         dto.setType(ticket.getType());
-        dto.setEvent(ticket.getEvent());
+        if(ticket.getEvent() != null){
+            dto.setEvent(EventDto.of(
+                    ticket.getEvent().getId(),
+                    ticket.getEvent().getName(),
+                    ticket.getEvent().getDate(),
+                    ticket.getEvent().getMinAge(),
+                    ticket.getEvent().getEventType()
+            ));
+        }
         return dto;
     }
 }
