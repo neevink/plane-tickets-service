@@ -81,11 +81,11 @@
  ::event-form-path-invalid-message
  (fn [db [_ prop-path]]
    (when (not= :ok (get db :event-form-valid))
-     (first (vec (mapv :message
-                       (filter
-                        (fn [error-mp]
-                          (= prop-path (into [] (:path error-mp))))
-                        (get db :event-form-valid))))))))
+    (first (vec (mapv :message
+                      (filter
+                       (fn [error-mp]
+                        (= prop-path (into [] (:path error-mp))))
+                       (get db :event-form-valid))))))))
 
 (reg-sub
  ::toggle-new
@@ -207,3 +207,19 @@
  ::ticket-discount-count-opened
  (fn [db [_]]
   (get db :ticket-discount-count-opened)))
+
+(reg-sub
+ ::ticket-copy
+ (fn [db [_]]
+  (get db :toggle-copy)))
+
+(reg-sub
+ ::ticket-copy-id
+ (fn [db [_]]
+  (get-in db [:ticket :copy-id])))
+
+(reg-sub
+ ::ticket-copy-mode
+ (fn [db [_]]
+  (get-in db [:ticket-copy-mode])))
+

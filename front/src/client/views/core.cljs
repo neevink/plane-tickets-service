@@ -207,6 +207,7 @@
                                :on-click #(dispatch [::events/close-hueta])}
             "Очень информативно, спасибо"]
            :modal-medium])]]
+      [:hr {:class (c [:pt 2])}]
 
       [:div
        [:button {:class button-cls

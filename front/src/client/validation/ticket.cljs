@@ -8,7 +8,7 @@
    ::x "Ожидалась x > - 686 (целое число)"
    ::y "Ожидалась y - целое число"
    ::price "Ожидалось целое число больше 0"
-   ::discount "Ожидалась скидка - целочисленное число больше 0"
+   ::discount "Ожидалась скидка - целочисленное число 0 < x <= 100"
    ::type "Ожидался тип: один из VIP, USUAL, BUDGETARY, CHEAP"
    ::refundable "Ожидался true/false"
    ::eventId "Ожидалось выбранное мероприятие"
@@ -50,13 +50,15 @@
                         (re-matches #"([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?"
                                     v)))
 
-(s/def ::eventId number?)
+(s/def ::eventId #(or (nil? %) (= "" %) (number? %)))
 
 (s/def ::ticket (s/keys :req-un [::name
                                  ::coordinates
                                  ::price
                                  ::discount
-                                 ::eventId
+
                                  ::refundable
                                  ::creationDate]
-                        :opt-un [::type]))
+                        :opt-un [::type
+                                 ::eventId
+                                 ]))

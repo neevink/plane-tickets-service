@@ -51,17 +51,19 @@
      [:div
       [:label {:for label-id
                :class (c :text-lg :font-light :italic)} (when descr descr)]]
-     [:div (when invalid-message
-             (:message invalid-message))]]))
+     [:div
+      ;; (prn invalid-message)
+      (when invalid-message
+             invalid-message)]]))
 
 (defn new-event-top []
   (let [event-types @(subscribe [::subs/event-types])]
     [:div
-     (event-new-prop [:name] "Название" "name" nil true)
-     (event-new-prop [:date] "Дата мероприятия" "date" nil false)
-     (event-new-prop [:minAge] "Минимальный возраст" "minAge" nil true)
-     (event-new-prop [:eventType] "Тип мероприятия" "type" nil false
-                     event-types)]))
+     ;; [event-new-prop [:name] "Название" "name" nil true]
+     ;; [event-new-prop [:date] "Дата мероприятия" "date" nil false]
+     [event-new-prop [:minAge] "Минимальный возраст" "minAge" nil true]
+     #_[event-new-prop [:eventType] "Тип мероприятия" "type" nil false
+                     event-types]]))
 
 (defn new-event-bot []
   (let [form-valid? @(subscribe [::subs/events-form-valid?])]
