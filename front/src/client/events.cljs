@@ -65,8 +65,9 @@
  (fn [db [_ tickets]]
    (let [tickets (:body tickets)
          tickets (mapv (fn [ticket]
-                         (-> (if-not (:eventId ticket)
-                               (assoc ticket :eventId (get-in ticket [:event :id]))
+                         (-> (if (:event ticket)
+                               (assoc (dissoc ticket :event)
+                                      :eventId (-> ticket :event :id))
                                ticket)
                              (hack-creation-date)))
                        tickets)
@@ -311,7 +312,8 @@
 (re-frame/reg-event-db
  ::ticket-not-deleted
  (fn [db [_ ticket-id]]
-   (update db :errors conj ["not deleted" ticket-id])))
+   (assoc (update db :errors conj ["not deleted" ticket-id])
+          :toggle-delete false)))
 
 (reg-event-fx
  ::delete-ticket-http
@@ -336,7 +338,8 @@
 (re-frame/reg-event-db
  ::event-not-deleted
  (fn [db [_ event-id]]
-   (update db :errors conj ["not deleted" event-id])))
+   (assoc (update db :errors conj ["not deleted" event-id])
+          :toggle-delete false)))
 
 (reg-event-fx
  ::delete-event-http
@@ -468,7 +471,8 @@
 (re-frame/reg-event-fx
  ::ticket-added
  (fn [{:keys [db]} [_ ticket-resp]]
-   (let [ticket (:body ticket-resp)]
+   (let [ticket (assoc (dissoc (:body ticket-resp) :event)
+                       :eventId (-> ticket-resp :body :event :id))]
      {:db (assoc-in db [:tickets (:id ticket)] ticket)
       :fx [[:dispatch [::count-tickets]]
            [:dispatch [::toggle-new]]]})))
@@ -482,7 +486,7 @@
  ::save-ticket-http
  (fn [{:keys [db]} [_ ticket]]
    (http-post db (full-url "/tickets")
-              ticket
+              (dissoc (assoc ticket :event {:id (:eventId ticket)} ) :eventId)
               [::ticket-added]
               [::ticket-not-added])))
 
@@ -502,7 +506,9 @@
 (re-frame/reg-event-db
  ::event-not-added
  (fn [db [_ result]]
-   (assoc db :http-result result :errors? true)))
+   (cond-> (update (assoc db :http-result result :errors? true) :toggle-new not)
+     (not (:toggle-new db))
+     (dissoc :form :event-form))))
 
 (reg-event-fx
  ::save-event-http
@@ -520,7 +526,8 @@
 (re-frame/reg-event-db
  ::ticket-updated
  (fn [db [_ result]]
-   (let [ticket (:body result)
+   (let [ticket (assoc (dissoc (:body result) :event)
+                       :eventId (-> result :body :event :id))
          id (:id ticket)]
      (-> db
          (assoc-in [:tickets id] ticket)
@@ -531,7 +538,7 @@
 (re-frame/reg-event-db
  ::ticket-not-updated
  (fn [db [_ result]]
-   (assoc db :http-result result :errors? true)))
+   (assoc db :http-result result :errors? true :toggle-change false)))
 
 (reg-event-fx
  ::update-ticket-http
@@ -539,7 +546,7 @@
    (prn "update ticket http " ticket)
    (http-put db
              (full-url (str "/tickets/" (:id ticket)))
-             (dissoc ticket :event)
+             (dissoc (assoc ticket :event {:id (:eventId ticket)} ) :eventId)
              [::ticket-updated]
              [::ticket-not-updated])))
 
@@ -563,7 +570,7 @@
 (re-frame/reg-event-db
  ::event-not-updated
  (fn [db [_ result]]
-   (assoc db :http-result result :errors? true)))
+   (assoc db :http-result result :errors? true :toggle-change false)))
 
 (reg-event-fx
  ::update-event-http
