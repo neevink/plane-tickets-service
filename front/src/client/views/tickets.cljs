@@ -193,7 +193,7 @@
        {:value false :desc "Нет"}] nil]
      [ticket-new-prop [:type]           "Тип" "type" "" false
       ticket-types]
-     [ticket-new-prop [:eventId]        "Мероприятие" "eventId" "" false
+     [ticket-new-prop [:eventId]        "Мероприятие" "eventId" "" true
       nice-events]]))
 
 (defn new-ticket-bot []

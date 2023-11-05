@@ -73,6 +73,10 @@ public class TicketServiceImpl implements TicketService {
             throw ErrorDescriptions.X_BAD.exception();
         }
 
+        if (request.getDiscount() == null || request.getDiscount() < 1 || request.getDiscount() > 100) {
+            throw ErrorDescriptions.DISCOUNT_MUST_PRESENT.exception();
+        }
+
 
         Ticket ticket = new Ticket();
         ticket.setName(request.getName());
@@ -232,6 +236,10 @@ public class TicketServiceImpl implements TicketService {
             throw ErrorDescriptions.REFUNDABLE_MUST_PRESENT.exception();
         }
 
+        if (request.getDiscount() == null || request.getDiscount() < 1 || request.getDiscount() > 100) {
+            throw ErrorDescriptions.DISCOUNT_MUST_PRESENT.exception();
+        }
+
         if (request.getCoordinates() == null ||
                 request.getCoordinates().getX() == null ||
                 request.getCoordinates().getY() == null
@@ -242,7 +250,7 @@ public class TicketServiceImpl implements TicketService {
         if (request.getCoordinates().getX() <= -686L) {
             throw ErrorDescriptions.X_BAD.exception();
         }
-        
+
 
         Ticket updatedTicket = new Ticket();
         updatedTicket.setId(ticketId);

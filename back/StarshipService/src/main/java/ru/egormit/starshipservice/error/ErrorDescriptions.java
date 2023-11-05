@@ -19,6 +19,7 @@ public enum ErrorDescriptions {
     EVENT_NOT_FOUND("Событие с заданным ID не найдено", HttpStatus.NOT_FOUND),
     CANT_DELETE_EVENT("Нельзя удалить событие, пока на него существует хотя бы один билет", HttpStatus.BAD_REQUEST),
     REFUNDABLE_MUST_PRESENT("Refundable должен быть либо true либо false", HttpStatus.BAD_REQUEST),
+    DISCOUNT_MUST_PRESENT("Скидка должна быть от 1 до 100", HttpStatus.BAD_REQUEST),
 
     COORDINATES_MUST_PRESENT("Координаты X Y должны присутствовать", HttpStatus.BAD_REQUEST),
     X_BAD("Координата x должна быть > -686", HttpStatus.BAD_REQUEST),
