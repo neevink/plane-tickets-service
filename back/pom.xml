@@ -10,7 +10,6 @@
   <modules>
     <module>StarshipService</module>
     <module>Library</module>
-    <module>MarineService</module>
   </modules>
 
   <modelVersion>4.0.0</modelVersion>

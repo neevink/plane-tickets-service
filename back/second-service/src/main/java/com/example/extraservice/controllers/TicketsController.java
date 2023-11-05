@@ -23,8 +23,12 @@ public class TicketsController {
         return sellingService.increaseStepsCount(ticketId, personId);
     }
 
-    @PostMapping(value = "/disciplines/{discipline-id}/make-hardcore")
-    public ResponseEntity<?> makeHardcore(@PathVariable("discipline-id") Integer id) {
-        return sellingService.makeHardcore(id);
+    @PostMapping(value = "/discount/{ticket-id}/{person-id}/{discount}")
+    public ResponseEntity<?> makeHardcore(
+            @PathVariable("ticket-id") Integer ticketId,
+            @PathVariable("person-id") Integer personId,
+            @PathVariable("person-id") Double discount
+    ) {
+        return sellingService.makeDiscount(ticketId, personId, discount);
     }
 }

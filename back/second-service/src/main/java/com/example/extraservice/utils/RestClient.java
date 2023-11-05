@@ -14,26 +14,18 @@ public class RestClient {
     @Value("${main-service.url}")
     private String mainServiceUrl;
 
-    public ResponseEntity<Object> createVipTicket(Integer id, Integer stepsCount) {
+    public ResponseEntity<Object> createVipTicket(Integer ticketId, Integer personId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = mainServiceUrl + "/tickets/vip/" + id;
+        String url = mainServiceUrl + "/tickets/vip/" + ticketId;
         HttpEntity<?> httpEntity = new HttpEntity<>(headers);
         return restTemplate.exchange(url, HttpMethod.PUT, httpEntity, Object.class);
     }
 
-    public ResponseEntity<Object> createVip(Integer ticketId, Integer stepsCount) {
+    public ResponseEntity<Object> makeDiscountTicket(Integer ticketId, Integer personId, Double discount) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = mainServiceUrl + "/labworks/" + ticketId + "/difficulty/increase/" + stepsCount;
-        HttpEntity<?> httpEntity = new HttpEntity<>(headers);
-        return restTemplate.exchange(url, HttpMethod.PUT, httpEntity, Object.class);
-    }
-
-    public ResponseEntity<Object> makeHardcore(Integer id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = mainServiceUrl + "/labworks/discipline/" + id + "/make-hardcore";
+        String url = mainServiceUrl + "/tickets/vip/" + ticketId;
         HttpEntity<?> httpEntity = new HttpEntity<>(headers);
         return restTemplate.exchange(url, HttpMethod.POST, httpEntity, Object.class);
     }

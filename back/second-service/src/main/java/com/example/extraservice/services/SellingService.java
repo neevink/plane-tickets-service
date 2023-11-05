@@ -27,9 +27,9 @@ public class SellingService {
         }
     }
 
-    public ResponseEntity<?> makeHardcore(Integer id) {
+    public ResponseEntity<?> makeDiscount(Integer ticketId, Integer personId, Double discount) {
         try {
-            return restClient.makeHardcore(id);
+            return restClient.makeDiscountTicket(ticketId, personId, discount);
         } catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.status(404).body(e.getResponseBodyAsString());
         } catch (HttpClientErrorException.BadRequest e) {
