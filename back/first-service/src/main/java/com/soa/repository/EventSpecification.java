@@ -23,6 +23,10 @@ public class EventSpecification implements Specification<Event> {
         List<Predicate> predicates = new ArrayList<>();
 
         for (FilterCriteria crit : criteries) {
+            if(crit.getKey().equals("date")){
+                continue;
+            }
+
             if (crit.getOperation().equalsIgnoreCase("gt")) {
                 predicates.add(builder.greaterThan(
                         root.<String> get(crit.getKey()), crit.getValue().toString()));

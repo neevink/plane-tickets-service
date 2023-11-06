@@ -13,8 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class EventController {
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "limit", required = false, defaultValue = "10") Long limit,
             @RequestParam(value = "offset", required = false, defaultValue = "0") Long offset
-    ) {
+    ) throws Exception  {
         if (limit != null) {
             if (limit <= 0) {
                 throw ErrorDescriptions.INCORRECT_LIMIT.exception();
@@ -48,24 +51,52 @@ public class EventController {
             }
         }
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+        var allowedFilters = List.of(
+                "id",
+                "name",
+                "date",
+                "minAge",
+                "eventType"
+        );
+
         List<FilterCriteria> filters = new ArrayList<>();
         if (filter != null){
             try {
                 for (String f : filter) {
                     var key = f.split("\\[", 2)[0];
+                    if (!allowedFilters.contains(key)) {
+                        throw new Exception("Недопустимое значение фильтра " + key + ", должно быть одно иззначений: " + allowedFilters);
+                    }
+
                     var val = f.split("\\]", 2)[1];
                     val = val.substring(1);
+                    if (key.equals("eventType")){
+                        val = val.toUpperCase();
+                        try {
+                            EventType.valueOf(val);
+                        } catch (Exception exc) {
+                            throw new Exception("Недопустимое значение eventType: должно быть одно из значений: [CONCERT, BASEBALL, BASKETBALL, THEATRE_PERFORMANCE]");
+                        }
+                    } else if (key.equals("date")) {
+                        Date date = formatter.parse(val);
+                        System.out.println(date);
+                        if (date == null){
+                            throw new Exception("Недопустимое значение date: ожидается строка вида yyyy-MM-dd");
+                        }
+                    }
+
                     var op = f.split("\\[", 2)[1].split("\\]", 2)[0];
 
                     filters.add(
                             new FilterCriteria(
                                     key,
                                     op,
-                                    key.equals("eventType") ? EventType.valueOf(val) : val
+                                    key.equals("eventType") ? EventType.valueOf(val) : key.equals("date") ? formatter.parse(val) : val
                             )
                     );
                 }
-            } catch (Exception e) {
+            } catch (IndexOutOfBoundsException exc){
                 throw ErrorDescriptions.INCORRECT_FILTER.exception();
             }
         }

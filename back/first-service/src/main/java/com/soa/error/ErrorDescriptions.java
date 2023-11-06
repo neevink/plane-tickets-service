@@ -24,11 +24,11 @@ public enum ErrorDescriptions {
     COORDINATES_MUST_PRESENT("Координаты X Y должны присутствовать", HttpStatus.BAD_REQUEST),
     X_BAD("Координата x должна быть > -686", HttpStatus.BAD_REQUEST),
 
-    INCORRECT_FILTER("Некорректный фильтр", HttpStatus.BAD_REQUEST),
-    INCORRECT_SORT("Некорректная сортировка", HttpStatus.BAD_REQUEST),
+    INCORRECT_FILTER("Некорректный формат фильтра, ожидается формат вида: ПОЛЕ[eq|ne|gt|lt]=ЗНАЧЕНИЕ", HttpStatus.BAD_REQUEST),
+    INCORRECT_SORT("Некорректный формат сортировки", HttpStatus.BAD_REQUEST),
 
     INCORRECT_LIMIT("Некорректный лимит (> 0)", HttpStatus.BAD_REQUEST),
-    INCORRECT_OFFSET("Некорректный offset (>= 0)", HttpStatus.BAD_REQUEST)
+    INCORRECT_OFFSET("Некорректное смещение (>= 0)", HttpStatus.BAD_REQUEST)
     ;
 
     /**

@@ -34,6 +34,10 @@ public class TicketSpecification implements Specification<Ticket> {
         List<Predicate> predicates = new ArrayList<>();
 
         for (FilterCriteria crit : criteries) {
+            if(crit.getKey().equals("creationDate")){
+                continue;
+            }
+
             if (crit.getOperation().equalsIgnoreCase("gt")) {
                 predicates.add(builder.greaterThan(
                         root.<String> get(crit.getKey()), crit.getValue().toString()));
@@ -48,9 +52,7 @@ public class TicketSpecification implements Specification<Ticket> {
                             root.<String>get(crit.getKey()), "%" + crit.getValue() + "%"));
                 } else {
                     if (root.get(crit.getKey()).getJavaType() == TicketType.class) {
-
                         predicates.add(builder.equal(root.get(crit.getKey()),
-
                                 crit.getValue()));
                     }
                     predicates.add(builder.equal(root.get(crit.getKey()), crit.getValue()));

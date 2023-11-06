@@ -29,7 +29,7 @@ public interface TicketService {
      *
      * @return список всех билетов
      */
-    List<TicketDto> getAllTickets(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset);
+    List<TicketDto> getAllTickets(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset) throws Exception;
 
     /**
      * Получение билета

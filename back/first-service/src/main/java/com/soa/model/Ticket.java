@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Сущность Ticket.
@@ -47,7 +48,7 @@ public class Ticket {
      * Дата создания.
      */
     @Column(name = "creation_date")
-    private java.time.ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
     /**
      * Цена.

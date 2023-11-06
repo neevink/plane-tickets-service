@@ -7,6 +7,7 @@ import com.soa.model.enums.TicketType;
 import com.soa.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import com.soa.mapper.EventModelMapper;
 
@@ -58,7 +59,7 @@ public class TicketServiceImpl implements TicketService {
         ticket.setName(request.getName());
         ticket.setCoordinateX(request.getCoordinates().getX());
         ticket.setCoordinateY(request.getCoordinates().getY());
-        ticket.setCreationDate(ZonedDateTime.now());
+        ticket.setCreationDate(new Date());
         ticket.setPrice(request.getPrice());
         ticket.setDiscount(request.getDiscount());
         ticket.setRefundable(request.getRefundable());
@@ -105,46 +106,64 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketDto> getAllTickets(
             List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset
-    ) {
+    ) throws Exception {
         for (var e : filterBy){
             System.out.println(e);
         }
         System.out.println(sortBy);
 
-        TicketSpecification spec = new TicketSpecification(filterBy);
-        var ticketsStream = ticketRepository.findAll(spec).stream();
+        try {
+            TicketSpecification spec = new TicketSpecification(filterBy);
+            var ticketsStream = ticketRepository.findAll(spec).stream();
 
-        if (sortBy != null) {
-            if (sortBy.getKey().equals("id")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+            for (var f :filterBy){
+                if (f.getKey().equals("creationDate")){
+                    if (f.getOperation().equals("eq")) {
+                        ticketsStream =ticketsStream.filter(ticket -> ticket.getCreationDate().equals((Date)f.getValue()));
+                    } else if (f.getOperation().equals("ne")) {
+                        ticketsStream =ticketsStream.filter(ticket -> !ticket.getCreationDate().equals((Date)f.getValue()));
+                    } else if (f.getOperation().equals("gt")) {
+                        ticketsStream =ticketsStream.filter(ticket -> ticket.getCreationDate().before((Date)f.getValue()));
+                    } else {
+                        ticketsStream =ticketsStream.filter(ticket -> ticket.getCreationDate().after((Date)f.getValue()));
+                    }
+                }
             }
-            else if (sortBy.getKey().equals("name")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
+
+            if (sortBy != null) {
+                if (sortBy.getKey().equals("id")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+                }
+                else if (sortBy.getKey().equals("name")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
+                }
+                else if (sortBy.getKey().equals("coordinateX")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCoordinateX().compareTo(o2.getCoordinateX()));
+                }
+                else if (sortBy.getKey().equals("coordinateY")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCoordinateY().compareTo(o2.getCoordinateY()));
+                }
+                else if (sortBy.getKey().equals("creationDate")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCreationDate().compareTo(o2.getCreationDate()));
+                }
+                else if (sortBy.getKey().equals("price")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getPrice().compareTo(o2.getPrice()));
+                }
+                else if (sortBy.getKey().equals("discount")) {
+                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDiscount().compareTo(o2.getDiscount()));
+                }
+                else {
+                    throw ErrorDescriptions.INCORRECT_SORT.exception();
+                }
             }
-            else if (sortBy.getKey().equals("coordinateX")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCoordinateX().compareTo(o2.getCoordinateX()));
-            }
-            else if (sortBy.getKey().equals("coordinateY")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCoordinateY().compareTo(o2.getCoordinateY()));
-            }
-            else if (sortBy.getKey().equals("creationDate")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCreationDate().compareTo(o2.getCreationDate()));
-            }
-            else if (sortBy.getKey().equals("price")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getPrice().compareTo(o2.getPrice()));
-            }
-            else if (sortBy.getKey().equals("discount")) {
-                ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDiscount().compareTo(o2.getDiscount()));
-            }
-            else {
-                throw ErrorDescriptions.INCORRECT_SORT.exception();
-            }
+            return ticketsStream
+                    .skip(offset)
+                    .limit(limit)
+                   .map(ticketModelMapper::map)
+                   .collect(Collectors.toList());
+        } catch (InvalidDataAccessApiUsageException exc){
+            throw new Exception("В фильтре передано недопустимое значение для сравнения");
         }
-        return ticketsStream
-                .skip(offset)
-                .limit(limit)
-               .map(ticketModelMapper::map)
-               .collect(Collectors.toList());
     }
 
     @Override
@@ -233,7 +252,7 @@ public class TicketServiceImpl implements TicketService {
         updatedTicket.setName(request.getName());
         updatedTicket.setCoordinateX(request.getCoordinates().getX());
         updatedTicket.setCoordinateY(request.getCoordinates().getY());
-        updatedTicket.setCreationDate(ZonedDateTime.now());
+        updatedTicket.setCreationDate(new Date());
         updatedTicket.setPrice(request.getPrice());
         updatedTicket.setDiscount(request.getDiscount());
         updatedTicket.setRefundable(request.getRefundable());

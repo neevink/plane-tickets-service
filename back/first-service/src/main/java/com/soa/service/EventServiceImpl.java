@@ -8,12 +8,14 @@ import com.soa.model.enums.EventType;
 import com.soa.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import com.soa.error.ErrorDescriptions;
 
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,36 +55,55 @@ public class EventServiceImpl implements EventService {
         return createdEvent;
     }
 
-    public List<EventDto> getAllEvents(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset) {
+    public List<EventDto> getAllEvents(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset) throws Exception {
         for (var e : filterBy){
             System.out.println(e);
         }
         System.out.println(sortBy);
 
-        EventSpecification spec = new EventSpecification(filterBy);
-        var eventsStream = eventRepository.findAll(spec).stream();
+        try {
+            EventSpecification spec = new EventSpecification(filterBy);
+            var eventsStream = eventRepository.findAll(spec).stream();
 
-        if (sortBy != null) {
-            if (sortBy.getKey().equals("id")) {
-                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+            for (var f :filterBy){
+                if (f.getKey().equals("date")){
+                    if (f.getOperation().equals("eq")) {
+                        eventsStream = eventsStream.filter(event -> event.getDate().equals((Date)f.getValue()));
+                    } else if (f.getOperation().equals("ne")) {
+                        eventsStream = eventsStream.filter(event -> !event.getDate().equals((Date)f.getValue()));
+                    } else if (f.getOperation().equals("gt")) {
+                        eventsStream = eventsStream.filter(event -> event.getDate().before((Date)f.getValue()));
+                    } else {
+                        eventsStream = eventsStream.filter(event -> event.getDate().after((Date)f.getValue()));
+                    }
+                }
             }
-            else if (sortBy.getKey().equals("name")) {
-                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
+
+            if (sortBy != null) {
+                if (sortBy.getKey().equals("id")) {
+                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+                }
+                else if (sortBy.getKey().equals("name")) {
+                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
+                }
+                else if (sortBy.getKey().equals("date")) {
+                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDate().compareTo(o2.getDate()));
+                }
+                else if (sortBy.getKey().equals("minAge")) {
+                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getMinAge().compareTo(o2.getMinAge()));
+                } else {
+                    throw ErrorDescriptions.INCORRECT_SORT.exception();
+                }
             }
-            else if (sortBy.getKey().equals("date")) {
-                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDate().compareTo(o2.getDate()));
-            }
-            else if (sortBy.getKey().equals("minAge")) {
-                eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getMinAge().compareTo(o2.getMinAge()));
-            } else {
-                throw ErrorDescriptions.INCORRECT_SORT.exception();
-            }
+            return eventsStream
+                    .skip(offset)
+                    .limit(limit)
+                    .map(eventModelMapper::map)
+                    .collect(Collectors.toList());
+        } catch (
+            InvalidDataAccessApiUsageException exc){
+                throw new Exception("В фильтре передано недопустимое значение для сравнения");
         }
-        return eventsStream
-                .skip(offset)
-                .limit(limit)
-                .map(eventModelMapper::map)
-                .collect(Collectors.toList());
     }
 
     @Override
