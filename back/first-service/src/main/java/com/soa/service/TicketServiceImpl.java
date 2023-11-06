@@ -105,7 +105,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketDto> getAllTickets(
-            List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset
+            List<FilterCriteria> filterBy, List<SortCriteria> sortBy, Long limit, Long offset
     ) throws Exception {
         for (var e : filterBy){
             System.out.println(e);
@@ -130,31 +130,29 @@ public class TicketServiceImpl implements TicketService {
                 }
             }
 
-            if (sortBy != null) {
-                if (sortBy.getKey().equals("id")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+            if (sortBy != null && sortBy.size() != 0) {
+                Comparator<Ticket> c = null;
+                for (SortCriteria sortCriteria : sortBy) {
+                    Comparator<Ticket> currentComp;
+                    var desc = !sortCriteria.getAscending();
+                    switch (sortCriteria.getKey()) {
+                        case "id" -> currentComp = Comparator.comparing(Ticket::getId);
+                        case "name" -> currentComp = Comparator.comparing(Ticket::getName);
+                        case "coordinateX" -> currentComp = Comparator.comparing(Ticket::getCoordinateX);
+                        case "coordinateY" -> currentComp = Comparator.comparing(Ticket::getCoordinateY);
+                        case "creationDate" -> currentComp = Comparator.comparing(Ticket::getCreationDate);
+                        case "price" -> currentComp = Comparator.comparing(Ticket::getPrice);
+                        case "discount" -> currentComp = Comparator.comparing(Ticket::getDiscount);
+                        default -> throw ErrorDescriptions.INCORRECT_SORT.exception();
+                    }
+                    if (desc) currentComp = currentComp.reversed();
+                    if (c == null) {
+                        c = currentComp;
+                    } else {
+                        c = c.thenComparing(currentComp);
+                    }
                 }
-                else if (sortBy.getKey().equals("name")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
-                }
-                else if (sortBy.getKey().equals("coordinateX")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCoordinateX().compareTo(o2.getCoordinateX()));
-                }
-                else if (sortBy.getKey().equals("coordinateY")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCoordinateY().compareTo(o2.getCoordinateY()));
-                }
-                else if (sortBy.getKey().equals("creationDate")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getCreationDate().compareTo(o2.getCreationDate()));
-                }
-                else if (sortBy.getKey().equals("price")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getPrice().compareTo(o2.getPrice()));
-                }
-                else if (sortBy.getKey().equals("discount")) {
-                    ticketsStream = ticketsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDiscount().compareTo(o2.getDiscount()));
-                }
-                else {
-                    throw ErrorDescriptions.INCORRECT_SORT.exception();
-                }
+                if (c != null) ticketsStream = ticketsStream.sorted(c);
             }
             return ticketsStream
                     .skip(offset)

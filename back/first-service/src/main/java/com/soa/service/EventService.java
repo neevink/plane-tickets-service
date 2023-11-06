@@ -11,7 +11,7 @@ import java.util.List;
 public interface EventService {
     EventDto createEvent(CreateEventRequest request);
 
-    List<EventDto> getAllEvents(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset) throws Exception;
+    List<EventDto> getAllEvents(List<FilterCriteria> filterBy, List<SortCriteria> sortBy, Long limit, Long offset) throws Exception;
 
     EventDto getEventById(Long ticketId);
 

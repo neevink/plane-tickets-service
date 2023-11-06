@@ -4,6 +4,7 @@ import com.soa.mapper.EventModelMapper;
 import com.soa.model.Event;
 import com.soa.model.CreateEventRequest;
 import com.soa.model.EventDto;
+import com.soa.model.Ticket;
 import com.soa.model.enums.EventType;
 import com.soa.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +15,7 @@ import com.soa.error.ErrorDescriptions;
 
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,7 +53,8 @@ public class EventServiceImpl implements EventService {
         return createdEvent;
     }
 
-    public List<EventDto> getAllEvents(List<FilterCriteria> filterBy, SortCriteria sortBy, Long limit, Long offset) throws Exception {
+    @Override
+    public List<EventDto> getAllEvents(List<FilterCriteria> filterBy, List<SortCriteria> sortBy, Long limit, Long offset) throws Exception {
         for (var e : filterBy){
             System.out.println(e);
         }
@@ -79,22 +78,28 @@ public class EventServiceImpl implements EventService {
                 }
             }
 
-            if (sortBy != null) {
-                if (sortBy.getKey().equals("id")) {
-                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getId().compareTo(o2.getId()));
+            if (sortBy != null && sortBy.size() != 0) {
+                Comparator<Event> c = null;
+                for (SortCriteria sortCriteria : sortBy) {
+                    Comparator<Event> currentComp;
+                    var desc = !sortCriteria.getAscending();
+                    switch (sortCriteria.getKey()) {
+                        case "id" -> currentComp = Comparator.comparing(Event::getId);
+                        case "name" -> currentComp = Comparator.comparing(Event::getName);
+                        case "date" -> currentComp = Comparator.comparing(Event::getDate);
+                        case "minAge" -> currentComp = Comparator.comparing(Event::getMinAge);
+                        default -> throw ErrorDescriptions.INCORRECT_SORT.exception();
+                    }
+                    if (desc) currentComp = currentComp.reversed();
+                    if (c == null) {
+                        c = currentComp;
+                    } else {
+                        c = c.thenComparing(currentComp);
+                    }
                 }
-                else if (sortBy.getKey().equals("name")) {
-                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getName().compareTo(o2.getName()));
-                }
-                else if (sortBy.getKey().equals("date")) {
-                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getDate().compareTo(o2.getDate()));
-                }
-                else if (sortBy.getKey().equals("minAge")) {
-                    eventsStream = eventsStream.sorted((o1, o2) -> (sortBy.getAscending() ? 1 : -1) * o1.getMinAge().compareTo(o2.getMinAge()));
-                } else {
-                    throw ErrorDescriptions.INCORRECT_SORT.exception();
-                }
+                if (c != null) eventsStream = eventsStream.sorted(c);
             }
+
             return eventsStream
                     .skip(offset)
                     .limit(limit)

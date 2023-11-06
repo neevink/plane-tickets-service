@@ -3,6 +3,7 @@ package com.soa.controller;
 import com.soa.common.Endpoints;
 import com.soa.model.CreateEventRequest;
 import com.soa.model.EventDto;
+import com.soa.model.TicketDto;
 import com.soa.model.enums.EventType;
 import com.soa.repository.FilterCriteria;
 import com.soa.repository.SortCriteria;
@@ -14,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -101,22 +99,25 @@ public class EventController {
             }
         }
 
-        SortCriteria sc = null;
+        List<SortCriteria> sc = new ArrayList<>();
         if (sort != null) {
             try {
-                var descSort = sort.charAt(0) == '-';
-                var key = "";
-                if (descSort) {
-                    key = sort.substring(1);
-                } else {
-                    key = sort;
+                var listSorts = Arrays.asList(sort.split(","));
+                for (String oneSort : listSorts) {
+                    var descSort = oneSort.charAt(0) == '-';
+                    var key = "";
+                    if (descSort) {
+                        key = oneSort.substring(1);
+                    } else {
+                        key = oneSort;
+                    }
+                    sc.add(new SortCriteria(key, !descSort));
                 }
-                sc = new SortCriteria(key, !descSort);
-
             } catch (Exception e) {
                 throw ErrorDescriptions.INCORRECT_SORT.exception();
             }
         }
+
         List<EventDto> events = eventService.getAllEvents(filters, sc, limit, offset);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
