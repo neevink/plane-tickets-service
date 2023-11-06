@@ -57,7 +57,8 @@
       (when sortings (for [[sort-id _sort-map] sortings]
         ^{:key sort-id}
         [one-sort sort-id mode]))
-      [:div {:class [(c :cursor-pointer
+      (when (< (count sortings) 5)
+        [:div {:class [(c :cursor-pointer
                         [:my 2]
                         [:border "#FAFAFA"]
                         :rounded
@@ -68,7 +69,7 @@
                         [:hover [:border "#2e3633"]]) (c :text-center :w-full)]
              :on-click
              #(dispatch [::events/add-sorting mode])}
-       [:i.fa-solid.fa-plus]]]]))
+       [:i.fa-solid.fa-plus]])]]))
 
 (defn filter-view-one [prop only=? label & [selector-values]]
   (let [filter-db @(subscribe [::subs/filters prop])
