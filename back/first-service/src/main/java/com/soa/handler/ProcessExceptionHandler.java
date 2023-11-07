@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
 import java.time.format.DateTimeParseException;
@@ -29,8 +30,15 @@ public class ProcessExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<?> handleException(Exception e) {
+        System.out.println(e.getClass());
         return ResponseEntity.status(400)
                 .body(errorMessage.setErrors(List.of("Произошла ошибка: " + e.getMessage())));
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<?> handleException(MethodArgumentTypeMismatchException e) {
+        return ResponseEntity.status(400)
+                .body(errorMessage.setErrors(List.of("В GET-параметре передано слишком длинное число")));
     }
 
     @ExceptionHandler({ApplicationException.class})
