@@ -11,7 +11,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import com.soa.mapper.EventModelMapper;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -126,6 +125,16 @@ public class TicketServiceImpl implements TicketService {
                         ticketsStream =ticketsStream.filter(ticket -> ticket.getCreationDate().before((Date)f.getValue()));
                     } else {
                         ticketsStream =ticketsStream.filter(ticket -> ticket.getCreationDate().after((Date)f.getValue()));
+                    }
+                } else if (f.getKey().equals("type")){
+                    if (f.getOperation().equals("eq")) {
+                        ticketsStream = ticketsStream.filter(event -> event.getType().equals(f.getValue()));
+                    } else if (f.getOperation().equals("ne")) {
+                        ticketsStream = ticketsStream.filter(event -> !event.getType().equals(f.getValue()));
+                    } else if (f.getOperation().equals("gt")) {
+                        ticketsStream = ticketsStream.filter(event -> (event.getType().compareTo((TicketType) f.getValue()) < 0));
+                    } else {
+                        ticketsStream = ticketsStream.filter(event -> (event.getType().compareTo((TicketType) f.getValue()) > 0));
                     }
                 }
             }

@@ -34,7 +34,7 @@ public class TicketSpecification implements Specification<Ticket> {
         List<Predicate> predicates = new ArrayList<>();
 
         for (FilterCriteria crit : criteries) {
-            if(crit.getKey().equals("creationDate")){
+            if(crit.getKey().equals("creationDate") || crit.getKey().equals("type")){
                 continue;
             }
 

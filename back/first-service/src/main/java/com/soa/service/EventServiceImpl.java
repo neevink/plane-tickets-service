@@ -75,6 +75,16 @@ public class EventServiceImpl implements EventService {
                     } else {
                         eventsStream = eventsStream.filter(event -> event.getDate().after((Date)f.getValue()));
                     }
+                } else if (f.getKey().equals("eventType")){
+                    if (f.getOperation().equals("eq")) {
+                        eventsStream = eventsStream.filter(event -> event.getEventType().equals(f.getValue()));
+                    } else if (f.getOperation().equals("ne")) {
+                        eventsStream = eventsStream.filter(event -> !event.getEventType().equals(f.getValue()));
+                    } else if (f.getOperation().equals("gt")) {
+                        eventsStream = eventsStream.filter(event -> (event.getEventType().compareTo((EventType) f.getValue()) < 0));
+                    } else {
+                        eventsStream = eventsStream.filter(event -> (event.getEventType().compareTo((EventType) f.getValue()) > 0));
+                    }
                 }
             }
 
