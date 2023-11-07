@@ -148,10 +148,16 @@
          (:creationDate ticket) " " (type-view (:type ticket)) " " [:span (:type ticket)] " "]
         [:div  {:class (c [:w-max 100])}
          [:span {:class (c :text-xl :text-bold)}
-          [:span (if (:name event)
-                   (str "Мероприятие: " (:name event))
-                   "Неизвестное мероприятие")]]]]
-       [:span {:class (c :text-sm)} (str "Название билета: " (:name ticket))]
+          [:span.truncate {:class (c [:h 9] [:h-max 9]) :title (:name event)}
+           (if (:name event)
+             (if (> (count (:name event)) 15)
+               (str (apply str (take 15 (:name event))) "...") (:name event))
+             "Неизвестное мероприятие")]]]]
+       [:span {:class (c :text-sm [:h 9] [:h-max 9])
+               :title (:name ticket)} 
+        (str "Название билета: " 
+             (if (> (count (:name ticket)) 15)
+               (str (apply str (take 15 (:name ticket))) "...") (:name ticket)))]
        [:div {:class (c :text-sm)} (if (:refundable ticket) "Возвратный" "Невозвратный")]]
       [:div  {:class (c [:w-max 100])}
        [:div

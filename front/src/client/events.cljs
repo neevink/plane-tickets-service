@@ -776,3 +776,5 @@
  (fn [{:keys [db]} [_]]
    (let [mode (:ticket-copy-mode db)]
      {:dispatch [::copy-ticket-http mode (:form db)]})))
+
+

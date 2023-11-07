@@ -361,3 +361,42 @@ span, div, p, h1, h2, h3, h4, h5 {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
 }
+
+   .truncate {
+    /* background: #f4eddf; /* Цвет фона */ */
+    /* padding: 10px; /* Поля вокруг текста */ */
+    white-space: nowrap; /* Текст не переносится */
+    overflow: hidden; /* Обрезаем всё за пределами блока */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+   }
+
+
+   .tooltip {
+     position: relative;
+     display: inline-block;
+     /* border-bottom: 1px dotted black; */
+   }
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 1200px;
+  background-color: blue;
+  /* color: #fff; */
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  /* left: 105%; */
+  display: inline;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.hint { display: none; }
+input:focus + .hint { display: inline; }

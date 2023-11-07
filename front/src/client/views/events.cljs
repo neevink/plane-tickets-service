@@ -78,7 +78,7 @@
         date-sub @(subscribe [::subs/event-form-path-invalid-message [:date]])
         min-age-sub @(subscribe [::subs/event-form-path-invalid-message [:minAge]])
         type-sub @(subscribe [::subs/event-form-path-invalid-message [:eventType]])
-        event-types (@subscribe [::subs/event-types])]
+        event-types @(subscribe [::subs/event-types])]
     [:div
      [:div
       {:class (c :grid [:grid-cols 2])}
@@ -129,11 +129,15 @@
       [:div
        [:div "ID: " id]
        [:span {:class (c :text-sm)} (take 10 date)  " " (event-type-icon eventType) " " [:span eventType] " "]
-       [:div {:class (c [:w-max 100])}
-        [:span
-         {:class (c :text-xl :text-bold)}
+       [:div.truncate {:class (c [:w-max 90] [:h-max 9])}
+        [:span.truncate
+         {:class (c :text-xl :text-bold [:h 9] [:h-max 9])}
 
-         [:span {:class (c :w-max-xl)} name]]]]
+         [:span.truncate {:class (c [:h 9] [:h-max 9])}
+          [:div.tooltip {:title name}
+           (if (> (count name) 15) (str (apply str (take 15 name)) "...") name)
+           #_[:div.tooltiptext name]] ] ]]
+       ]
       [:span {:class (c :text-sm)} "Минимальный возраст: " minAge]]
      [:div
       {:class (c :text-xl [:pt 3])}]
