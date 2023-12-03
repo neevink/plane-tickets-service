@@ -2,6 +2,7 @@
 
 ![](doc/task1.png)
 ![](doc/task2.png)
+![](doc/task3.png)
 
 ### BUILD UI
 

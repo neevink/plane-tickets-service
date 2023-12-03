@@ -9,8 +9,24 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  application:
+    name: first-service
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+        import-check:
+          enabled: false
+      discovery:  # https://192.168.1.206:8080/tickets
+        health-check-path: /tickets
+        health-check-interval: 10s
+        health-check-tls-skip-verify: true
+        scheme: https
+
 server:
-  port: 8080
+  port: ${PORT:8080}
 # The format used for the keystore. It could be set to JKS in case it is a JKS file
   ssl:
     key-store-type: PKCS12
