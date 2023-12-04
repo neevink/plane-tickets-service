@@ -19,7 +19,7 @@ spring:
         enabled: true
         import-check:
           enabled: false
-      discovery:  # https://192.168.1.206:8080/tickets
+      discovery:
         health-check-path: /tickets
         health-check-interval: 10s
         health-check-tls-skip-verify: true

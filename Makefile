@@ -7,10 +7,15 @@ sh:
 	ssh -L 8500:localhost:8500 -L 18800:localhost:18800 -L 18888:localhost:18888 s313087@helios.se.ifmo.ru -p 2222
 
 deploy-helios:
-	#scp -P2222 -r back/first-service/target/soa-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/soa-0.0.1-SNAPSHOT.jar
-	scp -P2222 -r Makefile s313087@helios.cs.ifmo.ru:~/soa/Makefile
-	scp -P2222 -r back/haproxy/haproxy.cfg s313087@helios.cs.ifmo.ru:~/soa/haproxy.cfg
-	scp -P2222 -r back/haproxy/mydomain.pem s313087@helios.cs.ifmo.ru:~/soa/mydomain.pem
+	#scp -P2222 back/first-service/target/soa-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/soa-0.0.1-SNAPSHOT.jar
+	#scp -P2222 Makefile s313087@helios.cs.ifmo.ru:~/soa/Makefile
+	#scp -P2222 back/haproxy/haproxy.cfg s313087@helios.cs.ifmo.ru:~/soa/haproxy.cfg
+	#scp -P2222 back/haproxy/mydomain.pem s313087@helios.cs.ifmo.ru:~/soa/mydomain.pem
+
+	#second-service
+	scp -P2222 back/Eureka-Ribbon-Zuul/eureka-naming-server/target/eureka-naming-server-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/eureka-naming-server-0.0.1-SNAPSHOT.jar
+	#scp -P2222 back/Eureka-Ribbon-Zuul/server-app/target/server-app-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/server-app-0.0.1-SNAPSHOT.jar
+	#scp -P2222 back/Eureka-Ribbon-Zuul/zuul-api-server/target/zuul-api-server-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/zuul-api-server-0.0.1-SNAPSHOT.jar
 
 run-haproxy-on-helios:
 	../haproxy/haproxy -m 128 -f ./haproxy.cfg &
@@ -22,6 +27,20 @@ run-first-service-on-helios:
 	PORT=18801 java -jar soa-0.0.1-SNAPSHOT.jar &
 	sleep 3
 	PORT=18802 java -jar soa-0.0.1-SNAPSHOT.jar &
+
+run-eureka-naming-server-on-helios:
+	java -jar -Xmx128m -Xms128m eureka-naming-server-0.0.1-SNAPSHOT.jar &
+	sleep 10
+
+run-server-app-on-helios:
+	java -jar -Dspring.profiles.active=inst1 -Xmx128m -Xms128m server-app-0.0.1-SNAPSHOT.jar &
+	sleep 10
+	java -jar -Dspring.profiles.active=inst1 -Xmx128m -Xms128m server-app-0.0.1-SNAPSHOT.jar &
+	sleep 10
+
+run-zuul-api-server-on-helios:
+	java -jar -Xmx128m -Xms128m zuul-api-server-0.0.1-SNAPSHOT.jar &
+	sleep 10
 
 front:
 	cd ./front && rm -rf .shadow-cljs && npx shadow-cljs release app
