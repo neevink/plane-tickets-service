@@ -1,5 +1,9 @@
 # Lab 2
 
+Consul stats: http://localhost:8500/ui/
+Haproxy stats: http://localhost:18888/stats
+Haproxy vip: https://localhost:18800/tickets
+
 ![](doc/task1.png)
 ![](doc/task2.png)
 ![](doc/task3.png)
@@ -28,5 +32,7 @@ Run in terminal:
 make swagger-ui
 ```
 Then open `http://localhost:8080/swagger/` in browser.
+
+
 
 
