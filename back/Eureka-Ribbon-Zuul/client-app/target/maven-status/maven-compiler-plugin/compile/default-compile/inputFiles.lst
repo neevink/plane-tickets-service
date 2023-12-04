@@ -1,0 +1,4 @@
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/client-app/src/main/java/com/service/discovery/clientapp/model/GreetResponseClient.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/client-app/src/main/java/com/service/discovery/clientapp/controller/ClientServiceController.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/client-app/src/main/java/com/service/discovery/clientapp/ClientAppApplication.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/client-app/src/main/java/com/service/discovery/clientapp/controller/ClientAppServiceProxy.java

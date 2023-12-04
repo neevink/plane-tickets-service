@@ -1,0 +1,16 @@
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/Event.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/ServerAppApplication.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/config/SslConnectionConfig.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/ErrorMessage.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/TicketType.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/utils/RestClient.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/config/SecurityConfig.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/EventType.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/services/SellingService.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/TicketDto.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/controller/ServerServiceController.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/controller/TicketsController.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/CoordinatesDto.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/GreetResponse.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/config/JacksonConfig.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/server-app/src/main/java/com/service/discovery/serverapp/model/ListTicketDto.java

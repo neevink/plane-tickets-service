@@ -1,0 +1,2 @@
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/zuul-api-server/src/main/java/com/apigateway/zuulapiserver/ZuulApiServerApplication.java
+/home/svt/dev/itmo/soa/tickets-service/back/Eureka-Ribbon-Zuul/zuul-api-server/src/main/java/com/apigateway/zuulapiserver/ZuulLoggingFilter.java

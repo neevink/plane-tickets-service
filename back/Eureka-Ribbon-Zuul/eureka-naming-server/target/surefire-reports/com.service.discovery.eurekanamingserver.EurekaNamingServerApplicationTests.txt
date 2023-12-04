@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.service.discovery.eurekanamingserver.EurekaNamingServerApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.813 s - in com.service.discovery.eurekanamingserver.EurekaNamingServerApplicationTests

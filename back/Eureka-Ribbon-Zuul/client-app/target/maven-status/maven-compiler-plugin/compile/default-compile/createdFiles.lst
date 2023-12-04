@@ -1,0 +1,4 @@
+com/service/discovery/clientapp/controller/ClientAppServiceProxy.class
+com/service/discovery/clientapp/model/GreetResponseClient.class
+com/service/discovery/clientapp/ClientAppApplication.class
+com/service/discovery/clientapp/controller/ClientServiceController.class
