@@ -4,6 +4,8 @@ Consul stats: http://localhost:8500/ui/
 Haproxy stats: http://localhost:18888/stats
 Haproxy vip: https://localhost:18800/tickets
 
+Eureka: http://localhost:8761/
+
 ![](doc/task1.png)
 ![](doc/task2.png)
 ![](doc/task3.png)
