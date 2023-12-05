@@ -7,7 +7,7 @@
    [clojure.string :as str]
    [client.db :as db]))
 
-(def back-url "http://localhost:18800")
+(def back-url "https://localhost:18800")
 
 (def back-2-url "https://localhost:9090")
 
