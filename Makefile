@@ -13,15 +13,15 @@ deploy-helios:
 	scp -P2222 back/haproxy/mydomain.pem s313087@helios.cs.ifmo.ru:~/soa/mydomain.pem
 
 	#second-service
-	#scp -P2222 back/Eureka-Ribbon-Zuul/eureka-naming-server/target/eureka-naming-server-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/eureka-naming-server-0.0.1-SNAPSHOT.jar
-	#scp -P2222 back/Eureka-Ribbon-Zuul/server-app/target/server-app-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/server-app-0.0.1-SNAPSHOT.jar
-	#scp -P2222 back/Eureka-Ribbon-Zuul/zuul-api-server/target/zuul-api-server-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/zuul-api-server-0.0.1-SNAPSHOT.jar
+	scp -P2222 back/Eureka-Ribbon-Zuul/eureka-naming-server/target/eureka-naming-server-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/eureka-naming-server-0.0.1-SNAPSHOT.jar
+	scp -P2222 back/Eureka-Ribbon-Zuul/server-app/target/server-app-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/server-app-0.0.1-SNAPSHOT.jar
+	scp -P2222 back/Eureka-Ribbon-Zuul/zuul-api-server/target/zuul-api-server-0.0.1-SNAPSHOT.jar s313087@helios.cs.ifmo.ru:~/soa/zuul-api-server-0.0.1-SNAPSHOT.jar
 
 run-haproxy-on-helios:
 	../haproxy/haproxy -m 128 -f ./haproxy.cfg &
 
 run-consul-on-helios:
-	CONSUL_LOCAL_CONFIG='{"server": true}' ../consul/consul agent -dev -client=0.0.0.0 -server-port=18726 -serf-wan-port=18727 -serf-lan-port=18728 -dns-port=18729 -grpc-tls-port=18730
+	CONSUL_LOCAL_CONFIG='{"server": true}' ../consul/consul agent -dev -client=0.0.0.0 -server-port=18726 -serf-wan-port=18727 -serf-lan-port=18728 -dns-port=18729 -grpc-tls-port=18730 &
 
 run-first-service-on-helios:
 	PORT=18801 java -jar soa-0.0.1-SNAPSHOT.jar &

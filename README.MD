@@ -36,5 +36,19 @@ make swagger-ui
 Then open `http://localhost:8080/swagger/` in browser.
 
 
+## Интеграция haproxy с Consul. Нужно установить consul-template и отпредактировать haproxy.ctmpl:
+```
+frontend first-service
+    bind *:18800
+    default_backend first-service-backends
 
+backend servers
+  balance roundrobin
+  {{ range service "first-service" }}
+  server {{ .Node }} {{ .Address }}:{{ .Port }} check ssl verify none
+  {{ end }}
+```
 
+```bash
+consul-template -template="haproxy.ctmpl:/etc/haproxy/haproxy.cfg:service haproxy restart"
+```
