@@ -16,25 +16,11 @@ import java.util.Date;
 @AllArgsConstructor(staticName = "of")
 @Getter
 @Setter
-@XmlRootElement(name="event")
+@XmlRootElement(name="getEventResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EventDto {
-    @XmlElement(name="id")
-    private Long id;
+public class GetEventResponse {
 
-    @NotBlank(message = "Название дисциплины не должно быть пустым")
-    @NotNull
-    @XmlElement(name="name")
-    private String name;
-
-    @JsonFormat(pattern="yyyy-MM-dd")
-    @XmlElement(name="date")
-    private Date date;
-
-    @XmlElement(name="minAge")
-    private Integer minAge;
-
-    @XmlElement(name="eventType")
-    private EventType eventType;
+    @XmlElement(name="event")
+    private EventDto2 eventDto2;
 }
 

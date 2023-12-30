@@ -18,7 +18,7 @@ import java.util.Date;
 @Setter
 @XmlRootElement(name="event")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EventDto {
+public class EventDto2 {
     @XmlElement(name="id")
     private Long id;
 
@@ -26,15 +26,5 @@ public class EventDto {
     @NotNull
     @XmlElement(name="name")
     private String name;
-
-    @JsonFormat(pattern="yyyy-MM-dd")
-    @XmlElement(name="date")
-    private Date date;
-
-    @XmlElement(name="minAge")
-    private Integer minAge;
-
-    @XmlElement(name="eventType")
-    private EventType eventType;
 }
 

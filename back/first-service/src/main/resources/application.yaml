@@ -37,3 +37,7 @@ server:
   # The alias mapped to the certificate
     key-alias: baeldung
     enabled: true
+
+
+cors:
+  urls: '*'
