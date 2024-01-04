@@ -1,7 +1,7 @@
 package com.soa.service;
 
 
-import com.soa.model.CreateTicketRequest;
+import com.soa.model.request.CreateTicketRequest;
 import com.soa.model.TicketDto;
 import com.soa.model.enums.TicketType;
 import com.soa.repository.FilterCriteria;

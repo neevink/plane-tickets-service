@@ -1,9 +1,8 @@
 package com.soa.controller;
 
 import com.soa.common.Endpoints;
-import com.soa.model.CreateEventRequest;
+import com.soa.model.request.CreateEventRequest;
 import com.soa.model.EventDto;
-import com.soa.model.TicketDto;
 import com.soa.model.enums.EventType;
 import com.soa.repository.FilterCriteria;
 import com.soa.repository.SortCriteria;

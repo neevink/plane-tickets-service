@@ -13,3 +13,10 @@ front/.cpcache
 back/Library/target
 back/MarineService/target
 back/StarshipService/target
+
+back/Eureka-Ribbon-Zuul/zuul-api-server/target
+back/Eureka-Ribbon-Zuul/server-app/target
+back/Eureka-Ribbon-Zuul/client-app/target
+back/Eureka-Ribbon-Zuul/eureka-naming-server/target
+back/first-service/target
+helios

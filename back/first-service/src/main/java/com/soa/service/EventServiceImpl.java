@@ -2,9 +2,8 @@ package com.soa.service;
 
 import com.soa.mapper.EventModelMapper;
 import com.soa.model.Event;
-import com.soa.model.CreateEventRequest;
+import com.soa.model.request.CreateEventRequest;
 import com.soa.model.EventDto;
-import com.soa.model.Ticket;
 import com.soa.model.enums.EventType;
 import com.soa.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -94,11 +93,11 @@ public class EventServiceImpl implements EventService {
                     Comparator<Event> currentComp;
                     var desc = !sortCriteria.getAscending();
                     switch (sortCriteria.getKey()) {
-                        case "id" -> currentComp = Comparator.comparing(Event::getId);
-                        case "name" -> currentComp = Comparator.comparing(Event::getName);
-                        case "date" -> currentComp = Comparator.comparing(Event::getDate);
-                        case "minAge" -> currentComp = Comparator.comparing(Event::getMinAge);
-                        default -> throw ErrorDescriptions.INCORRECT_SORT.exception();
+                        case "id": currentComp = Comparator.comparing(Event::getId); break;
+                        case "name": currentComp = Comparator.comparing(Event::getName); break;
+                        case "date": currentComp = Comparator.comparing(Event::getDate); break;
+                        case "minAge": currentComp = Comparator.comparing(Event::getMinAge); break;
+                        default: throw ErrorDescriptions.INCORRECT_SORT.exception();
                     }
                     if (desc) currentComp = currentComp.reversed();
                     if (c == null) {

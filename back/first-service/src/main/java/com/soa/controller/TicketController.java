@@ -2,21 +2,18 @@ package com.soa.controller;
 
 import com.soa.common.Endpoints;
 import com.soa.error.ErrorDescriptions;
-import com.soa.model.CreateTicketRequest;
+import com.soa.model.request.CreateTicketRequest;
 import com.soa.model.TicketDto;
 import com.soa.model.enums.TicketType;
 import com.soa.repository.FilterCriteria;
 import com.soa.repository.SortCriteria;
 import com.soa.service.TicketService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController

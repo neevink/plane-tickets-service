@@ -1,7 +1,7 @@
 package com.soa.service;
 
 
-import com.soa.model.CreateEventRequest;
+import com.soa.model.request.CreateEventRequest;
 import com.soa.model.EventDto;
 import com.soa.repository.FilterCriteria;
 import com.soa.repository.SortCriteria;

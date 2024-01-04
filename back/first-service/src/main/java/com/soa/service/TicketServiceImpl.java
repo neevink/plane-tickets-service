@@ -4,6 +4,8 @@ import com.soa.error.ErrorDescriptions;
 import com.soa.mapper.TicketModelMapper;
 import com.soa.model.*;
 import com.soa.model.enums.TicketType;
+import com.soa.model.request.CreateEventRequest;
+import com.soa.model.request.CreateTicketRequest;
 import com.soa.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -145,14 +147,14 @@ public class TicketServiceImpl implements TicketService {
                     Comparator<Ticket> currentComp;
                     var desc = !sortCriteria.getAscending();
                     switch (sortCriteria.getKey()) {
-                        case "id" -> currentComp = Comparator.comparing(Ticket::getId);
-                        case "name" -> currentComp = Comparator.comparing(Ticket::getName);
-                        case "coordinateX" -> currentComp = Comparator.comparing(Ticket::getCoordinateX);
-                        case "coordinateY" -> currentComp = Comparator.comparing(Ticket::getCoordinateY);
-                        case "creationDate" -> currentComp = Comparator.comparing(Ticket::getCreationDate);
-                        case "price" -> currentComp = Comparator.comparing(Ticket::getPrice);
-                        case "discount" -> currentComp = Comparator.comparing(Ticket::getDiscount);
-                        default -> throw ErrorDescriptions.INCORRECT_SORT.exception();
+                        case "id": currentComp = Comparator.comparing(Ticket::getId); break;
+                        case "name": currentComp = Comparator.comparing(Ticket::getName); break;
+                        case "coordinateX": currentComp = Comparator.comparing(Ticket::getCoordinateX); break;
+                        case "coordinateY": currentComp = Comparator.comparing(Ticket::getCoordinateY); break;
+                        case "creationDate": currentComp = Comparator.comparing(Ticket::getCreationDate); break;
+                        case "price": currentComp = Comparator.comparing(Ticket::getPrice); break;
+                        case "discount": currentComp = Comparator.comparing(Ticket::getDiscount); break;
+                        default: throw ErrorDescriptions.INCORRECT_SORT.exception();
                     }
                     if (desc) currentComp = currentComp.reversed();
                     if (c == null) {
