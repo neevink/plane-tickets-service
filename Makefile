@@ -21,7 +21,7 @@ run-haproxy-on-helios:
 	../haproxy/haproxy -m 128 -f ./haproxy.cfg &
 
 run-consul-on-helios:
-	CONSUL_LOCAL_CONFIG='{"server": true}' ../consul/consul agent -dev -client=0.0.0.0 -server-port=18726 -serf-wan-port=18727 -serf-lan-port=18728 -dns-port=18729 -grpc-tls-port=18730 -http-port 18731
+	CONSUL_LOCAL_CONFIG='{"server": true}' ../consul/consul agent -dev -client=0.0.0.0 -server-port=18726 -serf-wan-port=18727 -serf-lan-port=18728 -dns-port=18729 -grpc-tls-port=18730 -http-port 18731 &
 
 run-first-service-on-helios:
 	PORT=18801 java -jar soa-0.0.1-SNAPSHOT.jar &

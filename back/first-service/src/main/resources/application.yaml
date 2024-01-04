@@ -14,7 +14,7 @@ spring:
   cloud:
     consul:
       host: localhost
-      port: 8500
+      port: 18731
       config:
         enabled: true
         import-check:
