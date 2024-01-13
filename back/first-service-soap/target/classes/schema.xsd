@@ -1,0 +1,55 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://org/example/catalog"
+           targetNamespace="http://org/example/catalog"
+           elementFormDefault="qualified">
+
+    <!--  Get Ping (only one)  -->
+    <xs:element name="getPingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long" minOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getEventRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long" minOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getEventResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="event" type="tns:EventDto" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="EventDto">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" minOccurs="1"/>
+            <xs:element name="name" type="xs:string" />
+            <!--            <xs:element name="date" type="xs:date"/>-->
+            <!--            <xs:element name="minAge" type="xs:int"/>-->
+            <!--            <xs:element name="eventType" type="xs:string"/>-->
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="getPingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ping" type="tns:PingGetResponseDto" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="PingGetResponseDto">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+
