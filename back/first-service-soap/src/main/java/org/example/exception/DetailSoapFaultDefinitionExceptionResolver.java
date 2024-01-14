@@ -1,5 +1,6 @@
 package org.example.exception;
 
+import org.example.error.ApplicationException;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver;
@@ -14,11 +15,18 @@ public class DetailSoapFaultDefinitionExceptionResolver extends SoapFaultMapping
     @Override
     protected void customizeFault(Object endpoint, Exception ex, SoapFault fault) {
         logger.warn("Exception processed ", ex);
-        if (ex instanceof ServiceFaultException) {
-            ServiceFault serviceFault = ((ServiceFaultException) ex).getServiceFault();
+
+        System.out.println("im here)");
+
+
+        if (ex instanceof ApplicationException) {
+            ApplicationException e = (ApplicationException ) ex;
+            int code = e.getErrorResponse().getCode();
+//            String message = e.getErrorResponse().getMessage();
             SoapFaultDetail detail = fault.addFaultDetail();
-            detail.addFaultDetailElement(CODE).addText(serviceFault.getCode());
-            detail.addFaultDetailElement(DESCRIPTION).addText(serviceFault.getDescription());
+
+            detail.addFaultDetailElement(CODE).addText(""+code);
+//            detail.addFaultDetailElement(DESCRIPTION).addText(message);
         }
     }
 
