@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e29f4154-6759-4a7c-94b4-20718a4a1b1a" >
+		<http:listener-connection host="0.0.0.0" port="18080" />
+	</http:listener-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="15b0b243-1b1a-4083-95b5-c77e90730fe9" >
+		<wsc:connection wsdlLocation="http://localhost:8080/ws/schema.wsdl" service="SchemaPortService" port="SchemaPortSoap11" address="http://localhost:8080/ws">
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next"/>
+		</wsc:connection>
+	</wsc:config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="d8da22d2-22e7-474d-8628-76f925f38f2f" >
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="18081" >
+			<tls:context >
+				<tls:key-store type="pkcs12" path="/home/neevin/uni/soa/back/first-service-soap/src/main/resources/keystore/baeldung.p12" alias="baeldung" keyPassword="password" password="password" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
+	<flow name="soaFlow" doc:id="3b23226f-948c-44cf-b12e-46c7f741400c" >
+		<http:listener doc:name="Listener" doc:id="1baef6e0-8cfc-43cb-aa74-e17f7b14b45b" config-ref="HTTP_Listener_config1" path="/getEvent/{id}"/>
+		<ee:transform doc:name="Transform Message" doc:id="386b9c37-eeb3-4aae-8374-13d000296202" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#getEventRequest: {
+		ns0#id: attributes.uriParams.'id'
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="bc1ddfb9-9caa-4935-8370-a055c3cbae9e" config-ref="Web_Service_Consumer_Config" operation="getEvent"/>
+		<ee:transform doc:name="Transform Message" doc:id="30e11c32-f828-4d28-b42b-a6c7c6d3a9ea" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+{
+	event: {
+		id: payload.body.ns0#getEventResponse.ns0#event.ns0#id as String default "",
+		name: payload.body.ns0#getEventResponse.ns0#event.ns0#name default "",
+		date: payload.body.ns0#getEventResponse.ns0#event.ns0#date as String default "",
+		minAge: payload.body.ns0#getEventResponse.ns0#event.ns0#minAge as String default "",
+		eventType: payload.body.ns0#getEventResponse.ns0#event.ns0#eventType default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	
+</mule>

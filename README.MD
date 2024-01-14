@@ -9,6 +9,7 @@ Eureka: http://localhost:8761/
 ![](doc/task1.png)
 ![](doc/task2.png)
 ![](doc/task3.png)
+![](doc/task4.png)
 
 ### BUILD UI
 
