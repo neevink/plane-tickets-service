@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <getEventResponse>
-    <event>
+    <eventDto2>
         <id>1</id>
         <name>hello</name>
-    </event>
+    </eventDto2>
 </getEventResponse>

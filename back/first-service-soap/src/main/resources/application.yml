@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/studs'
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  application:
+    name: first-service
+  cloud:
+    consul:
+      host: localhost
+      port: 18731
+      config:
+        enabled: true
+        import-check:
+          enabled: false
+      discovery:  # https://192.168.1.206:8080/tickets
+        health-check-path: /tickets
+        health-check-interval: 10s
+        health-check-tls-skip-verify: true
+        scheme: https
+
+server:
+  port: ${PORT:8080}
+  # The format used for the keystore. It could be set to JKS in case it is a JKS file
+  ssl:
+    key-store-type: PKCS12
+    # The path to the keystore containing the certificate
+    key-store: classpath:keystore/baeldung.p12
+    # The password used to generate the certificate
+    key-store-password: password
+    # The alias mapped to the certificate
+    key-alias: baeldung
+    enabled: true
+
+
+cors:
+  urls: '*'

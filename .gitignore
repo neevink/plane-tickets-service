@@ -20,3 +20,5 @@ back/Eureka-Ribbon-Zuul/client-app/target
 back/Eureka-Ribbon-Zuul/eureka-naming-server/target
 back/first-service/target
 helios
+
+back/first-service-soap/target

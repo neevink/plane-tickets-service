@@ -20,7 +20,7 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetEventResponse {
 
-    @XmlElement(name="event")
+    @XmlElement
     private EventDto2 eventDto2;
 }
 

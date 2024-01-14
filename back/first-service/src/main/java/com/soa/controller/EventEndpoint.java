@@ -7,7 +7,6 @@ import com.soa.model.EventDto;
 import com.soa.model.EventDto2;
 import com.soa.model.GetEventResponse;
 import com.soa.model.enums.EventType;
-import com.soa.model.request.GetAllEventsRequest;
 import com.soa.model.request.GetEventRequest;
 import com.soa.model.response.EventsResponse;
 import com.soa.repository.FilterCriteria;

@@ -3,15 +3,6 @@
            targetNamespace="http://org/example/catalog"
            elementFormDefault="qualified">
 
-    <!--  Get Ping (only one)  -->
-    <xs:element name="getPingRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="id" type="xs:long" minOccurs="1"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="getEventRequest">
         <xs:complexType>
             <xs:sequence>
@@ -23,33 +14,290 @@
     <xs:element name="getEventResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="event" type="tns:EventDto" maxOccurs="1"/>
+                <xs:element name="event" type="tns:EventDto2" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="EventDto">
+    <xs:complexType name="EventDto2">
         <xs:sequence>
-            <xs:element name="id" type="xs:long" minOccurs="1"/>
+            <xs:element name="id" type="xs:long"/>
             <xs:element name="name" type="xs:string" />
-            <!--            <xs:element name="date" type="xs:date"/>-->
-            <!--            <xs:element name="minAge" type="xs:int"/>-->
-            <!--            <xs:element name="eventType" type="xs:string"/>-->
+            <xs:element name="date" type="xs:date"/>
+            <xs:element name="minAge" type="xs:int"/>
+            <xs:element name="eventType" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:element name="getPingResponse">
+    <!--  Get all events  -->
+        <xs:element name="getAllEventsRequest">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="filter" type="xs:string" maxOccurs="unbounded"/>
+                    <xs:element name="sort" type="xs:string" />
+                    <xs:element name="limit" type="xs:long"/>
+                    <xs:element name="offset" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+        <xs:element name="getAllEventsResponse">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="events" maxOccurs="unbounded" type="tns:EventDto2"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
+<!--    Create event-->
+
+    <xs:element name="createEventRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="ping" type="tns:PingGetResponseDto" maxOccurs="1"/>
+                <xs:element name="event" type="tns:EventDto2"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="PingGetResponseDto">
+    <xs:element name="createEventResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="event" type="tns:EventDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+<!--    Update event-->
+    <xs:element name="updateEventRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="eventId" type="xs:long"/>
+                <xs:element name="event" type="tns:EventDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateEventResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="event" type="tns:EventDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <!--    Delete event-->
+    <xs:element name="deleteEventRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="eventId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteEventResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+
+
+
+<!--    TICKET-->
+
+
+    <xs:element name="getTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long" minOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:TicketDto2" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="TicketDto2">
         <xs:sequence>
-            <xs:element name="id" type="xs:long" minOccurs="1"/>
+            <xs:element name="id" type="xs:long"/>
+            <!--            cannot be null-->
+            <xs:element name="name" type="xs:string" />
+
+            <xs:element name="coordinates" type="tns:CoordinatesDto"/>
+            <!--            generated-->
+            <xs:element name="creationDate" type="xs:date"/>
+            <!--            cannot be null, > 0 -->
+            <xs:element name="price" type="xs:double"/>
+            <!--            cannot be null 0-100 -->
+            <xs:element name="discount" type="xs:double"/>
+            <!--            cannot be null -->
+            <xs:element name="refundable" type="xs:boolean"/>
+            <xs:element name="type" type="xs:string"/>
+
+            <xs:element name="event" type="tns:EventDto2"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="CoordinatesDto">
+        <xs:sequence>
+            <xs:element name="x" type="xs:int"/>
+            <xs:element name="y" type="xs:float"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+    <xs:element name="getAllTicketsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="filter" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="sort" type="xs:string" />
+                <xs:element name="limit" type="xs:long"/>
+                <xs:element name="offset" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAllTicketsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="tickets" type="tns:TicketDto2" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:TicketDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:TicketDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <!--    Delete ticket-->
+    <xs:element name="deleteTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticketId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!--    Update event-->
+    <xs:element name="updateTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticketId" type="xs:long"/>
+                <xs:element name="ticket" type="tns:TicketDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:TicketDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+
+
+    <xs:element name="getSumOfDiscountRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getSumOfDiscountResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="sum" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+
+    <xs:complexType name="Count">
+        <xs:sequence>
+            <xs:element name="count" type="xs:int"/>
+            <xs:element name="discount" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="getDiscountCountRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getDiscountCountResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="count" type="tns:Count" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+
+
+
+
+
+
+    <xs:element name="getTicketsTypeCountRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="type" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTicketsTypeCountResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="count" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
 </xs:schema>
 

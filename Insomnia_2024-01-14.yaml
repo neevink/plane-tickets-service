@@ -1,0 +1,1183 @@
+_type: export
+__export_format: 4
+__export_date: 2024-01-14T00:56:43.297Z
+__export_source: insomnia.desktop.app:v8.4.5
+resources:
+  - _id: req_6d9f7dd2074e43c08868f0242c74a186
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705193500584
+    created: 1705186855483
+    url: https://localhost:8080/ws
+    name: create ticket
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:createTicketRequest>
+        			<gs:ticket>
+        				<gs:name>hello</gs:name>
+        				<gs:coordinates>
+        					<gs:x>100</gs:x>
+        					<gs:y>100</gs:y>
+        				</gs:coordinates>
+        				<gs:price>5000</gs:price>
+        				<gs:discount>2</gs:discount>
+        				<gs:refundable>true</gs:refundable>
+        				<gs:type>USUAL</gs:type>
+        				<gs:event>
+        					<gs:name>Концерты доры</gs:name>
+        					<gs:date>2023-12-13</gs:date>
+        					<gs:minAge>12</gs:minAge>
+        					<gs:eventType>CONCERT</gs:eventType>
+        				</gs:event>
+        			</gs:ticket>
+        		</gs:createTicketRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705186858263
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_cb178c9b11da4e93aabdbb3011c2e848
+    parentId: fld_4636040195964714bbf6d26fdbcefcfb
+    modified: 1705183600716
+    created: 1705183600716
+    name: tickets
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1705183600716
+    _type: request_group
+  - _id: fld_4636040195964714bbf6d26fdbcefcfb
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1705174092439
+    created: 1705174092439
+    name: SOAP
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1705174092439
+    _type: request_group
+  - _id: wrk_f6ef46466f22489fbfc576de94e72ec8
+    parentId: null
+    modified: 1703967395585
+    created: 1703967395585
+    name: soa-spec.yaml
+    description: ""
+    scope: design
+    _type: workspace
+  - _id: req_714671cc47e54b1198be6000479cd07e
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705187500973
+    created: 1705186868908
+    url: https://localhost:8080/ws
+    name: get one ticket
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getTicketRequest>
+        			<gs:id>1</gs:id>
+        		</gs:getTicketRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705185220137.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a8a59475263f454a927ad63e3d1df1f9
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705187531505
+    created: 1705186937855
+    url: https://localhost:8080/ws
+    name: get all tickets
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getAllTicketsRequest>
+        			<gs:sort>name</gs:sort>
+        			<gs:limit>100</gs:limit>
+        			<gs:offset>0</gs:offset>
+        		</gs:getAllTicketsRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705184401074.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_16520585ee714f50a952d4e8c3a6ffd9
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705191492258
+    created: 1705186945953
+    url: https://localhost:8080/ws
+    name: delete ticket
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:deleteTicketRequest>
+        			<gs:ticketId>1</gs:ticketId>
+        		</gs:deleteTicketRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183991543.375
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_33dfd2093b2546b6b93ea3092524edf9
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705191426497
+    created: 1705186950599
+    url: https://localhost:8080/ws
+    name: update ticket
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:updateTicketRequest>
+        			<gs:ticketId>1</gs:ticketId>
+        			<gs:ticket>
+        				<gs:name>hello1</gs:name>
+        				<gs:coordinates>
+        					<gs:x>100</gs:x>
+        					<gs:y>100</gs:y>
+        				</gs:coordinates>
+        				<gs:price>5000</gs:price>
+        				<gs:discount>1</gs:discount>
+        				<gs:refundable>true</gs:refundable>
+        				<gs:type>USUAL</gs:type>
+        				<gs:event>
+        					<gs:id>1</gs:id>
+        					<gs:name>Концерты доры</gs:name>
+        					<gs:date>2023-12-13</gs:date>
+        					<gs:minAge>12</gs:minAge>
+        					<gs:eventType>CONCERT</gs:eventType>
+        				</gs:event>
+        			</gs:ticket>
+        		</gs:updateTicketRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183786777.6875
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_485629c3023f4064be78a972d16fc24a
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705193412379
+    created: 1705193346870
+    url: https://localhost:8080/ws
+    name: sum of discount
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getSumOfDiscountRequest>
+        		</gs:getSumOfDiscountRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183684394.8438
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_bc3678e3538f48bc9309751ea5ffd1b0
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705193442486
+    created: 1705193364044
+    url: https://localhost:8080/ws
+    name: get discount count
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |+
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getDiscountCountRequest>
+        		</gs:getDiscountCountRequest>
+        	</soap:Body>
+        </soap:Envelope>
+
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183633203.4219
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ef361554c723463a99fb2bd250733b7b
+    parentId: fld_cb178c9b11da4e93aabdbb3011c2e848
+    modified: 1705193543729
+    created: 1705193374006
+    url: https://localhost:8080/ws
+    name: get count by type
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |+
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getTicketsTypeCountRequest>
+        			<gs:type>VIP</gs:type>
+        		</gs:getTicketsTypeCountRequest>
+        	</soap:Body>
+        </soap:Envelope>
+
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183607607.711
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d394e76ebedf4370b1cc0c82440d2d52
+    parentId: fld_d802f232f95f4033820d41d5e7fac1ba
+    modified: 1705183589058
+    created: 1705181665506
+    url: https://localhost:8080/ws
+    name: create event
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:createEventRequest>
+        			<gs:event>
+        				<gs:name>hello</gs:name>
+        				<gs:minAge>12</gs:minAge>
+        			</gs:event>
+        		</gs:createEventRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183582012
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_d802f232f95f4033820d41d5e7fac1ba
+    parentId: fld_4636040195964714bbf6d26fdbcefcfb
+    modified: 1705183579095
+    created: 1705183579095
+    name: events
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1705183579095
+    _type: request_group
+  - _id: req_95f0df66f9764e7792b5b99e93946842
+    parentId: fld_d802f232f95f4033820d41d5e7fac1ba
+    modified: 1705184109233
+    created: 1705161966719
+    url: https://localhost:8080/ws
+    name: get one event
+    description: ""
+    method: POST
+    body:
+      mimeType: text/plain
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getEventRequest>
+        			<gs:id>2</gs:id>
+        		</gs:getEventRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/soap; charset="uft-8"
+        id: pair_57c9b7872d8942c8994f803d66e38954
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_d78918947fca47948eb2f47e76d04762
+        disabled: true
+    authentication: {}
+    metaSortKey: -1705183581912
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_b987e1966f0f411abc16a208a5820f1a
+    parentId: fld_d802f232f95f4033820d41d5e7fac1ba
+    modified: 1705183586224
+    created: 1703967409947
+    url: https://localhost:8080/ws
+    name: get all events
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:getAllEventsRequest>
+        			<gs:sort>name</gs:sort>
+        			<gs:limit>100</gs:limit>
+        			<gs:offset>0</gs:offset>
+        		</gs:getAllEventsRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_4835fc6168b142c7bd3b94987370d384
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_9f3806e9d7f34a2faeba0b9d681073b5
+    authentication: {}
+    metaSortKey: -1705183581862
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_25e9c46affe94ffba26b99085380f04c
+    parentId: fld_d802f232f95f4033820d41d5e7fac1ba
+    modified: 1705184335337
+    created: 1705183697606
+    url: https://localhost:8080/ws
+    name: delete event
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:deleteEventRequest>
+        			<gs:eventId>1</gs:eventId>
+        		</gs:deleteEventRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183581837
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_157351851f1d4729b9127c95881b06de
+    parentId: fld_d802f232f95f4033820d41d5e7fac1ba
+    modified: 1705183583234
+    created: 1705182562916
+    url: https://localhost:8080/ws
+    name: update event
+    description: ""
+    method: POST
+    body:
+      mimeType: application/xml
+      text: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        							 xmlns:gs="http://org/example/catalog">
+        	<soap:Body>
+        		<gs:updateEventRequest>
+        			<gs:eventId>1</gs:eventId>
+        			<gs:event>
+        				<gs:name>hello1</gs:name>
+        				<gs:minAge>12</gs:minAge>
+        			</gs:event>
+        		</gs:updateEventRequest>
+        	</soap:Body>
+        </soap:Envelope>
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/xml
+        id: pair_49af27b14c2e4617b895ec6ecaa62701
+        disabled: true
+      - name: User-Agent
+        value: insomnia/8.4.5
+        id: pair_ed2e86eb4b21454f88849c43310ed09a
+    authentication: {}
+    metaSortKey: -1705183581812
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_63ea42699ddb47b68b9016021798f242
+    parentId: fld_4636040195964714bbf6d26fdbcefcfb
+    modified: 1705183564792
+    created: 1705164364963
+    url: https://localhost:8080/ws/schema.wsdl
+    name: wsdl
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.4.5
+    authentication: {}
+    metaSortKey: -1705174102401
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_e83d30d72bd14d6597fa91bf6b41affd
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705192160632
+    created: 1705192135350
+    url: https://localhost:8080/tickets/type/count?type=USUAL
+    name: type count
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.4.5
+    authentication: {}
+    metaSortKey: -1705192135350
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_de5d48a3298644c888a96de7829674eb
+    parentId: fld_c2f0ac077b1844ae96abe2d033c99a7d
+    modified: 1705183605230
+    created: 1705176915593
+    name: tickets
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1705176908601
+    _type: request_group
+  - _id: fld_c2f0ac077b1844ae96abe2d033c99a7d
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1705174041837
+    created: 1705174041837
+    name: REST
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1705174041837
+    _type: request_group
+  - _id: req_7cef6b604dc64251bae54af19c631496
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705191896330
+    created: 1705191876166
+    url: https://localhost:8080/tickets/discount/count
+    name: count of discount
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.4.5
+    authentication: {}
+    metaSortKey: -1705191876166
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_13f49afe39274dbbabe0fee4fd6db7b9
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705191860485
+    created: 1705191766671
+    url: https://localhost:8080/tickets/discount/sum
+    name: Sum of discounts
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.4.5
+    authentication: {}
+    metaSortKey: -1705191766671
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_020070bfac41458ab1227340d27f1d90
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705176915600
+    created: 1705176915600
+    url: https://localhost:8080/tickets
+    name: create ticket
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Концерт Доры",
+          "coordinates": {
+            "x": 100,
+            "y": 100
+          },
+          "price": 5000,
+          "discount": 1,
+          "refundable": false,
+          "type": "USUAL",
+          "event": {
+        		"name": "Концерт Доры",
+        		"date": "2023-12-13",
+        		"minAge": 12,
+        		"eventType": "CONCERT"
+          }
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705174053285
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_21300b96991444f4b00d2dd7313e7449
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705176915603
+    created: 1705176915603
+    url: https://localhost:8080/tickets
+    name: get all tickets
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_e379a94ddc3345b2a850c2bc13317755
+        name: sort
+        value: -id
+        description: ""
+        disabled: true
+      - id: pair_41ce2f6d646743bb86525fb96f007adc
+        name: filter
+        value: refundable[eq]=true
+        description: ""
+        disabled: true
+      - id: pair_1bc3f8aa0a5444af8f521750cdc2ec27
+        name: sort
+        value: id
+        description: ""
+        disabled: true
+      - id: pair_e68e0efc7c454724a86bbc5530c0a8ff
+        name: filter
+        value: id[ne]=1
+        description: ""
+        disabled: true
+      - id: pair_4f57b8fd274143ab84fd398e2fefb02e
+        name: sort
+        value: name
+        description: ""
+        disabled: true
+      - id: pair_609b475e1c0e4596a3ef03b2dbc412cf
+        name: filter
+        value: type[gt]=USUAL
+        description: ""
+        disabled: true
+      - id: pair_f748fb3a21c044fc87a88df951d19236
+        name: limit
+        value: "3"
+        description: ""
+        disabled: true
+      - id: pair_3bf610e61eca46f59f7db75097d0f031
+        name: offset
+        value: "1"
+        description: ""
+        disabled: true
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705174053210
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_373b570a3f5b4a8fbdc1533065d9dfe8
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705176915616
+    created: 1705176915616
+    url: http://localhost:8080/tickets/1
+    name: update ticket by id
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "name": "Билет на концерт GSPD",
+          "coordinates": {
+            "x": 100,
+            "y": 100
+          },
+          "price": 5000,
+          "discount": 0,
+          "refundable": false,
+          "type": "USUAL",
+          "event": {
+        		"id": 1,
+        		"name": "Концерт GSPD",
+        		"date": "2023-12-13",
+        		"minAge": 18,
+        		"eventType": "CONCERT"
+        	}
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705174053186.5625
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_6c53c2c484eb4aa29a148ebba6e65520
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705176915597
+    created: 1705176915597
+    url: http://localhost:8080/tickets/1
+    name: get ticket by id
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705174053185.7812
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_0b7f661ee5314607ab3a69a0b71b4d1e
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705176915620
+    created: 1705176915620
+    url: https://localhost:9090/booking/sell/vip/1/1
+    name: create vip ticket
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705174053185
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_10ed914e28644a259e83ab310d26befc
+    parentId: fld_de5d48a3298644c888a96de7829674eb
+    modified: 1705176915613
+    created: 1705176915613
+    url: http://localhost:8080/tickets/1
+    name: delete ticket by id
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705174052985
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_fa9b6bfb713246e582fbcc58705d9b93
+    parentId: fld_426e751cb1384204be9cc8dc29948f9e
+    modified: 1705184073329
+    created: 1696765523521
+    url: https://localhost:8080/events
+    name: create event
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "name": "Концерт Доры 999",
+          "date": "2023-12-13",
+          "minAge": 12,
+          "eventType": "CONCERT"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705176936003
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_426e751cb1384204be9cc8dc29948f9e
+    parentId: fld_c2f0ac077b1844ae96abe2d033c99a7d
+    modified: 1705176908501
+    created: 1705176908501
+    name: events
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1705176908501
+    _type: request_group
+  - _id: req_bc11e3ce849345f0908bb4305b04f482
+    parentId: fld_426e751cb1384204be9cc8dc29948f9e
+    modified: 1705184076468
+    created: 1696765628027
+    url: https://localhost:8080/events/1
+    name: get event by id
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705176935953
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a272cecc14ed4f86a8f544084f99e7fa
+    parentId: fld_426e751cb1384204be9cc8dc29948f9e
+    modified: 1705184077549
+    created: 1696765658438
+    url: https://localhost:8080/events
+    name: get all events
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_81f2aea187284fdd98e5a1b247ae3bcc
+        name: filter
+        value: id[ne]=5
+        description: ""
+        disabled: true
+      - id: pair_b82eea2e715040e5aee2df6ffbc5b20e
+        name: filter
+        value: minAge[gt]=12
+        description: ""
+        disabled: true
+      - id: pair_32de340c78ce4ce1af0af068339c6aa8
+        name: sort
+        value: id
+        description: ""
+        disabled: true
+      - id: pair_34482be9602648bf8fbbc0c41089d3c1
+        name: limit
+        value: "2"
+        description: ""
+        disabled: true
+      - id: pair_1e128d74bda544b0a9df50707b5dd4a1
+        name: offset
+        value: "1"
+        description: ""
+        disabled: true
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705176935928
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_14c61109cab145749ea42f5d99653484
+    parentId: fld_426e751cb1384204be9cc8dc29948f9e
+    modified: 1705184093044
+    created: 1696934123335
+    url: https://localhost:8080/events/1
+    name: update event by id
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "name": "Концерт Доры",
+          "date": "2023-12-13",
+          "minAge": 12,
+          "eventType": "CONCERT"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705176935903
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_f4852c8f274e4392860bb7793bb53972
+    parentId: fld_426e751cb1384204be9cc8dc29948f9e
+    modified: 1705184066909
+    created: 1696798807275
+    url: https://localhost:8080/events/1
+    name: delete event by id
+    description: ""
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1705176935653
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_763f0d90a3374b768a31e7073efdc841
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1705177069960
+    created: 1699187719751
+    url: https://localhost:9090/booking/sell/vip/1/1
+    name: create vip ticket
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1702706968354.375
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5e0de51b91f94771b49871ebe85828f1
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1705176980481
+    created: 1705176915622
+    url: https://localhost:9090/booking/sell/hello
+    name: ping second service
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.1.0
+    authentication: {}
+    metaSortKey: -1700239894871.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_993fe61d48b24ea7846179acd31db321
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1696106551476
+    created: 1696106551476
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1696106551476
+    _type: environment
+  - _id: jar_e8439a2193d34ff1acd9f6b3f9d1e397
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1696106551476
+    created: 1696106551476
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_8fbe597ffe044346a92ca391a21b8e92
+    parentId: wrk_f6ef46466f22489fbfc576de94e72ec8
+    modified: 1703967395586
+    created: 1703967395586
+    fileName: soa-spec.yaml
+    contents: ""
+    contentType: yaml
+    _type: api_spec

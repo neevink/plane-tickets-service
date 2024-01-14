@@ -6,10 +6,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -18,6 +15,9 @@ import java.util.Date;
 @Setter
 @XmlRootElement(name="event")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "EventDto", propOrder = {
+        "id", "name"
+})
 public class EventDto2 {
     @XmlElement(name="id")
     private Long id;

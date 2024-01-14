@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Getter
 @XmlRootElement(name="getEventRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+        "id"
+})
 public class GetEventRequest {
     @XmlElement(name="id")
     private Long id;

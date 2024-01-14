@@ -5,23 +5,23 @@
 
 
     <!--  Get all events  -->
-    <xs:element name="getAllEventsRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="sort" type="xs:string" maxOccurs="unbounded"/>
-                <xs:element name="filter" type="xs:string" maxOccurs="unbounded"/>
-                <xs:element name="limit" type="xs:long"/>
-                <xs:element name="offset" type="xs:long"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+<!--    <xs:element name="getAllEventsRequest">-->
+<!--        <xs:complexType>-->
+<!--            <xs:sequence>-->
+<!--                <xs:element name="sort" type="xs:string" maxOccurs="unbounded"/>-->
+<!--                <xs:element name="filter" type="xs:string" maxOccurs="unbounded"/>-->
+<!--                <xs:element name="limit" type="xs:long"/>-->
+<!--                <xs:element name="offset" type="xs:long"/>-->
+<!--            </xs:sequence>-->
+<!--        </xs:complexType>-->
+<!--    </xs:element>-->
 
 
     <!--  Get Flat (only one)  -->
     <xs:element name="getEventRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="id" type="xs:long" minOccurs="1"/>
+                <xs:element name="id" type="xs:string" minOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
