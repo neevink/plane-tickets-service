@@ -259,5 +259,41 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+
+    <xs:element name="addVipTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticketId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="addVipTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:TicketDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="addDiscountTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticketId" type="xs:long"/>
+                <xs:element name="discount" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="addDiscountTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:TicketDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>
 

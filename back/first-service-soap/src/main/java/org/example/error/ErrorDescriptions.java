@@ -13,6 +13,7 @@ public enum ErrorDescriptions {
     EVENT_REQUIRED("event required", HttpStatus.BAD_REQUEST),
 
     TICKET_ID_REQUIRED("ticketId required", HttpStatus.BAD_REQUEST),
+    DISCOUNT_REQUIRED("discount required", HttpStatus.BAD_REQUEST),
 
     HANDLER_NOT_FOUND("Не найден обработчик", HttpStatus.NOT_FOUND),
 

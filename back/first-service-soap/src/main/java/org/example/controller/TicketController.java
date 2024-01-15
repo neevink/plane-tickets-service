@@ -58,9 +58,9 @@ public class TicketController {
 //    @PutMapping(value = Endpoints.UPDATE_TICKET_BY_ID)
 //    public ResponseEntity<Object> updateTicketById(
 //            @PathVariable("ticketId") Long ticketId,
-//            @RequestBody CreateTicketRequest request
+//            @RequestBody CreateTicketRestRequest request
 //    ) {
-//        var res = ticketService.updateTicketById(ticketId, request);
+//        var res = ticketService.updateTicketById(ticketId, request.);
 //        return new ResponseEntity<>(res, HttpStatus.OK);
 //    }
 
@@ -101,20 +101,20 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getTicketsTypeCount(type), HttpStatus.OK);
     }
 
-//    @PostMapping(value = Endpoints.NEW_VIP_TICKET_BY_ID)
-//    public ResponseEntity<Object> createVipTicketById(
-//            @PathVariable("ticketId") Long ticketId
-//    ) {
-//        var res = ticketService.newVipTicketById(ticketId);
-//        return new ResponseEntity<>(res, HttpStatus.OK);
-//    }
+    @PostMapping(value = Endpoints.NEW_VIP_TICKET_BY_ID)
+    public ResponseEntity<Object> createVipTicketById(
+            @PathVariable("ticketId") Long ticketId
+    ) {
+        var res = ticketService.newVipTicketById(ticketId);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 
-//    @PostMapping(value = Endpoints.DISCOUNT_TICKET_BY_ID)
-//    public ResponseEntity<Object> createDiscountTicketById(
-//            @PathVariable("ticketId") Long ticketId,
-//            @PathVariable("discount") Double discount
-//    ) {
-//        var res = ticketService.newDiscountTicketById(ticketId, discount);
-//        return new ResponseEntity<>(res, HttpStatus.OK);
-//    }
+    @PostMapping(value = Endpoints.DISCOUNT_TICKET_BY_ID)
+    public ResponseEntity<Object> createDiscountTicketById(
+            @PathVariable("ticketId") Long ticketId,
+            @PathVariable("discount") Double discount
+    ) {
+        var res = ticketService.newDiscountTicketById(ticketId, discount);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

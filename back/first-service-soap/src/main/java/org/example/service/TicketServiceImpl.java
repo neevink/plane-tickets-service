@@ -288,43 +288,45 @@ public class TicketServiceImpl implements TicketService {
         return ticketModelMapper.map(ticket);
     }
 
-//    @Override
-//    public TicketDto newVipTicketById(Long ticketId) {
-//        if (!ticketRepository.existsById(ticketId)) {
-//            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
-//        }
-//        Ticket ticket = ticketRepository.findById(ticketId).get();
-//        System.out.println(ticket.getEvent());
-//        TicketDto newVipTicket = createTicket(CreateTicketRequest.of(
-//                ticket.getName(),
-//                Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()),
-//                ticket.getPrice() * 2,
-//                ticket.getDiscount(),
-//                ticket.getRefundable(),
-//                TicketType.VIP,
-//                eventModelMapper.map(ticket.getEvent())
-//        ));
-//        return newVipTicket;
-//    }
+    @Override
+    @Transactional
+    public TicketDto newVipTicketById(Long ticketId) {
+        if (!ticketRepository.existsById(ticketId)) {
+            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
+        }
+        Ticket ticket = ticketRepository.findById(ticketId).get();
+        System.out.println(ticket.getEvent());
+        TicketDto newVipTicket = createTicket(CreateTicketRestRequest.of(
+                ticket.getName(),
+                Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()),
+                ticket.getPrice() * 2,
+                ticket.getDiscount(),
+                ticket.getRefundable(),
+                TicketType.VIP,
+                eventModelMapper.map(ticket.getEvent())
+        ));
+        return newVipTicket;
+    }
 
-//    @Override
-//    public TicketDto newDiscountTicketById(Long ticketId, Double discount) {
-//        if (!ticketRepository.existsById(ticketId)) {
-//            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
-//        }
-//        Ticket ticket = ticketRepository.findById(ticketId).get();
-//        System.out.println(ticket.getEvent());
-//        TicketDto newVipTicket = createTicket(CreateTicketRequest.of(
-//                ticket.getName(),
-//                Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()),
-//                ticket.getPrice() * (1 - discount / 100.0),
-//                discount,
-//                ticket.getRefundable(),
-//                ticket.getType(),
-//                eventModelMapper.map(ticket.getEvent())
-//        ));
-//        return newVipTicket;
-//    }
+    @Override
+    @Transactional
+    public TicketDto newDiscountTicketById(Long ticketId, Double discount) {
+        if (!ticketRepository.existsById(ticketId)) {
+            throw ErrorDescriptions.TICKET_NOT_FOUND.exception();
+        }
+        Ticket ticket = ticketRepository.findById(ticketId).get();
+        System.out.println(ticket.getEvent());
+        TicketDto newVipTicket = createTicket(CreateTicketRestRequest.of(
+                ticket.getName(),
+                Coordinates.of(ticket.getCoordinateX(), ticket.getCoordinateY()),
+                ticket.getPrice() * (1 - discount / 100.0),
+                discount,
+                ticket.getRefundable(),
+                ticket.getType(),
+                eventModelMapper.map(ticket.getEvent())
+        ));
+        return newVipTicket;
+    }
 
     @Override
     @Transactional

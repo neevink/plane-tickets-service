@@ -212,4 +212,41 @@ public class TicketEndpoint {
         return count;
     }
 
+
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addVipTicketRequest")
+    @ResponsePayload
+    public AddTicketResponse addVipTicketRequest(@RequestPayload AddVipTicketRequest addVipTicketRequest) throws DatatypeConfigurationException {
+
+        if (addVipTicketRequest.getTicketId() == 0)
+            throw ErrorDescriptions.TICKET_ID_REQUIRED.exception();
+
+        var res = ticketService.newVipTicketById(addVipTicketRequest.getTicketId());
+
+        AddTicketResponse r = new AddTicketResponse();
+        r.setTicket(SoapTicketMapper.fromTicketDtoToSoap(res));
+        return r;
+    }
+
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addDiscountTicketRequest")
+    @ResponsePayload
+    public AddDiscountTicketResponse addDiscountTicketRequest(@RequestPayload AddDiscountTicketRequest addDiscountTicketRequest) throws DatatypeConfigurationException {
+
+        if (addDiscountTicketRequest.getTicketId() == 0)
+            throw ErrorDescriptions.TICKET_ID_REQUIRED.exception();
+
+
+        if (addDiscountTicketRequest.getDiscount() == 0.0)
+            throw ErrorDescriptions.DISCOUNT_REQUIRED.exception();
+
+        var res = ticketService.newDiscountTicketById(
+                addDiscountTicketRequest.getTicketId(),
+                addDiscountTicketRequest.getDiscount());
+
+        AddDiscountTicketResponse r = new AddDiscountTicketResponse();
+        r.setTicket(SoapTicketMapper.fromTicketDtoToSoap(res));
+        return r;
+    }
+
 }

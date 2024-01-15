@@ -25,9 +25,9 @@ public interface TicketService {
 
     TicketDto getTicketById(Long ticketId);
 
-//    TicketDto newVipTicketById(Long ticketId);
+    TicketDto newVipTicketById(Long ticketId);
 
-//    TicketDto newDiscountTicketById(Long ticketId, Double discount);
+    TicketDto newDiscountTicketById(Long ticketId, Double discount);
 
     void deleteTicketById(Long ticketId);
 
