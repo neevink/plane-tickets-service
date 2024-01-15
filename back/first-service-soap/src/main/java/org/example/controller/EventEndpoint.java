@@ -62,9 +62,9 @@ public class EventEndpoint {
     }
 
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createEventRequest")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addEventRequest")
     @ResponsePayload
-    public CreateEventResponse createEvent(@RequestPayload  CreateEventRequest request) throws Exception {
+    public AddEventResponse addEvent(@RequestPayload  AddEventRequest request) throws Exception {
         var r = new CreateEventRestRequest();
         if (request.getEvent() != null){
             var eventDto = SoapEventMapper.fromSoapToEventDto(request.getEvent());
@@ -75,11 +75,12 @@ public class EventEndpoint {
             r.setDate(eventDto.getDate());
 
             EventDto newEvent = eventService.createEvent(r);
-            CreateEventResponse resp = new CreateEventResponse();
+            AddEventResponse resp = new AddEventResponse();
             resp.setEvent(SoapEventMapper.fromEventDtoToSoap(newEvent));
             return resp;
+        } else {
+            throw ErrorDescriptions.EVENT_REQUIRED.exception();
         }
-        throw new RuntimeException("Должен быть вложенный event");
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "updateEventRequest")

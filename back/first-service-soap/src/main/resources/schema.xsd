@@ -51,7 +51,7 @@
 
 <!--    Create event-->
 
-    <xs:element name="createEventRequest">
+    <xs:element name="addEventRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="event" type="tns:EventDto2"/>
@@ -59,7 +59,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="createEventResponse">
+    <xs:element name="addEventResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="event" type="tns:EventDto2"/>
@@ -177,7 +177,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="createTicketRequest">
+    <xs:element name="addTicketRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="ticket" type="tns:TicketDto2"/>
@@ -185,7 +185,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="createTicketResponse">
+    <xs:element name="addTicketResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="ticket" type="tns:TicketDto2"/>

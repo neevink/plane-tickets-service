@@ -100,11 +100,11 @@ public class TicketEndpoint {
 
 
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createTicketRequest")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addTicketRequest")
     @ResponsePayload
-    public CreateTicketResponse createTicket(@RequestPayload CreateTicketRequest hui) throws Exception {
+    public AddTicketResponse addTicket(@RequestPayload AddTicketRequest addTicketRequest) throws Exception {
         var r = new CreateTicketRestRequest();
-        var request = hui.getTicket();
+        var request = addTicketRequest.getTicket();
         if (request != null){
             var ticketDto = SoapTicketMapper.fromSoapToTicketDto(request);
             r.setName(ticketDto.getName());
@@ -116,12 +116,13 @@ public class TicketEndpoint {
             r.setEvent(ticketDto.getEvent());
 
             TicketDto newTicket = ticketService.createTicket(r);
-            CreateTicketResponse resp = new CreateTicketResponse();
+            AddTicketResponse resp = new AddTicketResponse();
             resp.setTicket(SoapTicketMapper.fromTicketDtoToSoap(newTicket));
 
             return resp;
+        } else {
+            throw ErrorDescriptions.EVENT_REQUIRED.exception();
         }
-        throw new RuntimeException("Должен быть вложенный ticket");
     }
 
 

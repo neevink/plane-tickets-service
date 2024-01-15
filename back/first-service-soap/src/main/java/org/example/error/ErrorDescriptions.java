@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorDescriptions {
 
     EVENT_ID_REQUIRED("eventId required", HttpStatus.BAD_REQUEST),
+    EVENT_REQUIRED("event required", HttpStatus.BAD_REQUEST),
 
     TICKET_ID_REQUIRED("ticketId required", HttpStatus.BAD_REQUEST),
 
