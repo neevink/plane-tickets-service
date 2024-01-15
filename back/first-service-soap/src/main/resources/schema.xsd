@@ -29,27 +29,24 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!--  Get all events  -->
-        <xs:element name="getAllEventsRequest">
-            <xs:complexType>
-                <xs:sequence>
-                    <xs:element name="filter" type="xs:string" maxOccurs="unbounded"/>
-                    <xs:element name="sort" type="xs:string" />
-                    <xs:element name="limit" type="xs:long"/>
-                    <xs:element name="offset" type="xs:long"/>
-                </xs:sequence>
-            </xs:complexType>
-        </xs:element>
+    <xs:element name="getAllEventsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="filter" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="sort" type="xs:string" />
+                <xs:element name="limit" type="xs:long"/>
+                <xs:element name="offset" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-        <xs:element name="getAllEventsResponse">
-            <xs:complexType>
-                <xs:sequence>
-                    <xs:element name="events" maxOccurs="unbounded" type="tns:EventDto2"/>
-                </xs:sequence>
-            </xs:complexType>
-        </xs:element>
-
-<!--    Create event-->
+    <xs:element name="getAllEventsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="events" maxOccurs="unbounded" type="tns:EventDto2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
     <xs:element name="addEventRequest">
         <xs:complexType>
@@ -67,8 +64,6 @@
         </xs:complexType>
     </xs:element>
 
-
-<!--    Update event-->
     <xs:element name="updateEventRequest">
         <xs:complexType>
             <xs:sequence>
@@ -86,8 +81,6 @@
         </xs:complexType>
     </xs:element>
 
-
-    <!--    Delete event-->
     <xs:element name="deleteEventRequest">
         <xs:complexType>
             <xs:sequence>
@@ -103,14 +96,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-
-
-
-
-
-<!--    TICKET-->
-
 
     <xs:element name="getTicketRequest">
         <xs:complexType>
@@ -133,7 +118,6 @@
             <xs:element name="id" type="xs:long"/>
             <!--            cannot be null-->
             <xs:element name="name" type="xs:string" />
-
             <xs:element name="coordinates" type="tns:CoordinatesDto"/>
             <!--            generated-->
             <xs:element name="creationDate" type="xs:date"/>
@@ -144,7 +128,6 @@
             <!--            cannot be null -->
             <xs:element name="refundable" type="xs:boolean"/>
             <xs:element name="type" type="xs:string"/>
-
             <xs:element name="event" type="tns:EventDto2"/>
         </xs:sequence>
     </xs:complexType>
@@ -155,8 +138,6 @@
             <xs:element name="y" type="xs:float"/>
         </xs:sequence>
     </xs:complexType>
-
-
 
     <xs:element name="getAllTicketsRequest">
         <xs:complexType>
@@ -193,8 +174,6 @@
         </xs:complexType>
     </xs:element>
 
-
-    <!--    Delete ticket-->
     <xs:element name="deleteTicketRequest">
         <xs:complexType>
             <xs:sequence>
@@ -211,7 +190,6 @@
         </xs:complexType>
     </xs:element>
 
-    <!--    Update event-->
     <xs:element name="updateTicketRequest">
         <xs:complexType>
             <xs:sequence>
@@ -229,10 +207,6 @@
         </xs:complexType>
     </xs:element>
 
-
-
-
-
     <xs:element name="getSumOfDiscountRequest">
         <xs:complexType>
             <xs:sequence>
@@ -247,9 +221,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-
-
 
     <xs:complexType name="Count">
         <xs:sequence>
@@ -273,14 +244,6 @@
         </xs:complexType>
     </xs:element>
 
-
-
-
-
-
-
-
-
     <xs:element name="getTicketsTypeCountRequest">
         <xs:complexType>
             <xs:sequence>
@@ -296,8 +259,5 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-
-
 </xs:schema>
 
