@@ -1,5 +1,4 @@
-{
-  "event":
+
   {
     "id": "1",
     "name": "Dora dura",
@@ -7,4 +6,4 @@
     "minAge": "12",
     "eventType": "CONCERT"
   }
-}
+

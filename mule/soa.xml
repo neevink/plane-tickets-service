@@ -24,8 +24,18 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 			</tls:context>
 		</http:listener-connection>
 	</http:listener-config>
-	<flow name="soaFlow" doc:id="3b23226f-948c-44cf-b12e-46c7f741400c" >
-		<http:listener doc:name="Listener" doc:id="1baef6e0-8cfc-43cb-aa74-e17f7b14b45b" config-ref="HTTP_Listener_config1" path="/getEvent/{id}"/>
+	<flow name="getEventByIdFlow" doc:id="3b23226f-948c-44cf-b12e-46c7f741400c" >
+		<http:listener doc:name="Listener" doc:id="1baef6e0-8cfc-43cb-aa74-e17f7b14b45b" config-ref="HTTP_Listener_config1" path="/events/{id}" allowedMethods="GET">
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
 		<ee:transform doc:name="Transform Message" doc:id="386b9c37-eeb3-4aae-8374-13d000296202" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -47,13 +57,58 @@ output application/json
 ns ns0 http://org/example/catalog
 ---
 {
-	event: {
-		id: payload.body.ns0#getEventResponse.ns0#event.ns0#id as String default "",
-		name: payload.body.ns0#getEventResponse.ns0#event.ns0#name default "",
-		date: payload.body.ns0#getEventResponse.ns0#event.ns0#date as String default "",
-		minAge: payload.body.ns0#getEventResponse.ns0#event.ns0#minAge as String default "",
-		eventType: payload.body.ns0#getEventResponse.ns0#event.ns0#eventType default ""
+	id: payload.body.ns0#getEventResponse.ns0#event.ns0#id as String default "",
+	name: payload.body.ns0#getEventResponse.ns0#event.ns0#name default "",
+	date: payload.body.ns0#getEventResponse.ns0#event.ns0#date as String default "",
+	minAge: payload.body.ns0#getEventResponse.ns0#event.ns0#minAge as String default "",
+	eventType: payload.body.ns0#getEventResponse.ns0#event.ns0#eventType default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getAllEventsFlow" doc:id="cff8ffca-6415-42d6-9d0b-60eb153554a3" >
+		<http:listener doc:name="Listener" doc:id="d0dca984-2b85-4b9d-b2dd-fd2af4e17844" config-ref="HTTP_Listener_config1" path="/events" allowedMethods="GET" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="f3efb25c-5731-4e82-a259-c93edfc22985" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#getAllEventsRequest: {
+		ns0#sort: attributes.queryParams.'sort' default "id",
+		ns0#filter: attributes.queryParams.'filter' default "",
+		ns0#limit: attributes.queryParams.'limit' default 10,
+		ns0#offset: attributes.queryParams.'offset' default 0
+		
 	}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="getAllEvents" doc:name="Consume" doc:id="a9259f68-55cf-42e4-bfd8-b23e40375ee5" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message1" doc:id="24946a1f-cbf7-4a7a-a7a5-51686da904d6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+payload.body.ns0#getAllEventsResponse.*ns0#events map ( payload01 , indexOfPayload01 ) -> {
+	id: payload01.id,
+	name: payload01.name,
+	date: payload01.date,
+	minAge: payload01.minAge,
+	eventType: payload01.eventType
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
