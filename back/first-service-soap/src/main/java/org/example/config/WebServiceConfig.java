@@ -27,7 +27,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
         SoapFaultMappingExceptionResolver exceptionResolver = new DetailSoapFaultDefinitionExceptionResolver();
 
         SoapFaultDefinition faultDefinition = new SoapFaultDefinition();
-        faultDefinition.setFaultCode(SoapFaultDefinition.SERVER);
+        faultDefinition.setFaultCode(SoapFaultDefinition.CLIENT);
         exceptionResolver.setDefaultFault(faultDefinition);
 
         Properties errorMappings = new Properties();

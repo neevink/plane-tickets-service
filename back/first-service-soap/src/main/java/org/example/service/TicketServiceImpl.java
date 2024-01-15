@@ -327,6 +327,7 @@ public class TicketServiceImpl implements TicketService {
 //    }
 
     @Override
+    @Transactional
     public void deleteTicketById(Long ticketId) {
         if (!ticketRepository.existsById(ticketId)){
             throw ErrorDescriptions.TICKET_NOT_FOUND.exception();

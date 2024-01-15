@@ -16,8 +16,6 @@ public class DetailSoapFaultDefinitionExceptionResolver extends SoapFaultMapping
     protected void customizeFault(Object endpoint, Exception ex, SoapFault fault) {
         logger.warn("Exception processed ", ex);
 
-        System.out.println("im here)");
-
 
         if (ex instanceof ApplicationException) {
             ApplicationException e = (ApplicationException ) ex;
