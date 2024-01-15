@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:gs="http://org/example/catalog">
+    <soap:Body>
+        <gs:createEventRequest>
+            <gs:event>
+                <gs:name>Концерты доры</gs:name>
+                <gs:date>2023-12-13</gs:date>
+                <gs:minAge>12</gs:minAge>
+                <gs:eventType>CONCERT</gs:eventType>
+            </gs:event>
+        </gs:createEventRequest>
+    </soap:Body>
+</soap:Envelope>

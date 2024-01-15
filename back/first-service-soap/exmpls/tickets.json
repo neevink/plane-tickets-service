@@ -1,0 +1,42 @@
+[
+{
+  "id": 1,
+  "name": "Концерт Доры",
+  "coordinates": {
+    "x": 100,
+    "y": 100
+  },
+  "creationDate": "2023-12-13",
+  "price": 5000,
+  "discount": 0,
+  "refundable": false,
+  "type": "USUAL",
+  "event": {
+    "id": 1,
+    "name": "Концерт Доры",
+    "date": "2023-12-13",
+    "minAge": 12,
+    "eventType": "CONCERT"
+  }
+},
+  {
+    "id": 1,
+    "name": "Концерт Доры",
+    "coordinates": {
+      "x": 100,
+      "y": 100
+    },
+    "creationDate": "2023-12-13",
+    "price": 5000,
+    "discount": 0,
+    "refundable": false,
+    "type": "USUAL",
+    "event": {
+      "id": 1,
+      "name": "Концерт Доры",
+      "date": "2023-12-13",
+      "minAge": 12,
+      "eventType": "CONCERT"
+    }
+  }
+]

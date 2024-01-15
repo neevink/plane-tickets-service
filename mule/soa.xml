@@ -104,11 +104,355 @@ output application/json
 ns ns0 http://org/example/catalog
 ---
 payload.body.ns0#getAllEventsResponse.*ns0#events map ( payload01 , indexOfPayload01 ) -> {
-	id: payload01.id,
-	name: payload01.name,
-	date: payload01.date,
-	minAge: payload01.minAge,
-	eventType: payload01.eventType
+	id: payload01.id default 0,
+	name: payload01.name default "",
+	date: payload01.date default "",
+	minAge: payload01.minAge default 0,
+	eventType: payload01.eventType default "CONCERT"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="updateEventFlow" doc:id="3326572a-ab1d-48bb-b1d8-4e05a1404953" >
+		<http:listener doc:name="Listener" doc:id="9e8cc07e-cf7d-4b22-8b27-0075efc061a8" config-ref="HTTP_Listener_config1" path="/events/{id}" allowedMethods="PUT" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="d1fb3e54-9cd6-4a71-b089-c4820f8ab2c3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#updateEventRequest: {
+		ns0#eventId: attributes.uriParams.'id' as Number,
+		ns0#event: {
+			ns0#name: payload.name,
+			ns0#date: payload.date as Date,
+			ns0#minAge: payload.minAge as Number,
+			ns0#eventType: payload.eventType
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="updateEvent" doc:name="Consume" doc:id="95e19054-bf29-4ffd-a0a8-c3db50cf4fd9" config-ref="Web_Service_Consumer_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="1eddb202-9ddb-4ac3-9146-3f4095384439" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+{
+	id: payload.body.ns0#updateEventResponse.ns0#event.ns0#id as String default "",
+	name: payload.body.ns0#updateEventResponse.ns0#event.ns0#name default "",
+	date: payload.body.ns0#updateEventResponse.ns0#event.ns0#date as String default "",
+	minAge: payload.body.ns0#updateEventResponse.ns0#event.ns0#minAge as String default "",
+	eventType: payload.body.ns0#updateEventResponse.ns0#event.ns0#eventType default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="createEventFlow" doc:id="f4da775a-a0a6-4d37-8f6e-3634584d704d" >
+		<http:listener doc:name="Listener" doc:id="58ae1a2a-7514-4dcc-a125-4ca95112dc03" config-ref="HTTP_Listener_config1" path="/events" allowedMethods="POST" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="93fefbd2-a7ca-463a-b75c-5dd0eba7ce90" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="345b27ff-9a2f-4689-ac3f-a3baadbb03dd" config-ref="Web_Service_Consumer_Config" operation="createEvent"/>
+		<ee:transform doc:name="Transform Message" doc:id="c22b36ea-c8f7-4252-82c1-6d8f9ee2a5af" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="deleteByIdFlow" doc:id="6a03b9de-7b5e-48f9-86f9-efc4d12f3952" >
+		<http:listener doc:name="Listener" doc:id="7265f3fd-1395-42b7-897f-9c9e6c511cc7" config-ref="HTTP_Listener_config1" path="/events/{id}" allowedMethods="DELETE" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="92ae8ec6-623a-44c1-997c-cccb7ab80e79" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#getEventRequest: {
+		ns0#id: attributes.uriParams.'id'
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="getEvent" doc:name="Consume" doc:id="332aa729-fcc3-47ad-8059-ed440e3beee3" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message1" doc:id="09ce8ef8-7823-4859-a4ca-4815c81c8411" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+{
+	"message": "Событие удалено"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getTicketByIdFlow" doc:id="24a8c9ff-b796-4249-b33c-12e4d9adc60e" >
+		<http:listener doc:name="Listener" doc:id="a9167daa-03ba-478c-83a0-05df9b6dd0b4" config-ref="HTTP_Listener_config1" path="/tickets/{id}" allowedMethods="GET" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="5db69a62-700d-4cdb-96df-c447c87c291b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#getTicketRequest: {
+		ns0#id: attributes.uriParams.'id'
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="getTicket" doc:name="Consume" doc:id="75346cb9-1b9e-4280-b923-6c58afd5045e" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message1" doc:id="79328815-eb5f-40c3-8924-eb6b26632963" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+{
+	id: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#id default 0,
+	name: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#name default "",
+	coordinates: {
+		x: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#coordinates.ns0#x default 0,
+		y: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#coordinates.ns0#y default 0
+	},
+	creationDate: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#creationDate as String default "",
+	price: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#price default 0,
+	discount: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#discount default 0,
+	refundable: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#refundable default true,
+	"type": payload.body.ns0#getTicketResponse.ns0#ticket.ns0#"type" default "",
+	event: {
+		id: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#event.ns0#id default 0,
+		name: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#event.ns0#name default "",
+		date: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#event.ns0#date as String default "",
+		minAge: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#event.ns0#minAge default 0,
+		eventType: payload.body.ns0#getTicketResponse.ns0#ticket.ns0#event.ns0#eventType default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getAllTicketsFlow" doc:id="76d37008-7e97-48d4-840c-fff28866f1bc" >
+		<http:listener doc:name="Listener" doc:id="d0750f7b-0b42-4f0a-babb-2d7245631aaf" config-ref="HTTP_Listener_config1" path="/tickets" allowedMethods="GET" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="050a2e90-497c-41b8-b5e6-5392c5c87a75" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#getAllTicketsRequest: {
+		ns0#sort: attributes.queryParams.'sort' default "id",
+		ns0#filter: attributes.queryParams.'filter' default "",
+		ns0#limit: attributes.queryParams.'limit' default 10,
+		ns0#offset: attributes.queryParams.'offset' default 0
+		
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="getAllTickets" doc:name="Consume" doc:id="1552935d-cc48-4b57-bc20-d712f6ecc83e" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message1" doc:id="3eb45576-f966-4517-a16a-c7f996278354" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+payload.body.ns0#getAllTicketsResponse.*ns0#tickets map ( ticket , indexOfTicket ) -> {
+	id: ticket.ns0#id default 0,
+	name: ticket.ns0#name default "",
+	coordinates: {
+		x: ticket.ns0#coordinates.ns0#x default 0,
+		y: ticket.ns0#coordinates.ns0#y default 0
+	},
+	creationDate: ticket.ns0#creationDate as String default "",
+	price: ticket.ns0#price default 0,
+	discount: ticket.ns0#discount default 0,
+	refundable: ticket.ns0#refundable default true,
+	"type": ticket.ns0#"type" default "",
+	event: {
+		id: ticket.ns0#event.ns0#id default 0,
+		name: ticket.ns0#event.ns0#name default "",
+		date: ticket.ns0#event.ns0#date as String default "",
+		minAge: ticket.ns0#event.ns0#minAge default 0,
+		eventType: ticket.ns0#event.ns0#eventType default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="updateTicketFlow" doc:id="b5ed427e-a4aa-4f2e-b462-735424c8afab" >
+		<http:listener doc:name="Listener" doc:id="ff7ab099-0ec6-4d09-b950-c83919eb97b5" config-ref="HTTP_Listener_config1" path="/tickets/{id}" allowedMethods="PUT" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="516a8b1b-c86d-444f-91e8-d04157fc1ddb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#updateTicketRequest: {
+		ns0#ticketId: attributes.uriParams.'id',
+		ns0#ticket: {
+			ns0#id: payload.id,
+			ns0#name: payload.name,
+			ns0#coordinates: {
+				ns0#x: payload.coordinates.x,
+				ns0#y: payload.coordinates.y
+			},
+			ns0#price: payload.price,
+			ns0#discount: payload.discount,
+			ns0#refundable: payload.refundable,
+			ns0#"type": payload."type",
+			ns0#event: {
+				ns0#id: payload.event.id,
+				ns0#name: payload.event.name,
+				ns0#date: payload.event.date as String,
+				ns0#minAge: payload.event.minAge,
+				ns0#eventType: payload.event.eventType
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="updateTicket" doc:name="Consume" doc:id="575f1a9b-ff72-4003-adb1-80dddd1d2d47" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message1" doc:id="9ac2322e-3b93-4a51-a23e-e00df32152fb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+{
+	id: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#id default 0,
+	name: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#name default "",
+	coordinates: {
+		x: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#coordinates.ns0#x default 0,
+		y: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#coordinates.ns0#y default 0
+	},
+	creationDate: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#creationDate as String default "",
+	price: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#price default 0,
+	discount: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#discount default 0,
+	refundable: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#refundable default true,
+	"type": payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#"type" default "",
+	event: {
+		id: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#event.ns0#id default 0,
+		name: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#event.ns0#name default "",
+		date: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#event.ns0#date as String default "",
+		minAge: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#event.ns0#minAge default 0,
+		eventType: payload.body.ns0#updateTicketResponse.ns0#ticket.ns0#event.ns0#eventType default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="deleteTicketByIdFlow" doc:id="0359e87f-1fad-4257-a881-f5da63f945bf" >
+		<http:listener doc:name="Listener" doc:id="d0ead1b1-156e-43b0-8e49-86bfb3f6aed5" config-ref="HTTP_Listener_config1" path="/tickets/{id}" allowedMethods="DELETE" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json
+---
+{
+  "errors": [
+    error.description as String
+  ]
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="f530a0bb-0e46-4bc4-9bfc-f9805f06d804" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://org/example/catalog
+---
+{
+	ns0#deleteTicketRequest: {
+		ns0#ticketId: attributes.uriParams.'id'
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="deleteTicket" doc:name="Consume" doc:id="6e3b467b-5d09-4e28-8bb0-f5c89f2a4fed" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message1" doc:id="2e538cd8-bf2a-4775-9bae-9234eeee3727" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://org/example/catalog
+---
+{
+	"message": "Билет удалён"
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
