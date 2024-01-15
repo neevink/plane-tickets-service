@@ -143,6 +143,10 @@ public class TicketServiceImpl implements TicketService {
         if (filter != null){
             try {
                 for (String f : filter) {
+
+                    if (f.trim().equals("")) {
+                        continue;
+                    }
                     var key = f.split("\\[", 2)[0];
                     if (!allowedFilters.contains(key)) {
                         throw new Exception("Недопустимое значение фильтра " + key + ", должно быть одно иззначений: " + allowedFilters);
